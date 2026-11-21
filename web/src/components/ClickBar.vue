@@ -55,7 +55,7 @@ function onClick(button: MouseButton, event: MouseEvent) {
       class="grid touch-none place-items-center rounded-2xl border border-line text-[13px] font-medium text-muted transition-colors"
       :class="held[button] != null ? 'bg-key-down text-text' : 'bg-pad'"
       tabindex="0"
-      :aria-label="`${button} mouse button`"
+      :aria-label="`${button} 鼠标按键`"
       @pointerdown="down(button, $event)"
       @pointerup="up(button, $event)"
       @pointercancel="up(button, $event)"
@@ -64,7 +64,7 @@ function onClick(button: MouseButton, event: MouseEvent) {
       @keydown.space.prevent="click(button)"
       @contextmenu.prevent
     >
-      <span>{{ button === 'left' ? 'Click' : 'Right-click' }}</span>
+      <span>{{ button === 'left' ? '单击' : '右键单击' }}</span>
       <HapticSwitch />
     </label>
   </div>

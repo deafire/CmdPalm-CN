@@ -164,7 +164,7 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
         >
           <AppIcon :id="model.id" :size="36" />
           <span class="min-w-0 flex-1 truncate text-[15px]">{{ appName }}</span>
-          <span class="text-[13px] text-accent">Change</span>
+          <span class="text-[13px] text-accent">更改</span>
         </button>
         <AppPicker
           v-else
@@ -178,13 +178,13 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
         />
         <Segmented
           class="mt-2"
-          label="When tapped"
+          label="轻点时"
           :model-value="model.op ?? 'toggle'"
           :options="[
-            { value: 'toggle', label: 'Show / hide' },
-            { value: 'open', label: 'Open' },
-            { value: 'hide', label: 'Hide' },
-            { value: 'quit', label: 'Quit' },
+            { value: 'toggle', label: '显示 / 隐藏' },
+            { value: 'open', label: '打开' },
+            { value: 'hide', label: '隐藏' },
+            { value: 'quit', label: '退出' },
           ]"
           @update:model-value="(op: AppOp) => patch({ op })"
         />
@@ -195,11 +195,11 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
           :value="model.text"
           rows="4"
           :maxlength="LIMITS.text"
-          placeholder="Text to type on the Mac"
+          placeholder="要在 Mac 上输入的文本"
           class="w-full resize-none rounded-xl border border-line bg-surface-2 p-3 text-[15px] outline-none focus:border-accent"
           @input="patch({ text: ($event.target as HTMLTextAreaElement).value })"
         />
-        <Toggle :model-value="!!model.enter" label="Press Return afterwards" @update:model-value="(enter) => patch({ enter })" />
+        <Toggle :model-value="!!model.enter" label="随后按回车键" @update:model-value="(enter) => patch({ enter })" />
       </div>
 
       <label v-else-if="model.kind === 'url'" class="block">
@@ -213,18 +213,18 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
           class="h-11 w-full rounded-xl border border-line bg-surface-2 px-3 text-[15px] outline-none focus:border-accent"
           @input="patch({ url: ($event.target as HTMLInputElement).value })"
         />
-        <span class="mt-1.5 block text-[13px] text-muted">Opens in the Mac’s default app for the link. App links like <code>obsidian://</code> work too.</span>
+        <span class="mt-1.5 block text-[13px] text-muted">在 Mac 上用链接的默认应用打开。<code>obsidian://</code> 之类的应用链接也可使用。</span>
       </label>
 
       <label v-else-if="model.kind === 'shortcut'" class="block">
         <input
           :value="model.name"
-          placeholder="Shortcut name"
+          placeholder="快捷指令名称"
           autocomplete="off"
           class="h-11 w-full rounded-xl border border-line bg-surface-2 px-3 text-[15px] outline-none focus:border-accent"
           @input="patch({ name: ($event.target as HTMLInputElement).value })"
         />
-        <span class="mt-1.5 block text-[13px] text-muted">The exact name of a shortcut in the Mac’s Shortcuts app.</span>
+        <span class="mt-1.5 block text-[13px] text-muted">Mac“快捷指令”应用中快捷指令的准确名称。</span>
       </label>
 
       <div v-else-if="model.kind === 'shell'">
@@ -240,33 +240,33 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
         />
         <p class="mt-1.5 flex gap-2 text-[13px] leading-snug text-warn">
           <TriangleAlert :size="15" class="mt-px shrink-0" />
-          Runs with your user’s permissions through zsh. Only add commands you understand.
+          以你的用户权限通过 zsh 运行。只添加你理解的命令。
         </p>
         <p class="mt-1.5 text-[13px] leading-snug text-muted">
-          Quotes and dashes stay plain, as the shell needs them. If the command fails, the button shows why.
+          引号和短横线会保持原样，因为 shell 需要它们。如果命令失败，按钮会显示原因。
         </p>
       </div>
 
       <div v-else-if="model.kind === 'mouse'">
         <Segmented
-          label="Button"
+          label="按钮"
           :model-value="model.button"
           :options="[
-            { value: 'left', label: 'Left' },
-            { value: 'right', label: 'Right' },
-            { value: 'middle', label: 'Middle' },
-            { value: 'back', label: 'Back' },
-            { value: 'forward', label: 'Forward' },
+            { value: 'left', label: '左' },
+            { value: 'right', label: '右' },
+            { value: 'middle', label: '中' },
+            { value: 'back', label: '后退' },
+            { value: 'forward', label: '前进' },
           ]"
           @update:model-value="(button: MouseButton) => patch({ button })"
         />
         <Segmented
-          label="Clicks"
+          label="点击次数"
           :model-value="String(model.clicks ?? 1)"
           :options="[
-            { value: '1', label: 'Single' },
-            { value: '2', label: 'Double' },
-            { value: '3', label: 'Triple' },
+            { value: '1', label: '单击' },
+            { value: '2', label: '双击' },
+            { value: '3', label: '三击' },
           ]"
           @update:model-value="(clicks: string) => patch({ clicks: Number(clicks) })"
         />
@@ -274,7 +274,7 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
 
       <label v-else-if="model.kind === 'delay'" class="block py-2">
         <span class="flex justify-between text-[15px]">
-          <span>Wait</span>
+          <span>等待</span>
           <span class="text-muted tabular-nums">{{ model.ms < 1000 ? `${model.ms} ms` : `${(model.ms / 1000).toFixed(1)} s` }}</span>
         </span>
         <input
@@ -290,7 +290,7 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
       </label>
 
       <div v-else-if="model.kind === 'sequence'" class="space-y-1.5">
-        <p class="pb-1 text-[13px] text-muted">Steps run in order. Add short waits between steps for apps that need time to react.</p>
+        <p class="pb-1 text-[13px] text-muted">步骤按顺序执行。对于需要时间响应的应用，可在步骤之间添加短暂等待。</p>
         <div v-for="(step, i) in steps" :key="i" class="overflow-hidden rounded-2xl border border-line bg-surface-2">
           <div class="flex items-center gap-2 px-3 py-2">
             <span class="w-5 text-[12px] text-faint tabular-nums">{{ i + 1 }}</span>
@@ -299,19 +299,19 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
               <span class="truncate text-[14px]">{{ describe(step, labels, appNames) }}</span>
               <ChevronDown :size="15" class="shrink-0 text-faint transition-transform" :class="openStep === i && 'rotate-180'" />
             </button>
-            <button type="button" class="grid size-7 place-items-center text-muted disabled:opacity-30" :disabled="i === 0" aria-label="Move up" @click="moveStep(i, -1)">
+            <button type="button" class="grid size-7 place-items-center text-muted disabled:opacity-30" :disabled="i === 0" aria-label="上移" @click="moveStep(i, -1)">
               <ArrowUp :size="15" />
             </button>
             <button
               type="button"
               class="grid size-7 place-items-center text-muted disabled:opacity-30"
               :disabled="i === steps.length - 1"
-              aria-label="Move down"
+              aria-label="下移"
               @click="moveStep(i, 1)"
             >
               <ArrowDown :size="15" />
             </button>
-            <button type="button" class="grid size-7 place-items-center text-bad" aria-label="Remove step" @click="removeStep(i)">
+            <button type="button" class="grid size-7 place-items-center text-bad" aria-label="删除步骤" @click="removeStep(i)">
               <Trash2 :size="15" />
             </button>
           </div>
@@ -325,7 +325,7 @@ const kindOf = (step: Action) => ACTION_KINDS.find((k) => k.kind === step.kind)
           :disabled="steps.length >= LIMITS.steps"
           @click="addStep"
         >
-          <Plus :size="16" /> Add step
+          <Plus :size="16" /> 添加步骤
         </button>
       </div>
     </div>

@@ -396,9 +396,9 @@ describe('copying from another device', () => {
 
 describe('relative times', () => {
   it('reads naturally', () => {
-    expect(sync.ago(NOW - 5_000, NOW)).toBe('just now')
-    expect(sync.ago(NOW - 5 * 60_000, NOW)).toBe('5 minutes ago')
-    expect(sync.ago(NOW - 86_400_000, NOW)).toBe('yesterday')
+    expect(sync.ago(NOW - 5_000, NOW)).toBe('刚刚')
+    expect(sync.ago(NOW - 5 * 60_000, NOW)).toBe('5分钟前')
+    expect(sync.ago(NOW - 86_400_000, NOW)).toBe('昨天')
   })
 })
 

@@ -30,33 +30,33 @@ onMounted(async () => {
 const incompatible = computed(() => state.status === 'denied' && state.denied?.reason === 'incompatible')
 const reload = () => location.reload()
 const busy = computed(() => state.status === 'connecting' || state.status === 'pending')
-const mac = computed(() => macName.value || 'your Mac')
+const mac = computed(() => macName.value || '你的 Mac')
 // Disconnected from the Mac while still paired.
 const canReconnect = computed(() => !!token.get() && (state.status === 'idle' || (state.status === 'denied' && state.denied?.reason === 'busy')))
-const disconnected = computed(() => (canReconnect.value && !state.byeReason ? 'Disconnected from the Mac.' : ''))
+const disconnected = computed(() => (canReconnect.value && !state.byeReason ? '已与 Mac 断开连接。' : ''))
 
 const error = computed(() => {
   if (state.status === 'idle' && state.byeReason) return state.byeReason
   if (state.status !== 'denied' || !state.denied) return ''
   switch (state.denied.reason) {
     case 'wrongPin':
-      return 'That PIN didn’t match. Check the PIN in the CmdPalm menu on the Mac.'
+      return 'PIN 不匹配。请查看 Mac 上 CmdPalm 菜单中的 PIN。'
     case 'expiredCode':
-      return 'That pairing code expired or was already used. Scan the new QR code, or enter the PIN.'
+      return '该配对码已过期或已被使用。请扫描新的二维码，或输入 PIN。'
     case 'rejected':
       return mode.value === 'pin'
-        ? 'PIN pairing is turned off on the Mac.'
-        : 'The Mac didn’t allow this device. Approval may be turned off in CmdPalm’s Phone Setup settings.'
+        ? 'Mac 上已关闭 PIN 配对。'
+        : 'Mac 未允许此设备。可能在 CmdPalm 的“手机设置”中关闭了批准。'
     case 'pinClosed':
-      return 'Open the CmdPalm menu on the Mac to show the PIN, then try again.'
+      return '在 Mac 上打开 CmdPalm 菜单以显示 PIN，然后重试。'
     case 'blocked':
-      return `Too many attempts. Try again in ${state.denied.retryAfter ?? 30} seconds.`
+      return `尝试次数过多，请在 ${state.denied.retryAfter ?? 30} 秒后重试。`
     case 'busy':
-      return `The Mac can’t accept this connection right now. Try again in ${state.denied.retryAfter ?? 5} seconds. If this keeps happening, quit and reopen CmdPalm on the Mac.`
+      return `Mac 目前无法接受此连接。请在 ${state.denied.retryAfter ?? 5} 秒后重试。如果一直如此，请退出并重新打开 Mac 上的 CmdPalm。`
     case 'incompatible':
-      return 'This page doesn’t match the CmdPalm version on the Mac. Reload the page.'
+      return '此页面与 Mac 上的 CmdPalm 版本不匹配。请重新加载页面。'
     default:
-      return 'Couldn’t connect.'
+      return '无法连接。'
   }
 })
 
@@ -100,9 +100,9 @@ watch(
     <div class="flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-10">
       <div class="mb-8 flex flex-col items-center text-center">
         <img src="/icon.svg" alt="" class="mb-5 size-16 rounded-[22%] shadow-lg" />
-        <h1 class="text-[26px] font-semibold tracking-tight">Connect to {{ mac }}</h1>
+        <h1 class="text-[26px] font-semibold tracking-tight">连接到 {{ mac }}</h1>
         <p class="mt-2 text-[15px] leading-relaxed text-muted">
-          Open the CmdPalm menu on the Mac and scan the QR code, or enter the PIN shown there.
+          在 Mac 上打开 CmdPalm 菜单并扫描二维码，或输入其中显示的 PIN。
         </p>
       </div>
 
@@ -110,14 +110,14 @@ watch(
         <template v-if="state.status === 'pending'">
           <LaptopMinimal :size="32" class="text-accent" />
           <div>
-            <div class="text-[17px] font-semibold">Waiting for approval</div>
-            <p class="mt-1 text-[14px] text-muted">Click <b>Allow</b> on {{ mac }} to let this {{ deviceModel() }} connect.</p>
+            <div class="text-[17px] font-semibold">等待批准</div>
+            <p class="mt-1 text-[14px] text-muted">在 {{ mac }} 上点击<b>“允许”</b>，让此 {{ deviceModel() }} 连接。</p>
           </div>
-          <button type="button" class="h-11 w-full rounded-2xl text-[15px] font-medium text-accent" @click="cancel">Cancel</button>
+          <button type="button" class="h-11 w-full rounded-2xl text-[15px] font-medium text-accent" @click="cancel">取消</button>
         </template>
         <template v-else>
           <LoaderCircle :size="28" class="animate-spin text-muted" />
-          <div class="text-[15px] text-muted">{{ mode === 'pair' ? 'Pairing…' : 'Connecting…' }}</div>
+          <div class="text-[15px] text-muted">{{ mode === 'pair' ? '配对中…' : '连接中…' }}</div>
         </template>
       </div>
 
@@ -132,7 +132,7 @@ watch(
             autocomplete="one-time-code"
             pattern="[0-9]*"
             maxlength="6"
-            aria-label="Six-digit PIN"
+            aria-label="六位 PIN"
             class="absolute inset-0 z-10 h-full w-full opacity-0"
             @input="onPinInput"
           />
@@ -155,7 +155,7 @@ watch(
           class="mt-3 h-11 w-full rounded-2xl text-[15px] font-medium text-accent"
           @click="reload"
         >
-          Reload
+          重新加载
         </button>
         <button
           v-if="canReconnect"
@@ -163,24 +163,24 @@ watch(
           class="mt-3 h-11 w-full rounded-2xl text-[15px] font-medium text-accent"
           @click="connect()"
         >
-          Reconnect
+          重新连接
         </button>
         <button
           type="submit"
           class="mt-5 h-12 w-full rounded-2xl bg-accent text-[16px] font-semibold text-accent-text disabled:opacity-40"
           :disabled="pin.length !== 6"
         >
-          Connect
+          连接
         </button>
         <button type="button" class="mt-2 h-11 w-full rounded-2xl text-[15px] font-medium text-accent" @click="requestApproval">
-          Ask the Mac to approve instead
+          改为让 Mac 批准
         </button>
       </form>
 
       <div class="mt-6 rounded-2xl px-1">
-        <Toggle v-model="settings.rememberDevice" label="Remember this device" hint="Reconnect automatically next time. Turn off on shared devices." />
+        <Toggle v-model="settings.rememberDevice" label="记住此设备" hint="下次自动重新连接。在共用设备上请关闭。" />
         <label class="mt-1 block py-2">
-          <span class="text-[15px]">Device name</span>
+          <span class="text-[15px]">设备名称</span>
           <input
             v-model="settings.deviceName"
             :placeholder="deviceModel()"
@@ -193,7 +193,7 @@ watch(
 
       <p class="mt-6 flex items-start gap-2 text-[13px] leading-relaxed text-faint">
         <ShieldCheck :size="16" class="mt-0.5 shrink-0" />
-        Everything stays on your local network. Nothing is sent to the internet.
+        所有数据都保留在本地网络中，不会发送到互联网。
       </p>
     </div>
   </main>

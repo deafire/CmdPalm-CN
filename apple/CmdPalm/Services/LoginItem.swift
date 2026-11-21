@@ -54,6 +54,6 @@ final class LoginItem {
 
     nonisolated static func locationProblem(path: String, onReadOnlyVolume: Bool) -> String? {
         guard onReadOnlyVolume || path.contains("/AppTranslocation/") else { return nil }
-        return "Move CmdPalm to your Applications folder and open it from there, then turn this on."
+        return "将 CmdPalm 移到“应用程序”文件夹并从那里打开，然后再打开此选项。"
     }
 }

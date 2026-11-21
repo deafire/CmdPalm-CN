@@ -74,8 +74,8 @@ final class Updater: NSObject {
     func checkForUpdates() {
         guard isConfigured else {
             let alert = NSAlert()
-            alert.messageText = "Updates aren’t available in this build"
-            alert.informativeText = "This copy of CmdPalm was built locally without an update feed. Install a release from GitHub or Homebrew to get automatic updates."
+            alert.messageText = "此版本不提供更新"
+            alert.informativeText = "此 CmdPalm 副本在本地构建，未包含更新源。请从 GitHub 或 Homebrew 安装正式版本以获得自动更新。"
             _ = AppActivation.shared.present { alert.runModal() }
             return
         }

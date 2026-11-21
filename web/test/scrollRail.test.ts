@@ -45,7 +45,7 @@ const settle = (ms = 20) => vi.advanceTimersByTimeAsync(ms)
 async function rail() {
   const { default: ScrollRail } = await import('../src/components/ScrollRail.vue')
   const view = mount(ScrollRail, { attachTo: document.body })
-  const [track, handle] = [view.element as HTMLElement, view.find('[aria-label="Scroll strip"]').element as HTMLElement]
+  const [track, handle] = [view.element as HTMLElement, view.find('[aria-label="滚动条"]').element as HTMLElement]
   Object.defineProperty(track, 'clientHeight', { value: 400 })
   Object.defineProperty(handle, 'clientHeight', { value: 112 })
   handle.setPointerCapture = () => {}
@@ -138,8 +138,8 @@ describe('scroll strip', () => {
     const { default: ScrollRail } = await import('../src/components/ScrollRail.vue')
     const view = mount(ScrollRail, { attachTo: document.body })
     const strip = view.element as HTMLElement
-    expect(strip.getAttribute('aria-label')).toBe('Scroll strip')
-    expect(view.findAll('[aria-label="Scroll strip"]')).toHaveLength(1)
+    expect(strip.getAttribute('aria-label')).toBe('滚动条')
+    expect(view.findAll('[aria-label="滚动条"]')).toHaveLength(1)
     strip.setPointerCapture = () => {}
     const fire = (type: string, clientY: number) => strip.dispatchEvent(new PointerEvent(type, { pointerId: 1, clientY, bubbles: true }))
     fire('pointerdown', 300)

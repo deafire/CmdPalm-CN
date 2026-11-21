@@ -47,19 +47,19 @@ export function plainMods(mods: number): number {
 }
 
 export const MOD_ORDER: { mod: number; code: number; symbol: string; name: string }[] = [
-  { mod: Mod.Control, code: Key.Control, symbol: '⌃', name: 'Control' },
-  { mod: Mod.Option, code: Key.Option, symbol: '⌥', name: 'Option' },
-  { mod: Mod.Shift, code: Key.Shift, symbol: '⇧', name: 'Shift' },
-  { mod: Mod.Command, code: Key.Command, symbol: '⌘', name: 'Command' },
-  { mod: Mod.Fn, code: Key.Fn, symbol: 'fn', name: 'Function' },
+  { mod: Mod.Control, code: Key.Control, symbol: '⌃', name: '控制' },
+  { mod: Mod.Option, code: Key.Option, symbol: '⌥', name: '选项' },
+  { mod: Mod.Shift, code: Key.Shift, symbol: '⇧', name: '上档' },
+  { mod: Mod.Command, code: Key.Command, symbol: '⌘', name: '命令' },
+  { mod: Mod.Fn, code: Key.Fn, symbol: 'fn', name: '功能' },
 ]
 
 /** The keys on the right of a Mac keyboard, which some apps treat differently. */
 export const RIGHT_MODS: typeof MOD_ORDER = [
-  { mod: Mod.RightControl, code: Key.RightControl, symbol: '⌃', name: 'Right Control' },
-  { mod: Mod.RightOption, code: Key.RightOption, symbol: '⌥', name: 'Right Option' },
-  { mod: Mod.RightShift, code: Key.RightShift, symbol: '⇧', name: 'Right Shift' },
-  { mod: Mod.RightCommand, code: Key.RightCommand, symbol: '⌘', name: 'Right Command' },
+  { mod: Mod.RightControl, code: Key.RightControl, symbol: '⌃', name: '右控制' },
+  { mod: Mod.RightOption, code: Key.RightOption, symbol: '⌥', name: '右选项' },
+  { mod: Mod.RightShift, code: Key.RightShift, symbol: '⇧', name: '右上档' },
+  { mod: Mod.RightCommand, code: Key.RightCommand, symbol: '⌘', name: '右命令' },
 ]
 
 export const ALL_MODS = [...MOD_ORDER, ...RIGHT_MODS]
@@ -170,25 +170,25 @@ export function keyboardRows(iso: boolean): KeySpec[][] {
   return [
     [
       { kind: 'special', code: Key.Escape, label: 'esc', width: 1.4, align: 'left' },
-      { kind: 'fn', code: Key.F1, label: 'F1', media: 'brightnessDown', mediaLabel: 'brightness down' },
-      { kind: 'fn', code: Key.F2, label: 'F2', media: 'brightnessUp', mediaLabel: 'brightness up' },
-      { kind: 'fn', code: Key.F3, label: 'F3', system: 'missionControl', mediaLabel: 'mission control' },
-      { kind: 'fn', code: Key.F4, label: 'F4', system: 'spotlight', mediaLabel: 'spotlight' },
-      { kind: 'fn', code: Key.F5, label: 'F5', media: 'illuminationDown', mediaLabel: 'backlight down' },
-      { kind: 'fn', code: Key.F6, label: 'F6', media: 'illuminationUp', mediaLabel: 'backlight up' },
-      { kind: 'fn', code: Key.F7, label: 'F7', media: 'previous', mediaLabel: 'previous' },
-      { kind: 'fn', code: Key.F8, label: 'F8', media: 'playPause', mediaLabel: 'play/pause' },
-      { kind: 'fn', code: Key.F9, label: 'F9', media: 'next', mediaLabel: 'next' },
-      { kind: 'fn', code: Key.F10, label: 'F10', media: 'mute', mediaLabel: 'mute' },
-      { kind: 'fn', code: Key.F11, label: 'F11', media: 'volumeDown', mediaLabel: 'volume down' },
-      { kind: 'fn', code: Key.F12, label: 'F12', media: 'volumeUp', mediaLabel: 'volume up' },
+      { kind: 'fn', code: Key.F1, label: 'F1', media: 'brightnessDown', mediaLabel: '降低亮度' },
+      { kind: 'fn', code: Key.F2, label: 'F2', media: 'brightnessUp', mediaLabel: '提高亮度' },
+      { kind: 'fn', code: Key.F3, label: 'F3', system: 'missionControl', mediaLabel: '调度中心' },
+      { kind: 'fn', code: Key.F4, label: 'F4', system: 'spotlight', mediaLabel: '聚焦' },
+      { kind: 'fn', code: Key.F5, label: 'F5', media: 'illuminationDown', mediaLabel: '调暗背光' },
+      { kind: 'fn', code: Key.F6, label: 'F6', media: 'illuminationUp', mediaLabel: '调亮背光' },
+      { kind: 'fn', code: Key.F7, label: 'F7', media: 'previous', mediaLabel: '上一首' },
+      { kind: 'fn', code: Key.F8, label: 'F8', media: 'playPause', mediaLabel: '播放/暂停' },
+      { kind: 'fn', code: Key.F9, label: 'F9', media: 'next', mediaLabel: '下一首' },
+      { kind: 'fn', code: Key.F10, label: 'F10', media: 'mute', mediaLabel: '静音' },
+      { kind: 'fn', code: Key.F11, label: 'F11', media: 'volumeDown', mediaLabel: '调低音量' },
+      { kind: 'fn', code: Key.F12, label: 'F12', media: 'volumeUp', mediaLabel: '调高音量' },
       { kind: 'special', code: Key.ForwardDelete, label: 'del', symbol: '⌦', width: 1 },
     ],
     [
       char(iso ? Key.ISOSection : Key.Grave),
       char(Key.One), char(Key.Two), char(Key.Three), char(Key.Four), char(Key.Five), char(Key.Six),
       char(Key.Seven), char(Key.Eight), char(Key.Nine), char(Key.Zero), char(Key.Minus), char(Key.Equal),
-      { kind: 'special', code: Key.Delete, label: 'delete', symbol: '⌫', width: 1.5, align: 'right' },
+      { kind: 'special', code: Key.Delete, label: '删除', symbol: '⌫', width: 1.5, align: 'right' },
     ],
     [
       { kind: 'special', code: Key.Tab, label: 'tab', symbol: '⇥', width: 1.5, align: 'left' },
@@ -197,26 +197,26 @@ export function keyboardRows(iso: boolean): KeySpec[][] {
       char(Key.Backslash, 1.0),
     ],
     [
-      { kind: 'special', code: Key.CapsLock, label: 'caps', symbol: '⇪', width: 1.8, align: 'left' },
+      { kind: 'special', code: Key.CapsLock, label: '大写锁定', symbol: '⇪', width: 1.8, align: 'left' },
       char(Key.A), char(Key.S), char(Key.D), char(Key.F), char(Key.G), char(Key.H), char(Key.J),
       char(Key.K), char(Key.L), char(Key.Semicolon), char(Key.Quote),
-      { kind: 'special', code: Key.Return, label: 'return', symbol: RETURN, width: 1.7, align: 'right' },
+      { kind: 'special', code: Key.Return, label: '回车', symbol: RETURN, width: 1.7, align: 'right' },
     ],
     [
-      { kind: 'mod', code: Key.Shift, mod: Mod.Shift, label: 'shift', symbol: '⇧', width: iso ? 1.25 : 2.3, align: 'left' },
+      { kind: 'mod', code: Key.Shift, mod: Mod.Shift, label: '上档', symbol: '⇧', width: iso ? 1.25 : 2.3, align: 'left' },
       ...(iso ? [char(Key.Grave)] : []),
       char(Key.Z), char(Key.X), char(Key.C), char(Key.V), char(Key.B), char(Key.N), char(Key.M),
       char(Key.Comma), char(Key.Period), char(Key.Slash),
-      { kind: 'mod', code: Key.RightShift, mod: Mod.RightShift, label: 'shift', symbol: '⇧', width: 2.2, align: 'right' },
+      { kind: 'mod', code: Key.RightShift, mod: Mod.RightShift, label: '上档', symbol: '⇧', width: 2.2, align: 'right' },
     ],
     [
       { kind: 'mod', code: Key.Fn, mod: Mod.Fn, label: 'fn', symbol: 'fn', width: 1, align: 'left' },
-      { kind: 'mod', code: Key.Control, mod: Mod.Control, label: 'control', symbol: '⌃', width: 1, align: 'right' },
-      { kind: 'mod', code: Key.Option, mod: Mod.Option, label: 'option', symbol: '⌥', width: 1, align: 'right' },
-      { kind: 'mod', code: Key.Command, mod: Mod.Command, label: 'command', symbol: '⌘', width: 1.25, align: 'right' },
+      { kind: 'mod', code: Key.Control, mod: Mod.Control, label: '控制', symbol: '⌃', width: 1, align: 'right' },
+      { kind: 'mod', code: Key.Option, mod: Mod.Option, label: '选项', symbol: '⌥', width: 1, align: 'right' },
+      { kind: 'mod', code: Key.Command, mod: Mod.Command, label: '命令', symbol: '⌘', width: 1.25, align: 'right' },
       { kind: 'special', code: Key.Space, label: '', width: 5.0 },
-      { kind: 'mod', code: Key.RightCommand, mod: Mod.RightCommand, label: 'command', symbol: '⌘', width: 1.25, align: 'left' },
-      { kind: 'mod', code: Key.RightOption, mod: Mod.RightOption, label: 'option', symbol: '⌥', width: 1, align: 'left' },
+      { kind: 'mod', code: Key.RightCommand, mod: Mod.RightCommand, label: '命令', symbol: '⌘', width: 1.25, align: 'left' },
+      { kind: 'mod', code: Key.RightOption, mod: Mod.RightOption, label: '选项', symbol: '⌥', width: 1, align: 'left' },
       { kind: 'arrows' },
     ],
   ]
@@ -225,7 +225,7 @@ export function keyboardRows(iso: boolean): KeySpec[][] {
 /** Human-readable name for a key position, used in combo labels. */
 export function keyName(code: number, labels: LabelMap): string {
   const special: Record<number, string> = {
-    [Key.Return]: RETURN, [Key.Tab]: '⇥', [Key.Space]: 'Space', [Key.Delete]: '⌫', [Key.Escape]: 'esc',
+    [Key.Return]: RETURN, [Key.Tab]: '⇥', [Key.Space]: '空格', [Key.Delete]: '⌫', [Key.Escape]: 'esc',
     [Key.ForwardDelete]: '⌦', [Key.Left]: '←', [Key.Right]: '→', [Key.Up]: '↑', [Key.Down]: '↓',
     [Key.Home]: '⇱', [Key.End]: '⇲', [Key.PageUp]: '⇞', [Key.PageDown]: '⇟', [Key.CapsLock]: '⇪',
     [Key.F1]: 'F1', [Key.F2]: 'F2', [Key.F3]: 'F3', [Key.F4]: 'F4', [Key.F5]: 'F5', [Key.F6]: 'F6',
@@ -257,11 +257,11 @@ export function fromDomCode(code: string): number | undefined {
 }
 
 export const SPECIAL_KEYS: { code: number; label: string }[] = [
-  { code: Key.Return, label: 'Return' }, { code: Key.Tab, label: 'Tab' }, { code: Key.Space, label: 'Space' },
-  { code: Key.Delete, label: 'Delete' }, { code: Key.ForwardDelete, label: 'Fwd Del' }, { code: Key.Escape, label: 'Esc' },
+  { code: Key.Return, label: '回车' }, { code: Key.Tab, label: 'Tab' }, { code: Key.Space, label: '空格' },
+  { code: Key.Delete, label: '删除' }, { code: Key.ForwardDelete, label: '前向删除' }, { code: Key.Escape, label: 'Esc' },
   { code: Key.Left, label: '←' }, { code: Key.Right, label: '→' }, { code: Key.Up, label: '↑' }, { code: Key.Down, label: '↓' },
-  { code: Key.Home, label: 'Home' }, { code: Key.End, label: 'End' }, { code: Key.PageUp, label: 'Page Up' },
-  { code: Key.PageDown, label: 'Page Down' },
+  { code: Key.Home, label: '起始' }, { code: Key.End, label: '结束' }, { code: Key.PageUp, label: '上一页' },
+  { code: Key.PageDown, label: '下一页' },
   ...Array.from({ length: 12 }, (_, i) => ({ code: Key[`F${i + 1}` as keyof typeof Key], label: `F${i + 1}` })),
 ]
 

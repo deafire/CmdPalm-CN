@@ -95,7 +95,7 @@ private struct ApprovalPrompt: View {
                         .resizable()
                         .frame(width: 40, height: 40)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Allow “\(request.deviceName)” to control this Mac?")
+                        Text("允许“\(request.deviceName)”控制这台 Mac？")
                             .font(.headline)
                             .fixedSize(horizontal: false, vertical: true)
                         Text(detail(request))
@@ -106,14 +106,14 @@ private struct ApprovalPrompt: View {
                 }
                 HStack {
                     if waiting > 0 {
-                        Text("\(waiting) more waiting")
+                        Text("还有 \(waiting) 个等待中")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button("Don’t Allow") { host.respond(to: request, allow: false) }
+                    Button("不允许") { host.respond(to: request, allow: false) }
                         .keyboardShortcut(.cancelAction)
-                    Button("Allow") { host.respond(to: request, allow: true) }
+                    Button("允许") { host.respond(to: request, allow: true) }
                         .buttonStyle(.borderedProminent)
                 }
             }
@@ -127,7 +127,7 @@ private struct ApprovalPrompt: View {
     }
 
     private func detail(_ request: ApprovalRequest) -> String {
-        let model = request.model.isEmpty ? "A device" : request.model
-        return "\(model) at \(request.address) wants to connect. Only allow devices you recognize."
+        let model = request.model.isEmpty ? "一台设备" : request.model
+        return "来自 \(request.address) 的\(model)请求连接。只批准你认识的设备。"
     }
 }

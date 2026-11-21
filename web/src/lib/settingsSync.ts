@@ -29,24 +29,24 @@ export type SyncedSettings = {
 /** Each preference belongs to one independently copyable section. */
 export const COPY_CATEGORIES = [
   {
-    id: 'trackpad', label: 'Trackpad', hint: 'Pointer, clicks and scrolling',
+    id: 'trackpad', label: '触控板', hint: '指针、点按和滚动',
     keys: ['pointerSpeed', 'pointerAcceleration', 'tapToClick', 'twoFingerTapRightClick', 'longPress', 'tapAndDrag', 'dragLock', 'clickButtons', 'scrollSpeed', 'naturalScroll', 'momentum', 'scrollStrip', 'scrollStripSide', 'scrollStripWidth', 'scrollStripEdge', 'scrollHold', 'showTouches'],
   },
   {
-    id: 'gestures', label: 'Gestures', hint: 'Pinch, rotate and finger gestures',
+    id: 'gestures', label: '手势', hint: '捏合、旋转和手指手势',
     keys: ['pinchToZoom', 'pinchStyle', 'rotateGesture', 'smartZoom', 'threeFingerDrag', 'threeFinger', 'fourFinger'],
   },
   {
-    id: 'keyboard', label: 'Keyboard settings', hint: 'Keyboard mode, typing and key repeat',
+    id: 'keyboard', label: '键盘设置', hint: '键盘模式、输入和按键重复',
     keys: ['keyboard', 'functionRow', 'sidewaysKeyboard', 'sidewaysTurn', 'keyRepeat', 'textMode', 'liveTyping'],
   },
-  { id: 'deck', label: 'Deck button size', hint: 'Button size on this device', keys: ['deckButtonSize'] },
+  { id: 'deck', label: '快捷面板按钮大小', hint: '本设备上的按钮大小', keys: ['deckButtonSize'] },
   {
-    id: 'display', label: 'Display', hint: 'Viewing controls, quality and preview space',
+    id: 'display', label: '屏幕镜像', hint: '观看控制、画质和预览区域',
     keys: ['displayControls', 'displayQuality', 'displaySplit', 'displayId'],
   },
   {
-    id: 'appearance', label: 'Appearance and feedback', hint: 'Theme, haptics and screen preferences',
+    id: 'appearance', label: '外观与反馈', hint: '主题、触觉反馈和屏幕偏好',
     keys: ['theme', 'haptics', 'keyHaptics', 'keepAwake'],
   },
 ] as const satisfies readonly { id: string; label: string; hint: string; keys: readonly (keyof SyncedPrefs)[] }[]
@@ -147,7 +147,7 @@ function push() {
   const payload = buildPayload()
   const size = new TextEncoder().encode(JSON.stringify(payload)).length
   if (size > MAX_BYTES) {
-    if (!warnedTooLarge) notify('Your custom keyboards are too large to back up on the Mac.', 'warning', 'settings')
+    if (!warnedTooLarge) notify('你的自定义键盘过大，无法在 Mac 上备份。', 'warning', 'settings')
     warnedTooLarge = true
     return
   }
@@ -252,14 +252,14 @@ export function requestCopy(device: SettingsSource): Promise<CopyPreview | null>
   return new Promise((resolve) => {
     const id = ++nextCopyId
     if (!send({ t: 'settingsCopy', from: device.id, id })) {
-      notify('Not connected to the Mac.', 'error', 'settings')
+      notify('未连接到 Mac。', 'error', 'settings')
       resolve(null)
       return
     }
     pendingCopy = { id, device, resolve }
     copier.copying = device.id
     copyTimer = setTimeout(() => {
-      notify('The Mac didn’t answer. Try again.', 'error', 'settings')
+      notify('Mac 未响应，请重试。', 'error', 'settings')
       finishCopy(null)
     }, REPLY_TIMEOUT_MS)
   })
@@ -274,7 +274,7 @@ function copied(saved: SavedSettings | null, id?: number) {
   if (!pending || id !== pending.id) return
   const raw = saved?.settings
   if (!raw || raw.version !== 1 || !isRecord(raw.settings)) {
-    notify('Those settings couldn’t be read.', 'error', 'settings')
+    notify('无法读取这些设置。', 'error', 'settings')
     finishCopy(null)
     return
   }
@@ -320,23 +320,23 @@ export function copyFrom(preview: CopyPreview, selection: CopySelection): boolea
   // Reject the whole operation before touching local state, rather than
   // partially importing a setup or silently dropping keyboards past the limit.
   if (boards.length > LIMITS.boards) {
-    notify(`You can keep up to ${LIMITS.boards} keyboards. Select fewer keyboards or delete one here first.`, 'warning', 'settings')
+    notify(`最多可保留 ${LIMITS.boards} 个键盘。请少选几个，或先在此处删除一个。`, 'warning', 'settings')
     return false
   }
   const payload = buildPayload(prefs, boards)
   if (new TextEncoder().encode(JSON.stringify(payload)).length > MAX_BYTES) {
-    notify('This selection is too large to back up on the Mac. Select fewer keyboards.', 'warning', 'settings')
+    notify('所选内容过大，无法在 Mac 上备份。请少选几个键盘。', 'warning', 'settings')
     return false
   }
   if (!replaceSynced(payload)) return false
-  notify(`Copied your selection from ${preview.device.name}.`, 'info', 'settings')
+  notify(`已从 ${preview.device.name} 复制所选内容。`, 'info', 'settings')
   return true
 }
 
 /** Install a validated setup atomically and make it newer than its Mac copy. */
 export function replaceSynced(payload: SyncedSettings): boolean {
   if (new TextEncoder().encode(JSON.stringify(payload)).length > MAX_BYTES) {
-    notify('This setup is too large to back up on the Mac.', 'warning', 'settings')
+    notify('此设置过大，无法在 Mac 上备份。', 'warning', 'settings')
     return false
   }
   commit()
@@ -432,9 +432,9 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 /** "just now", "5 minutes ago", "yesterday". */
 export function ago(then: number, now = Date.now()): string {
   const seconds = Math.round((then - now) / 1000)
-  if (Math.abs(seconds) < 45) return 'just now'
+  if (Math.abs(seconds) < 45) return '刚刚'
   let unit = UNITS[0]!
   for (const u of UNITS) if (Math.abs(seconds) >= u[1]) unit = u
-  relative ??= new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+  relative ??= new Intl.RelativeTimeFormat('zh-CN', { numeric: 'auto' })
   return relative.format(Math.round(seconds / unit[1]), unit[0])
 }

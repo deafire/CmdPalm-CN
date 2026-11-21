@@ -63,7 +63,7 @@ function duplicate() {
 </script>
 
 <template>
-  <Sheet :title="isNew ? 'New button' : 'Edit button'" full :closable="!busy" @close="emit('close')">
+  <Sheet :title="isNew ? '新建按钮' : '编辑按钮'" full :closable="!busy" @close="emit('close')">
     <template #actions>
       <button
         type="button"
@@ -71,7 +71,7 @@ function duplicate() {
         :disabled="busy || !!problem"
         @click="save"
       >
-        {{ busy ? 'Saving…' : isNew ? 'Add' : 'Save' }}
+        {{ busy ? '保存中…' : isNew ? '添加' : '保存' }}
       </button>
     </template>
 
@@ -85,7 +85,7 @@ function duplicate() {
           <TileFace :tile="draft" compact />
         </div>
         <label class="min-w-0 flex-1">
-          <span class="text-[13px] text-muted">Label</span>
+          <span class="text-[13px] text-muted">标签</span>
           <input
             v-model="draft.label"
             :maxlength="LIMITS.label"
@@ -97,19 +97,19 @@ function duplicate() {
       </div>
 
       <section class="border-t border-line py-4">
-        <h3 class="mb-2 text-[13px] font-medium tracking-wide text-muted uppercase">Action</h3>
+        <h3 class="mb-2 text-[13px] font-medium tracking-wide text-muted uppercase">操作</h3>
         <ActionEditor v-model="draft.action" />
         <p v-if="problem" class="mt-2 text-[13px] text-bad">{{ problem }}</p>
       </section>
 
       <section class="border-t border-line py-4">
-        <h3 class="mb-1 text-[13px] font-medium tracking-wide text-muted uppercase">Look</h3>
+        <h3 class="mb-1 text-[13px] font-medium tracking-wide text-muted uppercase">外观</h3>
         <Segmented
           v-model="iconMode"
           :options="[
-            { value: 'auto', label: 'Automatic' },
-            { value: 'symbol', label: 'Symbol' },
-            { value: 'emoji', label: 'Emoji' },
+            { value: 'auto', label: '自动' },
+            { value: 'symbol', label: '符号' },
+            { value: 'emoji', label: '表情' },
           ]"
         />
         <div v-if="iconMode === 'symbol'" class="mt-2 grid max-h-52 grid-cols-8 gap-1 overflow-y-auto overscroll-contain rounded-2xl bg-surface-2 p-2">
@@ -129,19 +129,19 @@ function duplicate() {
           <input
             :value="draft.icon?.kind === 'emoji' ? draft.icon.text : ''"
             class="h-12 w-full rounded-xl border border-line bg-surface-2 text-center text-[26px] outline-none focus:border-accent"
-            aria-label="Emoji"
+            aria-label="表情"
             @input="onEmoji"
           />
         </label>
 
-        <div class="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Color">
+        <div class="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="颜色">
           <button
             type="button"
             role="radio"
             :aria-checked="!draft.color"
             class="grid size-9 place-items-center rounded-full border border-line-strong text-muted"
             :class="!draft.color && 'ring-2 ring-text ring-offset-2 ring-offset-surface'"
-            aria-label="No color"
+            aria-label="无颜色"
             @click="draft.color = undefined"
           >
             <Ban :size="16" />
@@ -168,10 +168,10 @@ function duplicate() {
           :disabled="!!problem"
           @click="duplicate"
         >
-          <Copy :size="16" /> Duplicate
+          <Copy :size="16" /> 复制
         </button>
         <button type="button" class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-surface-2 text-[14px] text-bad" @click="emit('remove')">
-          <Trash2 :size="16" /> Delete
+          <Trash2 :size="16" /> 删除
         </button>
       </section>
     </fieldset>

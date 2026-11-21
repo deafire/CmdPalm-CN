@@ -70,7 +70,7 @@ export function lazy(loader: () => Promise<Component | { default: Component }>) 
     setup() {
       return () =>
         h('div', { class: 'flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-muted' }, [
-          h('p', { class: 'text-[14px]' }, 'Couldn’t load this view while the Mac was unreachable.'),
+          h('p', { class: 'text-[14px]' }, 'Mac 无法连接，未能加载此视图。'),
           h(
             'button',
             {
@@ -78,7 +78,7 @@ export function lazy(loader: () => Promise<Component | { default: Component }>) 
               class: 'h-9 rounded-full bg-surface-3 px-4 text-[13px] font-medium text-text',
               onClick: bump,
             },
-            'Try again',
+            '重试',
           ),
         ])
     },

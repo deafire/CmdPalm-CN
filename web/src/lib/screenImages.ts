@@ -30,11 +30,11 @@ export class ScreenImageAssembler {
   reset() { this.buffer = null; this.offset = 0 }
 
   push(message: ArrayBuffer): ScreenImageFrame | null {
-    if (message.byteLength < 17 || message.byteLength > 16 * 1024) throw new Error('Invalid HD picture chunk')
+    if (message.byteLength < 17 || message.byteLength > 16 * 1024) throw new Error('无效的高清画面数据块')
     const bytes = new Uint8Array(message)
     const isFull = bytes[0] === 67 && bytes[1] === 80 && bytes[2] === 78 && bytes[3] === 71 // CPNG
     const isPatch = bytes[0] === 67 && bytes[1] === 80 && bytes[2] === 65 && bytes[3] === 84 // CPAT
-    if (!isFull && !isPatch) throw new Error('Invalid HD picture header')
+    if (!isFull && !isPatch) throw new Error('无效的高清画面头')
     const kind = isFull ? 'full' : 'patch'
     const header = new DataView(message)
     const sequence = header.getUint32(4, true)
@@ -106,7 +106,7 @@ export class ScreenImageRenderer {
     }
     if (this.waiting.length >= 8 || this.waitingBytes + frame.png.byteLength > MAX_IMAGE) {
       this.stop()
-      this.onFailure('The phone could not display HD updates fast enough. Try Sharper text.')
+      this.onFailure('手机无法足够快地显示高清更新。请尝试「更清晰的文字」。')
       return
     }
     this.waiting.push(frame)
@@ -141,7 +141,7 @@ export class ScreenImageRenderer {
     } catch {
       if (!this.stopped) {
         this.stop()
-        this.onFailure('The HD picture could not be displayed. Try Sharper text.')
+        this.onFailure('高清画面无法显示。请尝试「更清晰的文字」。')
       }
     } finally { this.drawing = false }
   }

@@ -54,7 +54,7 @@ onMessage((message) => {
       void stopVoice(false, false)
     }
   } else if (current) {
-    voice.error = message.message ?? 'Speech recognition stopped.'
+    voice.error = message.message ?? '语音识别已停止。'
     void stopVoice(true, false)
   } else {
     dictations.delete(id)
@@ -87,19 +87,19 @@ export async function startVoice(onFinal: (text: string) => void, locale = navig
   voice.partial = ''
   // Reconnecting keeps the last features; a start now would never reach the Mac.
   if (conn.status !== 'connected') {
-    voice.error = 'Not connected to the Mac.'
+    voice.error = '未连接到 Mac。'
     return
   }
   if (!conn.features.voice) {
-    voice.error = 'Speech recognition is turned off on the Mac.'
+    voice.error = 'Mac 上的语音识别已关闭。'
     return
   }
   if (conn.paused) {
-    voice.error = 'Control is paused on the Mac.'
+    voice.error = 'Mac 上已暂停控制。'
     return
   }
   if (!voiceSupported()) {
-    voice.error = 'The microphone needs a secure connection. Open CmdPalm over HTTPS.'
+    voice.error = '麦克风需要安全连接。请通过 HTTPS 打开 CmdPalm。'
     return
   }
   starting = true
@@ -151,7 +151,7 @@ export async function startVoice(onFinal: (text: string) => void, locale = navig
     const live = audio
     const lost = () => {
       if (context !== live) return
-      voice.error = 'The microphone stopped.'
+      voice.error = '麦克风已停止工作。'
       void stopVoice()
     }
     for (const track of media.getTracks()) track.addEventListener('ended', lost)
@@ -159,13 +159,13 @@ export async function startVoice(onFinal: (text: string) => void, locale = navig
       if (live.state !== 'running') lost()
     }
     if (!send({ t: 'voiceStart', locale, id })) {
-      voice.error = 'Not connected to the Mac.'
+      voice.error = '未连接到 Mac。'
       await stopVoice(true, false)
     }
   } catch (error) {
     discard()
     if (run !== generation) return
-    voice.error = error instanceof DOMException && error.name === 'NotAllowedError' ? 'Microphone access was denied.' : 'Could not start the microphone.'
+    voice.error = error instanceof DOMException && error.name === 'NotAllowedError' ? '麦克风访问权限被拒绝。' : '无法启动麦克风。'
     await stopVoice(true, false)
   } finally {
     if (run === generation) starting = false

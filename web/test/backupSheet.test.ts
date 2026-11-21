@@ -18,8 +18,8 @@ describe('device backup review', () => {
     input.dispatchEvent(new Event('change'))
     await flushPromises()
     expect(settings.theme).toBe('light')
-    expect(document.querySelector('[role="dialog"]')?.textContent).toContain('Ready to restore')
-    const restore = Array.from(document.querySelectorAll<HTMLButtonElement>('button')).find((button) => button.textContent?.trim() === 'Restore backup')!
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain('可以恢复')
+    const restore = Array.from(document.querySelectorAll<HTMLButtonElement>('button')).find((button) => button.textContent?.trim() === '恢复备份')!
     restore.click()
     await flushPromises()
     expect(settings.theme).toBe('dark')
@@ -34,8 +34,8 @@ describe('device backup review', () => {
     Object.defineProperty(input, 'files', { value: [{ size: 1, text: async () => '{' }] })
     input.dispatchEvent(new Event('change'))
     await flushPromises()
-    expect(document.querySelector('[role="alert"]')?.textContent).toContain('readable JSON')
-    expect(document.querySelector('[role="dialog"]')?.textContent).not.toContain('Restore backup')
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain('可读取的 JSON 备份')
+    expect(document.querySelector('[role="dialog"]')?.textContent).not.toContain('恢复备份')
     view.unmount()
   })
 })

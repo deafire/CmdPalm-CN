@@ -103,7 +103,7 @@ async fn voice_worker(
                             voice(
                                 request_id,
                                 VoiceState::Unavailable,
-                                Some("Couldn't start speech recognition on the Mac."),
+                                Some("无法在 Mac 上启动语音识别。"),
                             ),
                         );
                     }
@@ -185,10 +185,10 @@ pub(crate) async fn run<S>(
     let (mut sink, mut stream) = ws.split();
     let hello = match timeout(HELLO_TIMEOUT, next_message(&mut stream)).await {
         Ok(Some(Ok(message))) => message,
-        _ => return close(&mut sink, bye("Expected a hello message.", false)).await,
+        _ => return close(&mut sink, bye("请先发送问候消息。", false)).await,
     };
     let ClientMessage::Hello { v, device, auth, remember } = hello else {
-        return close(&mut sink, bye("Expected a hello message.", false)).await;
+        return close(&mut sink, bye("请先发送问候消息。", false)).await;
     };
     if v != PROTOCOL_VERSION {
         return close(&mut sink, deny(DenyReason::Incompatible, None)).await;
@@ -316,7 +316,7 @@ pub(crate) async fn run<S>(
                 out = outgoing.recv() => match out {
                     Some(Outgoing::Message(message)) => if !send(&mut sink, &message).await { break },
                     Some(Outgoing::Close { reason, reconnect }) => {
-                        let reason = if reason.trim().is_empty() { "Disconnected." } else { reason.as_str() };
+                        let reason = if reason.trim().is_empty() { "已断开连接。" } else { reason.as_str() };
                         close(&mut sink, bye(reason, reconnect)).await;
                         break;
                     }
@@ -392,7 +392,7 @@ where
     let now = Instant::now();
     let fallback_name = || {
         let name = auth::clean(&device.name, 64);
-        if name.is_empty() { "Unnamed device".to_string() } else { name }
+        if name.is_empty() { "未命名设备".to_string() } else { name }
     };
     let accept = |shared: &Shared| {
         let name = fallback_name();
@@ -585,7 +585,7 @@ impl Connection {
     fn deck_result(&self, id: Option<u32>, ok: bool, message: Option<String>) -> ServerMessage {
         match id {
             Some(id) => ServerMessage::DeckSaved { id, ok, revision: self.shared.state().deck_revision, message },
-            None => notice(NoticeLevel::Error, "deck", message.as_deref().unwrap_or("The deck wasn't saved.")),
+            None => notice(NoticeLevel::Error, "deck", message.as_deref().unwrap_or("快捷面板未保存。")),
         }
     }
 
@@ -602,7 +602,7 @@ impl Connection {
             Err(_) => Some(ServerMessage::ActionResult {
                 id,
                 ok: false,
-                message: Some("The Mac is still busy with earlier actions.".into()),
+                message: Some("Mac 仍在处理之前的操作。".into()),
             }),
         }
     }
@@ -613,7 +613,7 @@ impl Connection {
         if !self.try_blocking(work) {
             self.shared.send_to(
                 self.id,
-                notice(NoticeLevel::Warning, "busy", "The Mac is still busy. Try again in a moment."),
+                notice(NoticeLevel::Warning, "busy", "Mac 正忙，请稍后重试。"),
             );
         }
     }
@@ -666,7 +666,7 @@ impl Connection {
                     Some(self.id),
                     Some(id),
                     "cancelled",
-                    "The request was cancelled.",
+                    "请求已取消。",
                 );
                 None
             }
@@ -679,7 +679,7 @@ impl Connection {
                 None
             }
             ClientMessage::DisplayStop { id } => {
-                self.shared.displays.cancel(&self.shared, Some(self.id), Some(id), "Screen mirroring stopped.");
+                self.shared.displays.cancel(&self.shared, Some(self.id), Some(id), "屏幕镜像已停止。");
                 None
             }
             ClientMessage::DisplayAlive { id } => {
@@ -719,7 +719,7 @@ impl Connection {
             }
             ClientMessage::Text { text, mode } => {
                 if text.len() > MAX_TEXT {
-                    return Some(notice(NoticeLevel::Warning, "tooLong", "That text is too long to send at once."));
+                    return Some(notice(NoticeLevel::Warning, "tooLong", "文本过长，无法一次发送。"));
                 }
                 match mode {
                     TextMode::Unicode => self.input(Input::Text { text, mode: TypeMode::Unicode }),
@@ -739,7 +739,7 @@ impl Connection {
             }
             ClientMessage::Edit { delete, insert } => {
                 if insert.len() > MAX_TEXT {
-                    return Some(notice(NoticeLevel::Warning, "tooLong", "That text is too long to send at once."));
+                    return Some(notice(NoticeLevel::Warning, "tooLong", "文本过长，无法一次发送。"));
                 }
                 self.input(Input::Edit { delete, insert });
                 None
@@ -795,7 +795,7 @@ impl Connection {
                     self.deck_result(
                         id,
                         false,
-                        Some("The Mac is still busy, so the deck wasn’t changed. Try again in a moment.".into()),
+                        Some("Mac 正忙，快捷面板未更改，请稍后重试。".into()),
                     )
                 })
             }
@@ -809,7 +809,7 @@ impl Connection {
             }
             ClientMessage::ClipboardSet { text } => {
                 if text.len() > MAX_TEXT {
-                    return Some(notice(NoticeLevel::Warning, "tooLong", "That text is too long to send at once."));
+                    return Some(notice(NoticeLevel::Warning, "tooLong", "文本过长，无法一次发送。"));
                 }
                 self.blocking(move |shared| {
                     shared.delegate.set_clipboard_text(text);
@@ -835,7 +835,7 @@ impl Connection {
                     return Some(voice(
                         request_id,
                         VoiceState::Unavailable,
-                        Some("Speech recognition isn't available on this Mac."),
+                        Some("此 Mac 不支持语音识别。"),
                     ));
                 }
                 let locale = locale
@@ -845,7 +845,7 @@ impl Connection {
                     return Some(voice(
                         request_id,
                         VoiceState::Unavailable,
-                        Some("The Mac is still busy. Try again in a moment."),
+                        Some("Mac 正忙，请稍后重试。"),
                     ));
                 }
                 let epoch = self.shared.voice_epoch.load(AtomicOrdering::SeqCst);
@@ -883,7 +883,7 @@ impl Connection {
             ClientMessage::SettingsCopy { .. } if !self.remembered => Some(notice(
                 NoticeLevel::Warning,
                 "settings",
-                "Pair with “Remember this device” turned on to copy settings from another device.",
+                "开启“记住此设备”进行配对后，才能从其他设备复制设置。",
             )),
             ClientMessage::SettingsList => {
                 let devices = self.shared.state().trust.devices();
@@ -906,7 +906,7 @@ impl Connection {
             }
             ClientMessage::SettingsCopy { from, id } => match self.shared.device_settings().get(&from) {
                 Some(saved) => Some(ServerMessage::Settings { saved: saved.clone(), id }),
-                None => Some(notice(NoticeLevel::Warning, "settings", "Those settings are no longer on this Mac.")),
+                None => Some(notice(NoticeLevel::Warning, "settings", "这些设置已不在 Mac 上。")),
             },
             ClientMessage::VoiceStop { cancel, id: request_id } => {
                 if self.voice.is_some() && (request_id.is_none() || self.voice == Some(request_id)) {
@@ -951,7 +951,7 @@ impl Connection {
     }
 }
 
-const PAUSED: &str = "Control is paused on the Mac.";
+const PAUSED: &str = "Mac 上已暂停控制。";
 
 /// A request the Mac can't read, say from a phone app cached from another
 /// version, still gets an answer where the phone waits for one: an action
@@ -963,10 +963,10 @@ fn unreadable_reply(text: &str, revision: u64) -> Option<ServerMessage> {
         "action" => Some(ServerMessage::ActionResult {
             id: value.get("id").and_then(serde_json::Value::as_u64).and_then(|id| u32::try_from(id).ok()),
             ok: false,
-            message: Some("The Mac couldn’t read that action. Reload CmdPalm on this device and try again.".into()),
+            message: Some("Mac 无法读取该操作。请在此设备上重新加载 CmdPalm 后重试。".into()),
         }),
         "deckSave" => {
-            let message = "The Mac couldn’t read the changed deck, so it wasn’t saved. Reload CmdPalm on this device and try again.";
+            let message = "Mac 无法读取更改后的快捷面板，因此未保存。请在此设备上重新加载 CmdPalm 后重试。";
             let id = value.get("id").and_then(serde_json::Value::as_u64).and_then(|id| u32::try_from(id).ok());
             Some(match id {
                 Some(id) => ServerMessage::DeckSaved { id, ok: false, revision, message: Some(message.into()) },

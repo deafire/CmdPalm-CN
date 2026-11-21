@@ -45,10 +45,10 @@ export function deviceModel(): string {
   if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'iPad'
   if (/iPhone/.test(ua)) return 'iPhone'
   if (/iPod/.test(ua)) return 'iPod touch'
-  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'Android phone' : 'Android tablet'
-  if (/Windows/.test(ua)) return 'Windows PC'
+  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'Android 手机' : 'Android 平板'
+  if (/Windows/.test(ua)) return 'Windows 电脑'
   if (/Macintosh/.test(ua)) return 'Mac'
-  return 'Browser'
+  return '浏览器'
 }
 
 export function deviceInfo(): DeviceInfo {
@@ -58,7 +58,7 @@ export function deviceInfo(): DeviceInfo {
 
 export function isTablet(): boolean {
   const model = deviceModel()
-  return model === 'iPad' || model === 'Android tablet' || Math.min(screen.width, screen.height) >= 700
+  return model === 'iPad' || model === 'Android 平板' || Math.min(screen.width, screen.height) >= 700
 }
 
 /** The Mac's name from the last connection, for screens shown before the next. */

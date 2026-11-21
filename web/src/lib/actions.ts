@@ -8,75 +8,75 @@ export interface Meta {
 }
 
 export const SYSTEM: Record<SystemAction, Meta> = {
-  missionControl: { label: 'Mission Control', symbol: 'layout-grid', group: 'Windows & Spaces' },
-  appExpose: { label: 'App Windows', symbol: 'app-window', group: 'Windows & Spaces' },
-  showDesktop: { label: 'Show Desktop', symbol: 'monitor', group: 'Windows & Spaces' },
-  launchpad: { label: 'Apps', symbol: 'grid-2x2', group: 'Windows & Spaces' },
-  spaceLeft: { label: 'Space Left', symbol: 'arrow-left-to-line', group: 'Windows & Spaces' },
-  spaceRight: { label: 'Space Right', symbol: 'arrow-right-to-line', group: 'Windows & Spaces' },
-  appSwitcher: { label: 'Previous App', symbol: 'repeat', group: 'Windows & Spaces' },
-  fullscreen: { label: 'Full Screen', symbol: 'maximize', group: 'Windows & Spaces' },
-  minimize: { label: 'Minimize', symbol: 'minimize', group: 'Windows & Spaces' },
-  closeWindow: { label: 'Close Window', symbol: 'x', group: 'Windows & Spaces' },
-  hideApp: { label: 'Hide App', symbol: 'eye-off', group: 'Windows & Spaces' },
-  quitApp: { label: 'Quit App', symbol: 'power', group: 'Windows & Spaces' },
-  spotlight: { label: 'Spotlight', symbol: 'search', group: 'System' },
-  lookUp: { label: 'Look Up', symbol: 'book-open', group: 'System' },
-  emojiPicker: { label: 'Emoji & Symbols', symbol: 'smile', group: 'System' },
-  screenshot: { label: 'Screenshot', symbol: 'camera', group: 'System' },
-  screenshotArea: { label: 'Screenshot Area', symbol: 'scan', group: 'System' },
-  screenshotTool: { label: 'Screenshot Tool', symbol: 'aperture', group: 'System' },
-  forceQuit: { label: 'Force Quit', symbol: 'octagon-x', group: 'System' },
-  lockScreen: { label: 'Lock Screen', symbol: 'lock', group: 'System' },
-  sleepDisplay: { label: 'Display Off', symbol: 'monitor-off', group: 'System' },
-  sleep: { label: 'Sleep', symbol: 'moon', group: 'System' },
-  undo: { label: 'Undo', symbol: 'undo', group: 'Editing' },
-  redo: { label: 'Redo', symbol: 'redo', group: 'Editing' },
-  copy: { label: 'Copy', symbol: 'copy', group: 'Editing' },
-  cut: { label: 'Cut', symbol: 'scissors', group: 'Editing' },
-  paste: { label: 'Paste', symbol: 'clipboard', group: 'Editing' },
-  selectAll: { label: 'Select All', symbol: 'text-select', group: 'Editing' },
-  find: { label: 'Find', symbol: 'search', group: 'Editing' },
-  newTab: { label: 'New Tab', symbol: 'plus', group: 'Browsing' },
-  closeTab: { label: 'Close Tab', symbol: 'x', group: 'Browsing' },
-  nextTab: { label: 'Next Tab', symbol: 'chevron-right', group: 'Browsing' },
-  previousTab: { label: 'Previous Tab', symbol: 'chevron-left', group: 'Browsing' },
-  back: { label: 'Back', symbol: 'arrow-left', group: 'Browsing' },
-  forward: { label: 'Forward', symbol: 'arrow-right', group: 'Browsing' },
-  reload: { label: 'Reload', symbol: 'rotate-cw', group: 'Browsing' },
-  zoomIn: { label: 'Zoom In', symbol: 'zoom-in', group: 'Browsing' },
-  zoomOut: { label: 'Zoom Out', symbol: 'zoom-out', group: 'Browsing' },
-  actualSize: { label: 'Actual Size', symbol: 'scan-search', group: 'Browsing' },
+  missionControl: { label: '调度中心', symbol: 'layout-grid', group: '窗口与空间' },
+  appExpose: { label: '应用窗口', symbol: 'app-window', group: '窗口与空间' },
+  showDesktop: { label: '显示桌面', symbol: 'monitor', group: '窗口与空间' },
+  launchpad: { label: '启动台', symbol: 'grid-2x2', group: '窗口与空间' },
+  spaceLeft: { label: '左侧空间', symbol: 'arrow-left-to-line', group: '窗口与空间' },
+  spaceRight: { label: '右侧空间', symbol: 'arrow-right-to-line', group: '窗口与空间' },
+  appSwitcher: { label: '上一个应用', symbol: 'repeat', group: '窗口与空间' },
+  fullscreen: { label: '全屏', symbol: 'maximize', group: '窗口与空间' },
+  minimize: { label: '最小化', symbol: 'minimize', group: '窗口与空间' },
+  closeWindow: { label: '关闭窗口', symbol: 'x', group: '窗口与空间' },
+  hideApp: { label: '隐藏应用', symbol: 'eye-off', group: '窗口与空间' },
+  quitApp: { label: '退出应用', symbol: 'power', group: '窗口与空间' },
+  spotlight: { label: '聚焦', symbol: 'search', group: '系统' },
+  lookUp: { label: '查询', symbol: 'book-open', group: '系统' },
+  emojiPicker: { label: '表情与符号', symbol: 'smile', group: '系统' },
+  screenshot: { label: '截图', symbol: 'camera', group: '系统' },
+  screenshotArea: { label: '区域截图', symbol: 'scan', group: '系统' },
+  screenshotTool: { label: '截图工具', symbol: 'aperture', group: '系统' },
+  forceQuit: { label: '强制退出', symbol: 'octagon-x', group: '系统' },
+  lockScreen: { label: '锁定屏幕', symbol: 'lock', group: '系统' },
+  sleepDisplay: { label: '关闭显示器', symbol: 'monitor-off', group: '系统' },
+  sleep: { label: '睡眠', symbol: 'moon', group: '系统' },
+  undo: { label: '撤销', symbol: 'undo', group: '编辑' },
+  redo: { label: '重做', symbol: 'redo', group: '编辑' },
+  copy: { label: '复制', symbol: 'copy', group: '编辑' },
+  cut: { label: '剪切', symbol: 'scissors', group: '编辑' },
+  paste: { label: '粘贴', symbol: 'clipboard', group: '编辑' },
+  selectAll: { label: '全选', symbol: 'text-select', group: '编辑' },
+  find: { label: '查找', symbol: 'search', group: '编辑' },
+  newTab: { label: '新建标签页', symbol: 'plus', group: '浏览' },
+  closeTab: { label: '关闭标签页', symbol: 'x', group: '浏览' },
+  nextTab: { label: '下一个标签页', symbol: 'chevron-right', group: '浏览' },
+  previousTab: { label: '上一个标签页', symbol: 'chevron-left', group: '浏览' },
+  back: { label: '返回', symbol: 'arrow-left', group: '浏览' },
+  forward: { label: '前进', symbol: 'arrow-right', group: '浏览' },
+  reload: { label: '重新加载', symbol: 'rotate-cw', group: '浏览' },
+  zoomIn: { label: '放大', symbol: 'zoom-in', group: '浏览' },
+  zoomOut: { label: '缩小', symbol: 'zoom-out', group: '浏览' },
+  actualSize: { label: '实际大小', symbol: 'scan-search', group: '浏览' },
 }
 
 export const MEDIA: Record<MediaKey, Meta> = {
-  playPause: { label: 'Play / Pause', symbol: 'play-pause', group: 'Media' },
-  next: { label: 'Next Track', symbol: 'skip-forward', group: 'Media' },
-  previous: { label: 'Previous Track', symbol: 'skip-back', group: 'Media' },
-  fastForward: { label: 'Fast Forward', symbol: 'fast-forward', group: 'Media' },
-  rewind: { label: 'Rewind', symbol: 'rewind', group: 'Media' },
-  volumeUp: { label: 'Volume Up', symbol: 'volume-2', group: 'Sound & Display' },
-  volumeDown: { label: 'Volume Down', symbol: 'volume-1', group: 'Sound & Display' },
-  mute: { label: 'Mute', symbol: 'volume-x', group: 'Sound & Display' },
-  brightnessUp: { label: 'Brightness Up', symbol: 'sun', group: 'Sound & Display' },
-  brightnessDown: { label: 'Brightness Down', symbol: 'sun-dim', group: 'Sound & Display' },
-  illuminationUp: { label: 'Backlight Up', symbol: 'lightbulb', group: 'Sound & Display' },
-  illuminationDown: { label: 'Backlight Down', symbol: 'lightbulb-off', group: 'Sound & Display' },
-  illuminationToggle: { label: 'Backlight On/Off', symbol: 'lightbulb', group: 'Sound & Display' },
+  playPause: { label: '播放 / 暂停', symbol: 'play-pause', group: '媒体' },
+  next: { label: '下一首', symbol: 'skip-forward', group: '媒体' },
+  previous: { label: '上一首', symbol: 'skip-back', group: '媒体' },
+  fastForward: { label: '快进', symbol: 'fast-forward', group: '媒体' },
+  rewind: { label: '快退', symbol: 'rewind', group: '媒体' },
+  volumeUp: { label: '调高音量', symbol: 'volume-2', group: '声音与显示' },
+  volumeDown: { label: '调低音量', symbol: 'volume-1', group: '声音与显示' },
+  mute: { label: '静音', symbol: 'volume-x', group: '声音与显示' },
+  brightnessUp: { label: '调亮', symbol: 'sun', group: '声音与显示' },
+  brightnessDown: { label: '调暗', symbol: 'sun-dim', group: '声音与显示' },
+  illuminationUp: { label: '调亮背光', symbol: 'lightbulb', group: '声音与显示' },
+  illuminationDown: { label: '调暗背光', symbol: 'lightbulb-off', group: '声音与显示' },
+  illuminationToggle: { label: '背光开/关', symbol: 'lightbulb', group: '声音与显示' },
 }
 
 export const ACTION_KINDS: { kind: Action['kind']; label: string; symbol: string }[] = [
-  { kind: 'keys', label: 'Keyboard shortcut', symbol: 'command' },
-  { kind: 'system', label: 'Mac action', symbol: 'laptop' },
-  { kind: 'media', label: 'Media & sound', symbol: 'music' },
-  { kind: 'app', label: 'Open app', symbol: 'app-window' },
-  { kind: 'text', label: 'Type text', symbol: 'type' },
-  { kind: 'url', label: 'Open link', symbol: 'link' },
-  { kind: 'shortcut', label: 'Run Shortcut', symbol: 'workflow' },
-  { kind: 'mouse', label: 'Mouse click', symbol: 'mouse-pointer-click' },
-  { kind: 'sequence', label: 'Sequence', symbol: 'list-ordered' },
-  { kind: 'delay', label: 'Wait', symbol: 'timer' },
-  { kind: 'shell', label: 'Shell command', symbol: 'square-terminal' },
+  { kind: 'keys', label: '键盘快捷键', symbol: 'command' },
+  { kind: 'system', label: 'Mac 操作', symbol: 'laptop' },
+  { kind: 'media', label: '媒体与声音', symbol: 'music' },
+  { kind: 'app', label: '打开应用', symbol: 'app-window' },
+  { kind: 'text', label: '输入文本', symbol: 'type' },
+  { kind: 'url', label: '打开链接', symbol: 'link' },
+  { kind: 'shortcut', label: '运行快捷指令', symbol: 'workflow' },
+  { kind: 'mouse', label: '鼠标点击', symbol: 'mouse-pointer-click' },
+  { kind: 'sequence', label: '序列', symbol: 'list-ordered' },
+  { kind: 'delay', label: '等待', symbol: 'timer' },
+  { kind: 'shell', label: 'Shell 命令', symbol: 'square-terminal' },
 ]
 
 export function defaultAction(kind: Action['kind']): Action {
@@ -106,18 +106,18 @@ export function defaultAction(kind: Action['kind']): Action {
   }
 }
 
-const APP_OPS: Record<AppOp, string> = { open: 'Open', toggle: 'Show or hide', hide: 'Hide', quit: 'Quit' }
-const CLICKS: Record<MouseButton, string> = { left: 'click', right: 'right-click', middle: 'middle click', back: 'back click', forward: 'forward click' }
+const APP_OPS: Record<AppOp, string> = { open: '打开', toggle: '显示或隐藏', hide: '隐藏', quit: '退出' }
+const CLICKS: Record<MouseButton, string> = { left: '单击', right: '右键单击', middle: '中键单击', back: '后退键单击', forward: '前进键单击' }
 
-/** "Click", "Right-click", "Double-click", "Double right-click"… */
+/** "单击"、"右键单击"、"双击"、"双击右键"… */
 function mouseLabel(button: MouseButton, clicks: number): string {
-  const name = CLICKS[button] ?? `${button} click`
-  if (clicks <= 1) return name[0]!.toUpperCase() + name.slice(1)
-  return `${clicks === 2 ? 'Double' : 'Triple'}${button === 'left' ? '-' : ' '}${name}`
+  const name = CLICKS[button] ?? `${button} 单击`
+  if (clicks <= 1) return name
+  return `${clicks === 2 ? '双' : '三'}${name}`
 }
 
 export function describe(action: Action | null, labels: LabelMap, apps?: Map<string, string>): string {
-  if (!action) return 'Nothing'
+  if (!action) return '无'
   switch (action.kind) {
     case 'keys':
       return comboLabel(action.code, action.mods, labels)
@@ -126,21 +126,21 @@ export function describe(action: Action | null, labels: LabelMap, apps?: Map<str
     case 'media':
       return MEDIA[action.key]?.label ?? action.key
     case 'app':
-      return `${APP_OPS[action.op ?? 'toggle']} ${apps?.get(action.id) ?? (action.id.split('.').pop() || 'app')}`
+      return `${APP_OPS[action.op ?? 'toggle']} ${apps?.get(action.id) ?? (action.id.split('.').pop() || '应用')}`
     case 'text':
-      return action.text ? `Type “${action.text.length > 18 ? `${action.text.slice(0, 18)}…` : action.text}”` : 'Type text'
+      return action.text ? `输入“${action.text.length > 18 ? `${action.text.slice(0, 18)}…` : action.text}”` : '输入文本'
     case 'url':
       return action.url.replace(/^https?:\/\//, '')
     case 'shortcut':
-      return action.name ? `Shortcut “${action.name}”` : 'Run Shortcut'
+      return action.name ? `快捷指令“${action.name}”` : '运行快捷指令'
     case 'mouse':
       return mouseLabel(action.button, action.clicks ?? 1)
     case 'sequence':
-      return `${action.steps.length} step${action.steps.length === 1 ? '' : 's'}`
+      return `${action.steps.length} 个步骤`
     case 'delay':
-      return `Wait ${action.ms} ms`
+      return `等待 ${action.ms} 毫秒`
     case 'shell':
-      return action.command ? `$ ${action.command}` : 'Shell command'
+      return action.command ? `$ ${action.command}` : 'Shell 命令'
   }
 }
 

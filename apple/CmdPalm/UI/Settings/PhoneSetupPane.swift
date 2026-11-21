@@ -10,9 +10,9 @@ struct PhoneSetupPane: View {
         Form {
             Section {
                 VStack(alignment: .leading, spacing: 10) {
-                    Step(1, "Join the same Wi-Fi network as this Mac.")
-                    Step(2, "Scan the QR code with the phone’s camera, or type the address in its browser and enter the PIN.")
-                    Step(3, "Add CmdPalm to the Home Screen to use it full screen: Share → Add to Home Screen on iPhone and iPad, or the browser menu on Android.")
+                    Step(1, "连接到这台 Mac 所在的 Wi-Fi 网络。")
+                    Step(2, "用手机相机扫描二维码，或在手机浏览器中输入地址并输入 PIN。")
+                    Step(3, "将 CmdPalm 添加到主屏幕即可全屏使用：iPhone 和 iPad 上为“分享 → 添加到主屏幕”，Android 上在浏览器菜单中添加。")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
@@ -21,23 +21,23 @@ struct PhoneSetupPane: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             } header: {
-                Text("Connect a Device")
+                Text("连接设备")
             }
 
-            Section("Pairing") {
+            Section("配对") {
                 DescribedToggle(
-                    "Allow pairing with a PIN",
-                    detail: "Devices can pair by typing the six-digit PIN shown with the QR code. The PIN only works while it’s on screen here, and for a few minutes after. Scanning the QR code always works.",
+                    "允许使用 PIN 配对",
+                    detail: "设备可输入二维码旁边显示的六位 PIN 进行配对。PIN 仅在此处显示期间及之后几分钟内有效。扫描二维码始终可用。",
                     isOn: $preferences.allowPin
                 )
                 DescribedToggle(
-                    "Allow devices to ask to pair",
-                    detail: "A device can ask for access without a code, and you approve it on this Mac.",
+                    "允许设备请求配对",
+                    detail: "设备无需验证码即可请求访问，由你在这台 Mac 上批准。",
                     isOn: $preferences.allowApproval
                 )
             }
 
-            Section("Network") {
+            Section("网络") {
                 Picker(selection: $preferences.linkAddress) {
                     ForEach(Preferences.LinkAddress.allCases) { option in
                         Text(option.label(
@@ -49,8 +49,8 @@ struct PhoneSetupPane: View {
                     }
                 } label: {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Address in the QR code")
-                        Text("Mac Name keeps working when the IP address changes. Some Android phones can’t open .local names; choose IP Address for them. Custom is for a VPN or a proxy you set up yourself.")
+                        Text("二维码中的地址")
+                        Text("IP 地址变化时，“Mac 名称”仍然可用。部分 Android 手机无法打开 .local 名称，可为它们选择“IP 地址”。“自定义”适用于你自己设置的 VPN 或代理。")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -100,26 +100,26 @@ private struct PortField: View {
     var body: some View {
         LabeledContent {
             HStack(spacing: 8) {
-                TextField("Port", text: $text, prompt: Text(String(Preferences.defaultPort)))
+                TextField("端口", text: $text, prompt: Text(String(Preferences.defaultPort)))
                     .labelsHidden()
                     .frame(width: 70)
                     .multilineTextAlignment(.trailing)
                     .focused($focused)
                     .onSubmit(apply)
                 if parsed != preferences.port {
-                    Button("Apply", action: apply).disabled(parsed == nil)
+                    Button("应用", action: apply).disabled(parsed == nil)
                 }
             }
         } label: {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Port")
+                Text("端口")
                 Group {
                     if host.preferredPortTaken, let port = host.port {
-                        Text("Port \(String(preferences.port)) is in use by another app, so CmdPalm is using \(String(port)).")
+                        Text("端口 \(String(preferences.port)) 已被其他应用占用，因此 CmdPalm 正在使用 \(String(port))。")
                     } else if parsed == nil, !text.isEmpty {
-                        Text("Use a number from 1024 to 65535.").foregroundStyle(.red)
+                        Text("请输入 1024 到 65535 之间的数字。").foregroundStyle(.red)
                     } else {
-                        Text("Devices connect on this port. Changing it changes the pairing link.")
+                        Text("设备通过此端口连接。修改后配对链接也会变化。")
                     }
                 }
                 .font(.caption)
@@ -149,7 +149,7 @@ private struct CustomAddressField: View {
     var body: some View {
         LabeledContent {
             HStack(spacing: 8) {
-                TextField("Custom address", text: $text, prompt: Text(verbatim: "mac.example.com"))
+                TextField("自定义地址", text: $text, prompt: Text(verbatim: "mac.example.com"))
                     .labelsHidden()
                     .frame(minWidth: 180)
                     .autocorrectionDisabled()
@@ -168,17 +168,17 @@ private struct CustomAddressField: View {
                     }
                     .menuStyle(.borderlessButton)
                     .fixedSize()
-                    .help("Use one of this Mac’s addresses")
-                    .accessibilityLabel("Use one of this Mac’s addresses")
+                    .help("使用这台 Mac 的某个地址")
+                    .accessibilityLabel("使用这台 Mac 的某个地址")
                 }
                 if trimmed != preferences.customLinkAddress {
-                    Button("Apply", action: apply)
+                    Button("应用", action: apply)
                 }
             }
         } label: {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Custom address")
-                Text("Another of this Mac’s addresses, such as a VPN’s, a name for this Mac from your own DNS, or the https address of a proxy you set up. Without a port, CmdPalm’s port is added. CmdPalm also accepts connections that use this name.")
+                Text("自定义地址")
+                Text("这台 Mac 的另一个地址，例如 VPN 地址、你自己的 DNS 中为这台 Mac 设置的名称，或你搭建的代理的 https 地址。未指定端口时，会自动加上 CmdPalm 的端口。CmdPalm 也接受使用该名称的连接。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -215,17 +215,17 @@ private struct EncryptedConnectionSection: View {
     var body: some View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Dictation and some phone features only work over an encrypted (HTTPS) connection. Install CmdPalm’s certificate on your phone once to turn it on. The certificate was created on this Mac and only covers local network addresses, never websites.")
+                Text("语音输入和部分手机功能只能通过加密（HTTPS）连接使用。在手机上一次性安装 CmdPalm 的证书即可启用。证书在这台 Mac 上生成，仅涵盖本地网络地址，绝不用于网站。")
                     .fixedSize(horizontal: false, vertical: true)
-                Label("On Android, installing CmdPalm as an app, rather than a Home Screen shortcut, needs the encrypted connection, because Chrome only installs web apps over HTTPS.",
+                Label("在 Android 上，要将 CmdPalm 作为应用安装（而非主屏幕快捷方式），需要加密连接，因为 Chrome 只通过 HTTPS 安装 Web 应用。",
                       systemImage: "info.circle")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Picker("Phone", selection: $platform) {
-                Text("iPhone and iPad").tag(Platform.apple)
+            Picker("手机", selection: $platform) {
+                Text("iPhone 和 iPad").tag(Platform.apple)
                 Text("Android").tag(Platform.android)
             }
             .pickerStyle(.segmented)
@@ -234,8 +234,8 @@ private struct EncryptedConnectionSection: View {
                 let certificateLink = "\(pairing.address)/cmdpalm.crt"
                 HStack(alignment: .top, spacing: 16) {
                     VStack(spacing: 6) {
-                        QRCodeView(text: certificateLink, size: 110, label: "Certificate QR code")
-                        Text("Certificate").font(.caption).foregroundStyle(.secondary)
+                        QRCodeView(text: certificateLink, size: 110, label: "证书二维码")
+                        Text("证书").font(.caption).foregroundStyle(.secondary)
                     }
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(Array(steps(certificateLink).enumerated()), id: \.offset) { index, step in
@@ -248,14 +248,14 @@ private struct EncryptedConnectionSection: View {
                 LabeledContent {
                     VStack(spacing: 6) {
                         QRCodeView(text: secureLink(pairing), size: 110)
-                        Text("Encrypted link").font(.caption).foregroundStyle(.secondary)
+                        Text("加密链接").font(.caption).foregroundStyle(.secondary)
                     }
                 } label: {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Then scan this code to pair over the encrypted connection.")
+                        Text("然后扫描此二维码，通过加密连接完成配对。")
                         AddressRow(address: pairing.secureAddress)
                         if !pairing.caFingerprint.isEmpty {
-                            Text("SHA-256 fingerprint: \(pairing.caFingerprint)")
+                            Text("SHA-256 指纹：\(pairing.caFingerprint)")
                                 .font(.caption2.monospaced())
                                 .foregroundStyle(.secondary)
                                 .textSelection(.enabled)
@@ -266,14 +266,14 @@ private struct EncryptedConnectionSection: View {
             }
 
             LabeledContent {
-                Button("Save Certificate…", action: saveCertificate)
+                Button("保存证书…", action: saveCertificate)
                     .disabled(!host.isRunning)
             } label: {
-                Text("Certificate file")
-                Text("For a device that can’t scan the code.")
+                Text("证书文件")
+                Text("供无法扫描二维码的设备使用。")
             }
         } header: {
-            Text("Encrypted Connection")
+            Text("加密连接")
         }
     }
 
@@ -281,15 +281,15 @@ private struct EncryptedConnectionSection: View {
         switch platform {
         case .apple:
             [
-                "Scan the certificate code, or open \(link) in Safari, and tap Allow.",
-                "Open Settings → General → VPN & Device Management, choose the CmdPalm profile and tap Install.",
-                "Open Settings → General → About → Certificate Trust Settings and turn on CmdPalm.",
+                "扫描证书二维码，或在 Safari 中打开 \(link)，然后点按“允许”。",
+                "打开“设置 → 通用 → VPN 与设备管理”，选择 CmdPalm 描述文件并点按“安装”。",
+                "打开“设置 → 通用 → 关于本机 → 证书信任设置”，打开 CmdPalm。",
             ]
         case .android:
             [
-                "Scan the certificate code, or open \(link) in Chrome, to download it.",
-                "Open Settings → Security → More security settings → Encryption & credentials → Install a certificate → CA certificate.",
-                "Choose the downloaded cmdpalm.crt file.",
+                "扫描证书二维码，或在 Chrome 中打开 \(link) 以下载证书。",
+                "打开“设置 → 安全 → 更多安全设置 → 加密与凭据 → 安装证书 → CA 证书”。",
+                "选择下载的 cmdpalm.crt 文件。",
             ]
         }
     }
@@ -305,8 +305,8 @@ private struct EncryptedConnectionSection: View {
             AppActivation.shared.present {
                 let alert = NSAlert()
                 alert.alertStyle = .warning
-                alert.messageText = "Certificate Unavailable"
-                alert.informativeText = "CmdPalm’s certificate could not be loaded right now. Wait for CmdPalm to finish starting or check Encrypted Connection settings, then try again."
+                alert.messageText = "证书不可用"
+                alert.informativeText = "暂时无法加载 CmdPalm 的证书。请等待 CmdPalm 启动完成，或检查“加密连接”设置后重试。"
                 alert.runModal()
             }
             return

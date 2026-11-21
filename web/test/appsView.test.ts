@@ -43,12 +43,12 @@ async function mountApps() {
 describe('AppsView empty-state recovery', () => {
   it('shows a closed catalog app after switching from Open to All apps', async () => {
     const view = await mountApps()
-    expect(view.text()).toContain('No apps are open.')
+    expect(view.text()).toContain('没有打开的应用。')
     expect(view.find('button[aria-label="Notes"]').exists()).toBe(false)
 
     await view
       .findAll('button')
-      .find((button) => button.text() === 'Show all apps')!
+      .find((button) => button.text() === '显示所有应用')!
       .trigger('click')
     expect(view.find('button[aria-label="Notes"]').exists()).toBe(true)
   })
@@ -56,14 +56,14 @@ describe('AppsView empty-state recovery', () => {
   it('clears an unmatched search and retains the selected filter', async () => {
     const view = await mountApps()
     await view.get('button[role="radio"]:nth-child(2)').trigger('click')
-    await view.get('input[aria-label="Search apps on the Mac"]').setValue('missing app')
-    expect(view.text()).toContain('Clear search')
+    await view.get('input[aria-label="搜索 Mac 上的应用"]').setValue('missing app')
+    expect(view.text()).toContain('清除搜索')
     await view
       .findAll('button')
-      .find((button) => button.text() === 'Clear search')!
+      .find((button) => button.text() === '清除搜索')!
       .trigger('click')
     expect(view.find('button[aria-label="Notes"]').exists()).toBe(true)
-    expect(view.get('[role="radiogroup"]').text()).toContain('All apps')
+    expect(view.get('[role="radiogroup"]').text()).toContain('所有应用')
     expect(view.get('button[role="radio"]:nth-child(2)').attributes('aria-checked')).toBe('true')
   })
 })

@@ -20,49 +20,49 @@ const tooLong = (text: string, limit = LIMITS.text) => encoder.encode(text).leng
 
 /** Returns a problem with the action, or '' when it can be saved. */
 export function actionProblem(action: Action, depth = 0): string {
-  if (!action || typeof action !== 'object') return 'Choose an action.'
+  if (!action || typeof action !== 'object') return '请选择一个操作。'
   switch (action.kind) {
     case 'keys':
-      if (!Number.isInteger(action.code) || action.code < 0 || action.code > 0xff) return 'Pick a key.'
-      if (action.char !== undefined && (typeof action.char !== 'string' || tooLong(action.char, 16))) return 'Choose a valid shortcut character.'
-      return !Number.isInteger(action.mods) || action.mods < 0 || action.mods > 0xffff || (action.mods & ~0x1f) !== 0 ? 'Choose valid modifiers.' : ''
+      if (!Number.isInteger(action.code) || action.code < 0 || action.code > 0xff) return '请选择一个按键。'
+      if (action.char !== undefined && (typeof action.char !== 'string' || tooLong(action.char, 16))) return '请选择有效的快捷键字符。'
+      return !Number.isInteger(action.mods) || action.mods < 0 || action.mods > 0xffff || (action.mods & ~0x1f) !== 0 ? '请选择有效的修饰键。' : ''
     case 'text':
-      if (typeof action.text !== 'string' || !action.text) return 'Enter the text to type.'
-      if (action.enter !== undefined && typeof action.enter !== 'boolean') return 'Choose whether to press Return.'
-      return tooLong(action.text) ? 'The text is too long.' : ''
+      if (typeof action.text !== 'string' || !action.text) return '请输入要输入的文字。'
+      if (action.enter !== undefined && typeof action.enter !== 'boolean') return '请选择是否按回车键。'
+      return tooLong(action.text) ? '文字过长。' : ''
     case 'shell':
-      if (typeof action.command !== 'string' || !action.command.trim()) return 'Enter a command.'
-      return tooLong(action.command) ? 'The command is too long.' : ''
+      if (typeof action.command !== 'string' || !action.command.trim()) return '请输入命令。'
+      return tooLong(action.command) ? '命令过长。' : ''
     case 'url':
-      if (typeof action.url !== 'string') return 'Enter a full link.'
-      if (tooLong(action.url)) return 'The link is too long.'
-      return /^[a-z][\w+.-]*:\S+/i.test(action.url.trim()) ? '' : 'Enter a full link, like https://example.com.'
+      if (typeof action.url !== 'string') return '请输入完整链接。'
+      if (tooLong(action.url)) return '链接过长。'
+      return /^[a-z][\w+.-]*:\S+/i.test(action.url.trim()) ? '' : '请输入完整链接，例如 https://example.com。'
     case 'app':
-      return typeof action.id === 'string' && action.id && !tooLong(action.id, LIMITS.name) && (action.op === undefined || ['open', 'toggle', 'hide', 'quit'].includes(action.op)) ? '' : 'Choose an app.'
+      return typeof action.id === 'string' && action.id && !tooLong(action.id, LIMITS.name) && (action.op === undefined || ['open', 'toggle', 'hide', 'quit'].includes(action.op)) ? '' : '请选择一个应用。'
     case 'shortcut':
-      if (typeof action.name !== 'string' || !action.name.trim()) return 'Enter the name of a shortcut from the Shortcuts app.'
-      return tooLong(action.name, LIMITS.name) ? 'The shortcut name is too long.' : ''
+      if (typeof action.name !== 'string' || !action.name.trim()) return '请输入“快捷指令”App 中快捷指令的名称。'
+      return tooLong(action.name, LIMITS.name) ? '快捷指令名称过长。' : ''
     case 'delay':
-      return Number.isInteger(action.ms) && action.ms >= 0 && action.ms <= LIMITS.delayMs ? '' : 'Waits are limited to 10 seconds.'
+      return Number.isInteger(action.ms) && action.ms >= 0 && action.ms <= LIMITS.delayMs ? '' : '等待时间不能超过 10 秒。'
     case 'mouse':
-      return ['left', 'right', 'middle', 'back', 'forward'].includes(action.button) && Number.isInteger(action.clicks ?? 1) && (action.clicks ?? 1) >= 1 && (action.clicks ?? 1) <= 3 ? '' : 'Use one to three clicks and a mouse button.'
+      return ['left', 'right', 'middle', 'back', 'forward'].includes(action.button) && Number.isInteger(action.clicks ?? 1) && (action.clicks ?? 1) >= 1 && (action.clicks ?? 1) <= 3 ? '' : '请使用一到三次点击和一个鼠标按键。'
     case 'sequence': {
-      if (!Array.isArray(action.steps)) return 'Add at least one step.'
-      if (depth >= LIMITS.depth - 1 && action.steps.some((s) => s.kind === 'sequence')) return 'Sequences can only be nested a few levels deep.'
-      if (action.steps.length === 0) return 'Add at least one step.'
-      if (action.steps.length > LIMITS.steps) return `Sequences are limited to ${LIMITS.steps} steps.`
+      if (!Array.isArray(action.steps)) return '请至少添加一个步骤。'
+      if (depth >= LIMITS.depth - 1 && action.steps.some((s) => s.kind === 'sequence')) return '序列只能嵌套有限的层级。'
+      if (action.steps.length === 0) return '请至少添加一个步骤。'
+      if (action.steps.length > LIMITS.steps) return `序列最多只能包含 ${LIMITS.steps} 个步骤。`
       for (const [i, step] of action.steps.entries()) {
         const problem = actionProblem(step, depth + 1)
-        if (problem) return `Step ${i + 1}: ${problem}`
+        if (problem) return `步骤 ${i + 1}：${problem}`
       }
       return ''
     }
     case 'media':
-      return Object.hasOwn(MEDIA, action.key) ? '' : 'Choose a media key.'
+      return Object.hasOwn(MEDIA, action.key) ? '' : '请选择一个媒体按键。'
     case 'system':
-      return Object.hasOwn(SYSTEM, action.name) ? '' : 'Choose a Mac action.'
+      return Object.hasOwn(SYSTEM, action.name) ? '' : '请选择一个 Mac 操作。'
     default:
-      return 'Choose an action supported by this version of CmdPalm.'
+      return '请选择此版本 CmdPalm 支持的操作。'
   }
 }
 
@@ -142,24 +142,24 @@ onMessage((message) => {
 })
 
 watch(() => state.status, (status) => {
-  if (status !== 'connected') finishSave(false, 'Lost the connection. Your edit is still here; reconnect and save again.')
+  if (status !== 'connected') finishSave(false, '连接已断开。你的修改仍在这里，请重新连接后再次保存。')
 }, { flush: 'sync' })
 
 /** Resolve only after the Mac accepted the change, keeping drafts on failure. */
 export function saveDeck(deck: Deck, record = true): Promise<boolean> {
   if (pending) {
-    notify('Wait for the current Deck change to finish.', 'info', 'deck')
+    notify('请等待当前的快捷面板修改完成。', 'info', 'deck')
     return Promise.resolve(false)
   }
   return new Promise((resolve) => {
     const id = ++nextSaveId
     pending = {
       id, next: clone(deck), before: clone(confirmed ?? deck), record, resolve,
-      timer: setTimeout(() => finishSave(false, 'The Mac hasn’t confirmed this change. Your edit is still here; try saving again.'), 8000),
+      timer: setTimeout(() => finishSave(false, 'Mac 尚未确认此修改。你的修改仍在这里，请重试保存。'), 8000),
     }
     deckHistory.saving = true
     if (!send({ t: 'deckSave', deck: clone(deck), id, ...(state.deckRevision !== undefined ? { revision: state.deckRevision } : {}) })) {
-      finishSave(false, 'Not connected to the Mac, so the deck wasn’t changed.')
+      finishSave(false, '未连接到 Mac，快捷面板未做更改。')
     }
   })
 }

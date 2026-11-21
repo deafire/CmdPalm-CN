@@ -13,26 +13,26 @@ struct DeckPane: View {
     var body: some View {
         Form {
             Section {
-                Text("The deck is a grid of buttons on your phone that open apps, press shortcuts, type text and more. To change it, tap Edit on the phone’s Deck tab. Every paired device shares the same deck.")
+                Text("快捷面板是手机上的按钮网格，可用于打开应用、触发快捷指令、输入文字等。要修改它，请在手机的“快捷面板”标签页点按“编辑”。所有配对设备共享同一个快捷面板。")
                     .fixedSize(horizontal: false, vertical: true)
-                LabeledContent("Current deck", value: summary)
+                LabeledContent("当前快捷面板", value: summary)
             }
 
-            Section("Backup") {
+            Section("备份") {
                 LabeledContent {
                     HStack {
-                        Button("Import…", action: importDeck)
-                        Button("Export…", action: exportDeck)
+                        Button("导入…", action: importDeck)
+                        Button("导出…", action: exportDeck)
                     }
                 } label: {
-                    Text("Deck file")
-                    Text("Export a copy, or import one. Importing replaces the deck on every device.")
+                    Text("快捷面板文件")
+                    Text("导出副本或导入文件。导入会替换所有设备上的快捷面板。")
                 }
                 LabeledContent {
-                    Button("Reset…", role: .destructive) { confirmReset = true }
+                    Button("重置…", role: .destructive) { confirmReset = true }
                 } label: {
-                    Text("Start over with the default deck")
-                    Text("Replaces every page and button.")
+                    Text("恢复默认快捷面板")
+                    Text("将替换所有页面和按钮。")
                 }
                 if let error {
                     Label(error, systemImage: "exclamationmark.triangle.fill")
@@ -41,10 +41,10 @@ struct DeckPane: View {
                 }
             }
 
-            Section("Shell Commands") {
+            Section("Shell 命令") {
                 DescribedToggle(
-                    "Allow buttons to run shell commands",
-                    detail: "Buttons can run any command as your user account, and open links to files, terminals and file servers. Only turn this on if you trust every paired device.",
+                    "允许按钮运行 Shell 命令",
+                    detail: "按钮可以以你的用户账户运行任意命令，并打开指向文件、终端和文件服务器的链接。只有在信任所有配对设备时才打开此选项。",
                     isOn: Binding(
                         get: { preferences.allowShell },
                         set: { newValue in
@@ -62,20 +62,20 @@ struct DeckPane: View {
                 try? await Task.sleep(for: .seconds(2))
             }
         }
-        .confirmationDialog("Reset the deck?", isPresented: $confirmReset) {
-            Button("Reset Deck", role: .destructive) {
+        .confirmationDialog("重置快捷面板？", isPresented: $confirmReset) {
+            Button("重置快捷面板", role: .destructive) {
                 Task {
                     await host.resetDeck()
                     refresh()
                 }
             }
         } message: {
-            Text("Every page and button is replaced with the defaults on all devices. Export first to keep a copy.")
+            Text("所有设备上的每个页面和按钮都会被替换为默认设置。请先导出以保留副本。")
         }
-        .confirmationDialog("Allow shell commands?", isPresented: $confirmShell) {
-            Button("Allow Shell Commands", role: .destructive) { preferences.allowShell = true }
+        .confirmationDialog("允许 Shell 命令？", isPresented: $confirmShell) {
+            Button("允许 Shell 命令", role: .destructive) { preferences.allowShell = true }
         } message: {
-            Text("Deck buttons will be able to run commands with full access to your files. Paired devices can create such buttons.")
+            Text("快捷面板按钮将能够运行命令，并完全访问你的文件。配对设备可以创建此类按钮。")
         }
     }
 
@@ -90,9 +90,9 @@ struct DeckPane: View {
             return
         }
         let tiles = pages.reduce(0) { $0 + (($1["tiles"] as? [Any])?.count ?? 0) }
-        let pageText = pages.count == 1 ? "1 page" : "\(pages.count) pages"
-        let tileText = tiles == 1 ? "1 button" : "\(tiles) buttons"
-        summary = "\(pageText), \(tileText)"
+        let pageText = pages.count == 1 ? "1 个页面" : "\(pages.count) 个页面"
+        let tileText = tiles == 1 ? "1 个按钮" : "\(tiles) 个按钮"
+        summary = "\(pageText)，\(tileText)"
     }
 
     private func exportDeck() {
@@ -106,7 +106,7 @@ struct DeckPane: View {
             do {
                 try Data(json.utf8).write(to: url, options: .atomic)
             } catch {
-                self.error = "Couldn’t save the deck: \(error.localizedDescription)"
+                self.error = "无法保存快捷面板：\(error.localizedDescription)"
             }
         }
     }
@@ -123,7 +123,7 @@ struct DeckPane: View {
                 let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
                 let data = size < 2_000_000 ? try Data(contentsOf: url) : Data()
                 guard !data.isEmpty, data.count < 2_000_000, let json = String(data: data, encoding: .utf8) else {
-                    self.error = "That file isn’t a CmdPalm deck."
+                    self.error = "该文件不是 CmdPalm 快捷面板文件。"
                     return
                 }
                 Task {
@@ -131,13 +131,13 @@ struct DeckPane: View {
                         try await host.importDeck(json)
                         refresh()
                     } catch let failure as HostError {
-                        if case let .Failed(message) = failure { self.error = "Couldn’t import the deck: \(message)" }
+                        if case let .Failed(message) = failure { self.error = "无法导入快捷面板：\(message)" }
                     } catch {
-                        self.error = "Couldn’t import the deck: \(error.localizedDescription)"
+                        self.error = "无法导入快捷面板：\(error.localizedDescription)"
                     }
                 }
             } catch {
-                self.error = "Couldn’t read the file: \(error.localizedDescription)"
+                self.error = "无法读取文件：\(error.localizedDescription)"
             }
         }
     }

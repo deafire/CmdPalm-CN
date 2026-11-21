@@ -46,11 +46,11 @@ const HOUSEKEEPING_POLL: Duration = Duration::from_secs(60);
 
 #[derive(Debug, thiserror::Error)]
 pub enum SaveError {
-    #[error("The deck changed on another device. Review your edit and save again.")]
+    #[error("快捷面板已在另一台设备上更改。请检查修改后重新保存。")]
     Conflict,
     #[error(transparent)]
     Deck(#[from] DeckError),
-    #[error("could not save the deck: {0}")]
+    #[error("保存快捷面板失败：{0}")]
     Io(#[from] std::io::Error),
 }
 
@@ -824,8 +824,8 @@ pub(crate) fn resolve_static(root: &Path, url_path: &str) -> Result<Option<PathB
 }
 
 const MISSING_CLIENT: &str = "<!doctype html><meta name=viewport content=\"width=device-width\"><title>CmdPalm</title>\
-<body style=\"font:16px system-ui;padding:2rem\"><h1>CmdPalm</h1><p>The web client is missing from this build. \
-Run <code>bun run build</code> in <code>web/</code>.</p>";
+<body style=\"font:16px system-ui;padding:2rem\"><h1>CmdPalm</h1><p>此构建中缺少 Web 客户端。\
+请在 <code>web/</code> 目录中运行 <code>bun run build</code>。</p>";
 
 async fn static_file(root: &str, request: &Request) -> Response {
     let root = Path::new(root);

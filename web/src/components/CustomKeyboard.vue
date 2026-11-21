@@ -241,7 +241,7 @@ function removeKey() {
       type="button"
       class="grid place-items-center rounded-xl border border-dashed border-line-strong text-faint active:bg-surface-2"
       :style="place({ ...c, w: 1, h: 1 })"
-      aria-label="Add key here"
+      aria-label="在此添加按键"
       @click="addAt(c.x, c.y)"
     >
       <Plus :size="20" />
@@ -282,7 +282,7 @@ function removeKey() {
     />
 
     <p v-if="!editing && board.keys.length === 0" class="col-span-full row-span-full self-center text-center text-[15px] text-muted">
-      No keys yet. Tap Edit to add some.
+      还没有按键。轻点“编辑”以添加。
     </p>
     <HapticSwitch />
   </label>

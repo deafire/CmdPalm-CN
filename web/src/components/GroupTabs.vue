@@ -152,7 +152,7 @@ onBeforeUnmount(() => finish(false))
       role="tab"
       :data-group-id="item.id"
       :aria-selected="item.id === active"
-      :title="editing ? 'Drag to reorder. Alt + Left or Right also moves this tab.' : undefined"
+      :title="editing ? '拖动以重新排序。也可按 Alt + 左/右方向键移动此标签。' : undefined"
       class="flex h-8 shrink-0 items-center gap-1 rounded-full px-3.5 text-[13px] font-medium whitespace-nowrap transition-colors"
       :class="[
         item.id === active ? 'bg-text text-bg' : 'text-muted',
@@ -165,7 +165,7 @@ onBeforeUnmount(() => finish(false))
       @contextmenu="editing && $event.preventDefault()"
     >
       <GripVertical v-if="editing && items.length > 1" :size="12" class="-ml-1 opacity-60" />
-      {{ item.name || 'Untitled' }}
+      {{ item.name || '未命名' }}
       <Pencil v-if="editing && item.id === active" :size="11" />
     </button>
     <slot />

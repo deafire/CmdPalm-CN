@@ -7,7 +7,7 @@ import SwiftUI
 struct QRCodeView: View {
     let text: String
     var size: CGFloat = 180
-    var label = "Pairing QR code"
+    var label = "配对二维码"
 
     var body: some View {
         Group {

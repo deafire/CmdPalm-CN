@@ -83,18 +83,18 @@ function toggleMute() {
 }
 
 const transport = [
-  { key: 'previous' as const, icon: SkipBack, label: 'Previous track', size: 26 },
-  { key: 'playPause' as const, icon: null, label: 'Play or pause', size: 34 },
-  { key: 'next' as const, icon: SkipForward, label: 'Next track', size: 26 },
+  { key: 'previous' as const, icon: SkipBack, label: '上一首', size: 26 },
+  { key: 'playPause' as const, icon: null, label: '播放或暂停', size: 34 },
+  { key: 'next' as const, icon: SkipForward, label: '下一首', size: 26 },
 ]
 
 const extra = [
-  { key: 'rewind' as const, icon: Rewind, label: 'Rewind', name: 'Rewind' },
-  { key: 'fastForward' as const, icon: FastForward, label: 'Forward', name: 'Fast forward' },
-  { key: 'brightnessDown' as const, icon: SunDim, label: 'Dimmer', name: 'Display brightness down' },
-  { key: 'brightnessUp' as const, icon: Sun, label: 'Brighter', name: 'Display brightness up' },
-  { key: 'illuminationDown' as const, icon: LightbulbOff, label: 'Backlight −', name: 'Keyboard backlight down' },
-  { key: 'illuminationUp' as const, icon: Lightbulb, label: 'Backlight +', name: 'Keyboard backlight up' },
+  { key: 'rewind' as const, icon: Rewind, label: '快退', name: '快退' },
+  { key: 'fastForward' as const, icon: FastForward, label: '快进', name: '快进' },
+  { key: 'brightnessDown' as const, icon: SunDim, label: '调暗', name: '降低屏幕亮度' },
+  { key: 'brightnessUp' as const, icon: Sun, label: '调亮', name: '提高屏幕亮度' },
+  { key: 'illuminationDown' as const, icon: LightbulbOff, label: '背光 −', name: '降低键盘背光亮度' },
+  { key: 'illuminationUp' as const, icon: Lightbulb, label: '背光 +', name: '提高键盘背光亮度' },
 ]
 </script>
 
@@ -130,7 +130,7 @@ const extra = [
             type="button"
             class="grid size-10 shrink-0 place-items-center rounded-full"
             :class="muted ? 'bg-bad/15 text-bad' : 'bg-surface-3 text-text'"
-            :aria-label="muted ? 'Unmute' : 'Mute'"
+            :aria-label="muted ? '取消静音' : '静音'"
             :aria-pressed="muted"
             @click="toggleMute"
           >
@@ -145,7 +145,7 @@ const extra = [
             step="0.01"
             :value="local"
             :style="{ '--fill': `${local * 100}%` }"
-            aria-label="Volume"
+            aria-label="音量"
             @pointerdown="dragging = true"
             @pointerup="dragging = false"
             @pointercancel="dragging = false"
@@ -157,7 +157,7 @@ const extra = [
               :key="key"
               type="button"
               class="h-10 flex-1 touch-none rounded-xl bg-surface-3 text-[18px]"
-              :aria-label="key === 'volumeUp' ? 'Volume up' : 'Volume down'"
+              :aria-label="key === 'volumeUp' ? '调高音量' : '调低音量'"
               @pointerdown="down(key, $event)"
               @pointerup="up(key, $event)"
               @pointercancel="up(key, $event)"

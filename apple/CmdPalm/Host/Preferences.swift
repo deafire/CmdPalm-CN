@@ -16,9 +16,9 @@ final class Preferences {
 
         var title: String {
             switch self {
-            case .hostName: "Mac Name"
-            case .ipAddress: "IP Address"
-            case .custom: "Custom"
+            case .hostName: "Mac 名称"
+            case .ipAddress: "IP 地址"
+            case .custom: "自定义"
             }
         }
 
@@ -52,10 +52,10 @@ final class Preferences {
 
         var title: String {
             switch self {
-            case .warn: "Warnings only"
-            case .info: "Normal"
-            case .debug: "Detailed"
-            case .trace: "Everything"
+            case .warn: "仅警告"
+            case .info: "正常"
+            case .debug: "详细"
+            case .trace: "全部"
             }
         }
     }

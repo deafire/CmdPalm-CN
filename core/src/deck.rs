@@ -73,9 +73,9 @@ pub enum TileIcon {
 
 #[derive(Debug, thiserror::Error, PartialEq)]
 pub enum DeckError {
-    #[error("unsupported deck version {0}")]
+    #[error("不支持的快捷面板版本 {0}")]
     Version(u32),
-    #[error("the deck has too many pages or buttons")]
+    #[error("快捷面板的页面或按钮过多")]
     TooLarge,
     #[error("{0}")]
     Invalid(String),
@@ -87,7 +87,7 @@ impl Deck {
             return Err(DeckError::Version(self.version));
         }
         if self.pages.is_empty() {
-            return Err(DeckError::Invalid("the deck needs at least one page".into()));
+            return Err(DeckError::Invalid("快捷面板至少需要一个页面".into()));
         }
         if self.pages.len() > MAX_PAGES {
             return Err(DeckError::TooLarge);
@@ -96,11 +96,11 @@ impl Deck {
         for page in &self.pages {
             check_id(&page.id)?;
             if !pages.insert(&page.id) {
-                return Err(DeckError::Invalid("page IDs must be unique".into()));
+                return Err(DeckError::Invalid("页面 ID 必须唯一".into()));
             }
             check_label(&page.name)?;
             if !(1..=8).contains(&page.columns) {
-                return Err(DeckError::Invalid("columns must be between 1 and 8".into()));
+                return Err(DeckError::Invalid("列数必须在 1 到 8 之间".into()));
             }
             if page.tiles.len() > MAX_TILES {
                 return Err(DeckError::TooLarge);
@@ -109,7 +109,7 @@ impl Deck {
             for tile in &page.tiles {
                 check_id(&tile.id)?;
                 if !tiles.insert(&tile.id) {
-                    return Err(DeckError::Invalid("button IDs must be unique within a page".into()));
+                    return Err(DeckError::Invalid("同一页面内的按钮 ID 必须唯一".into()));
                 }
                 check_label(&tile.label)?;
                 if let Some(icon) = &tile.icon {
@@ -118,7 +118,7 @@ impl Deck {
                 if let Some(color) = &tile.color
                     && !is_css_color(color)
                 {
-                    return Err(DeckError::Invalid(format!("invalid color {color:?}")));
+                    return Err(DeckError::Invalid(format!("无效的颜色 {color:?}")));
                 }
                 validate_action(&tile.action, 0)?;
             }
@@ -129,17 +129,17 @@ impl Deck {
 
 fn check_label(label: &str) -> Result<(), DeckError> {
     if label.chars().count() > MAX_LABEL {
-        return Err(DeckError::Invalid("label is too long".into()));
+        return Err(DeckError::Invalid("标签过长".into()));
     }
     Ok(())
 }
 
 fn check_id(id: &str) -> Result<(), DeckError> {
     if id.is_empty() {
-        return Err(DeckError::Invalid("id must not be empty".into()));
+        return Err(DeckError::Invalid("ID 不能为空".into()));
     }
     if id.len() > MAX_ID {
-        return Err(DeckError::Invalid("id is too long".into()));
+        return Err(DeckError::Invalid("ID 过长".into()));
     }
     Ok(())
 }
@@ -152,7 +152,7 @@ fn check_icon(icon: &TileIcon) -> Result<(), DeckError> {
         TileIcon::Emoji { text } => (text, 64),
     };
     if text.len() > max {
-        return Err(DeckError::Invalid("icon is too long".into()));
+        return Err(DeckError::Invalid("图标过长".into()));
     }
     Ok(())
 }
@@ -166,37 +166,37 @@ pub fn validate_action(action: &Action, depth: usize) -> Result<(), DeckError> {
     match action {
         Action::Keys { code, mods: m, char } => {
             if *code > keycodes::MAX_KEYCODE || m & !mods::ALL != 0 || char.as_ref().is_some_and(|c| c.len() > 16) {
-                return Err(DeckError::Invalid("invalid key".into()));
+                return Err(DeckError::Invalid("无效的按键".into()));
             }
         }
         Action::Text { text, .. } | Action::Shell { command: text } => {
             if text.len() > MAX_TEXT {
-                return Err(DeckError::Invalid("text is too long".into()));
+                return Err(DeckError::Invalid("文本过长".into()));
             }
         }
         Action::Url { url } => {
             if url.len() > MAX_TEXT || !url.contains(':') {
-                return Err(DeckError::Invalid("invalid URL".into()));
+                return Err(DeckError::Invalid("无效的 URL".into()));
             }
         }
         Action::App { id, .. } | Action::Shortcut { name: id } => {
             if id.is_empty() || id.len() > MAX_NAME {
-                return Err(DeckError::Invalid("missing name".into()));
+                return Err(DeckError::Invalid("缺少名称".into()));
             }
         }
         Action::Delay { ms } => {
             if *ms > MAX_DELAY_MS {
-                return Err(DeckError::Invalid("delays are limited to 10 seconds".into()));
+                return Err(DeckError::Invalid("延迟不能超过 10 秒".into()));
             }
         }
         Action::Mouse { clicks, .. } => {
             if !(1..=3).contains(clicks) {
-                return Err(DeckError::Invalid("clicks must be 1–3".into()));
+                return Err(DeckError::Invalid("点击次数必须为 1–3".into()));
             }
         }
         Action::Sequence { steps } => {
             if depth >= MAX_DEPTH || steps.len() > MAX_STEPS {
-                return Err(DeckError::Invalid("sequence is too long or nested too deeply".into()));
+                return Err(DeckError::Invalid("序列过长或嵌套层级过深".into()));
             }
             for step in steps {
                 validate_action(step, depth + 1)?;
@@ -231,32 +231,32 @@ impl Default for Deck {
     fn default() -> Self {
         use SystemAction as S;
         let essentials = vec![
-            tile("mission-control", "Mission Control", symbol("layout-grid"), system(S::MissionControl)),
-            tile("app-expose", "App Windows", symbol("app-window"), system(S::AppExpose)),
-            tile("desktop", "Desktop", symbol("monitor"), system(S::ShowDesktop)),
-            tile("spotlight", "Spotlight", symbol("search"), system(S::Spotlight)),
-            tile("space-left", "Space Left", symbol("arrow-left-to-line"), system(S::SpaceLeft)),
-            tile("space-right", "Space Right", symbol("arrow-right-to-line"), system(S::SpaceRight)),
-            tile("screenshot", "Screenshot", symbol("scan"), system(S::ScreenshotArea)),
-            tile("lock", "Lock", symbol("lock"), system(S::LockScreen)),
-            tile("previous", "Previous", symbol("skip-back"), media(MediaKey::Previous)),
-            tile("play", "Play / Pause", symbol("play-pause"), media(MediaKey::PlayPause)),
-            tile("next", "Next", symbol("skip-forward"), media(MediaKey::Next)),
-            tile("mute", "Mute", symbol("volume-x"), media(MediaKey::Mute)),
-            tile("copy", "Copy", symbol("copy"), system(S::Copy)),
-            tile("paste", "Paste", symbol("clipboard"), system(S::Paste)),
-            tile("undo", "Undo", symbol("undo"), system(S::Undo)),
-            tile("emoji", "Emoji", symbol("smile"), system(S::EmojiPicker)),
+            tile("mission-control", "调度中心", symbol("layout-grid"), system(S::MissionControl)),
+            tile("app-expose", "应用窗口", symbol("app-window"), system(S::AppExpose)),
+            tile("desktop", "桌面", symbol("monitor"), system(S::ShowDesktop)),
+            tile("spotlight", "聚焦", symbol("search"), system(S::Spotlight)),
+            tile("space-left", "左侧桌面", symbol("arrow-left-to-line"), system(S::SpaceLeft)),
+            tile("space-right", "右侧桌面", symbol("arrow-right-to-line"), system(S::SpaceRight)),
+            tile("screenshot", "截屏", symbol("scan"), system(S::ScreenshotArea)),
+            tile("lock", "锁定", symbol("lock"), system(S::LockScreen)),
+            tile("previous", "上一曲", symbol("skip-back"), media(MediaKey::Previous)),
+            tile("play", "播放/暂停", symbol("play-pause"), media(MediaKey::PlayPause)),
+            tile("next", "下一曲", symbol("skip-forward"), media(MediaKey::Next)),
+            tile("mute", "静音", symbol("volume-x"), media(MediaKey::Mute)),
+            tile("copy", "复制", symbol("copy"), system(S::Copy)),
+            tile("paste", "粘贴", symbol("clipboard"), system(S::Paste)),
+            tile("undo", "撤销", symbol("undo"), system(S::Undo)),
+            tile("emoji", "表情", symbol("smile"), system(S::EmojiPicker)),
         ];
         let apps = [
-            ("com.apple.finder", "Finder"),
+            ("com.apple.finder", "访达"),
             ("com.apple.Safari", "Safari"),
-            ("com.apple.Terminal", "Terminal"),
-            ("com.apple.Music", "Music"),
-            ("com.apple.MobileSMS", "Messages"),
-            ("com.apple.Notes", "Notes"),
-            ("com.apple.iCal", "Calendar"),
-            ("com.apple.systempreferences", "Settings"),
+            ("com.apple.Terminal", "终端"),
+            ("com.apple.Music", "音乐"),
+            ("com.apple.MobileSMS", "信息"),
+            ("com.apple.Notes", "备忘录"),
+            ("com.apple.iCal", "日历"),
+            ("com.apple.systempreferences", "设置"),
         ]
         .into_iter()
         .map(|(id, label)| {
@@ -267,8 +267,8 @@ impl Default for Deck {
         Deck {
             version: DECK_VERSION,
             pages: vec![
-                DeckPage { id: "essentials".into(), name: "Essentials".into(), columns: 4, tiles: essentials },
-                DeckPage { id: "apps".into(), name: "Apps".into(), columns: 4, tiles: apps },
+                DeckPage { id: "essentials".into(), name: "常用".into(), columns: 4, tiles: essentials },
+                DeckPage { id: "apps".into(), name: "应用".into(), columns: 4, tiles: apps },
             ],
         }
     }
@@ -310,7 +310,7 @@ mod tests {
         assert_eq!(deck.validate(), Err(DeckError::Version(99)));
 
         let deck = Deck { version: DECK_VERSION, pages: vec![] };
-        assert_eq!(deck.validate(), Err(DeckError::Invalid("the deck needs at least one page".into())));
+        assert_eq!(deck.validate(), Err(DeckError::Invalid("快捷面板至少需要一个页面".into())));
     }
 
     #[test]

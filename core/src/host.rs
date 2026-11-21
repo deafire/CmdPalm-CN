@@ -41,7 +41,7 @@ pub(crate) enum Outgoing {
     Close { reason: String, reconnect: bool },
 }
 
-pub(crate) const STOPPED_SHARING: &str = "The Mac stopped sharing.";
+pub(crate) const STOPPED_SHARING: &str = "Mac 已停止共享。";
 
 pub(crate) struct LiveSession {
     pub info: ConnectedDevice,
@@ -294,7 +294,7 @@ impl Shared {
                     state: crate::protocol::VoiceState::Unavailable,
                     text: None,
                     is_final: false,
-                    message: Some("Dictation was stopped on the Mac.".into()),
+                    message: Some("听写已在 Mac 上停止。".into()),
                 },
             );
         }
@@ -338,10 +338,10 @@ impl Shared {
             Notice::SecureInput(session) => (
                 session,
                 "secureInput",
-                "A password field on the Mac is blocking typed input. Click outside it or type on the Mac.",
+                "Mac 上的密码输入框正在阻止键入。请点击输入框外部，或直接在 Mac 上输入。",
             ),
             Notice::NoPermission(session) => {
-                (session, "permission", "CmdPalm needs Accessibility permission on the Mac to control it.")
+                (session, "permission", "CmdPalm 需要 Mac 上的辅助功能权限才能进行控制。")
             }
         };
         self.send_to(
@@ -560,7 +560,7 @@ impl CoreHost {
             .enable_all()
             .build()
             .map_err(|e| {
-                let message = format!("could not start the network runtime: {e}");
+                let message = format!("无法启动网络服务：{e}");
                 self.shared.emit(HostEvent::Failed { message: message.clone() });
                 HostError::new(message)
             })?;
@@ -631,9 +631,9 @@ impl CoreHost {
                 None,
                 None,
                 "cancelled",
-                "Screen mirroring was turned off on the Mac.",
+                "Mac 上已关闭屏幕镜像。",
             );
-            self.shared.displays.cancel(&self.shared, None, None, "Screen mirroring was turned off on the Mac.");
+            self.shared.displays.cancel(&self.shared, None, None, "Mac 上已关闭屏幕镜像。");
         }
         if previous.allow_shell != config.allow_shell
             || previous.voice_available != config.voice_available
@@ -737,7 +737,7 @@ impl CoreHost {
         let removed = self.shared.state().trust.remove(&id);
         self.shared.save_trust();
         self.shared.remove_device_settings(Some(std::slice::from_ref(&id)));
-        self.close_device(&id, "This device was removed on the Mac. Pair again to reconnect.");
+        self.close_device(&id, "此设备已在 Mac 上移除，请重新配对以连接。");
         if removed {
             self.shared.emit(HostEvent::DevicesChanged);
         }
@@ -747,7 +747,7 @@ impl CoreHost {
         self.shared.state().trust.clear();
         self.shared.save_trust();
         self.shared.remove_device_settings(None);
-        self.close_sessions("All devices were removed on the Mac. Pair again to reconnect.", false);
+        self.close_sessions("所有设备已在 Mac 上移除，请重新配对以连接。", false);
         self.shared.emit(HostEvent::DevicesChanged);
     }
 
@@ -773,7 +773,7 @@ impl CoreHost {
     pub fn disconnect(&self, session: u64) {
         self.shared.displays.forget(&self.shared, session);
         if let Some(live) = self.shared.state().sessions.get(&session) {
-            let _ = live.tx.send(Outgoing::Close { reason: "Disconnected from the Mac.".into(), reconnect: false });
+            let _ = live.tx.send(Outgoing::Close { reason: "已与 Mac 断开连接。".into(), reconnect: false });
         }
     }
 
@@ -801,10 +801,10 @@ impl CoreHost {
                 None,
                 None,
                 "cancelled",
-                "Screen mirroring is paused on the Mac.",
+                "Mac 上已暂停屏幕镜像。",
             );
             self.shared.cancel_voices();
-            self.shared.displays.cancel(&self.shared, None, None, "Screen mirroring is paused on the Mac.");
+            self.shared.displays.cancel(&self.shared, None, None, "Mac 上已暂停屏幕镜像。");
         }
         self.shared.engine(Command::SetPaused(paused));
         self.shared.broadcast(ServerMessage::Paused { paused });
@@ -905,7 +905,7 @@ impl CoreHost {
                     Some(session),
                     None,
                     "allowed",
-                    "Screen mirroring was allowed on the Mac.",
+                    "Mac 上已允许屏幕镜像。",
                 );
             }
             self.shared.send_to(session, ServerMessage::DisplayAccess { allowed });
@@ -940,7 +940,7 @@ impl CoreHost {
                 Some(session),
                 None,
                 "allowed",
-                "Screen mirroring was allowed on the Mac.",
+                "Mac 上已允许屏幕镜像。",
             );
         }
         self.shared.emit(HostEvent::SessionsChanged);
@@ -991,13 +991,13 @@ impl CoreHost {
             None,
             None,
             "cancelled",
-            "Screen mirroring stopped on the Mac.",
+            "Mac 上的屏幕镜像已停止。",
         );
         self.shared.displays.cancel(
             &self.shared,
             None,
             None,
-            "Screen mirroring stopped on the Mac. Unlock or wake the Mac, then start viewing again.",
+            "Mac 上的屏幕镜像已停止。请解锁或唤醒 Mac，然后重新开始查看。",
         );
     }
 
@@ -1042,7 +1042,7 @@ impl CoreHost {
     }
 
     pub fn set_deck_json(&self, json: String) -> Result<(), HostError> {
-        let deck: Deck = serde_json::from_str(&json).map_err(|e| HostError::new(format!("invalid deck: {e}")))?;
+        let deck: Deck = serde_json::from_str(&json).map_err(|e| HostError::new(format!("无效的快捷面板：{e}")))?;
         server::save_deck(&self.shared, deck).map_err(|e| HostError::new(e.to_string()))
     }
 

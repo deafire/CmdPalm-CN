@@ -177,7 +177,7 @@ const textEncoder = new TextEncoder()
 
 export function checkTextLimit(text: string): boolean {
   if (textEncoder.encode(text).length <= MAX_TEXT_BYTES) return true
-  notify('That text is too long to send at once.', 'warning', 'tooLong')
+  notify('文字过长，无法一次发送。', 'warning', 'tooLong')
   return false
 }
 

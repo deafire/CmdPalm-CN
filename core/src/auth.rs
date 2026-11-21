@@ -311,7 +311,7 @@ pub fn visible_name(name: &str) -> String {
 
 fn display_name(info: &DeviceInfo) -> String {
     let name = clean(&info.name, 64);
-    if name.is_empty() { "Unnamed device".into() } else { name }
+    if name.is_empty() { "未命名设备".into() } else { name }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

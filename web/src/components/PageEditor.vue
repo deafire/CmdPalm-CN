@@ -19,15 +19,15 @@ const confirming = ref(false)
 
 function save() {
   if (props.busy) return
-  emit('save', { name: name.value.trim().slice(0, LIMITS.label) || 'Page', columns: columns.value })
+  emit('save', { name: name.value.trim().slice(0, LIMITS.label) || '页面', columns: columns.value })
 }
 </script>
 
 <template>
-  <Sheet title="Page" :closable="!busy" @close="save">
+  <Sheet title="页面" :closable="!busy" @close="save">
     <fieldset :disabled="busy" class="min-w-0">
       <label class="block py-2">
-        <span class="text-[13px] text-muted">Name</span>
+        <span class="text-[13px] text-muted">名称</span>
         <input
           v-model="name"
           :maxlength="LIMITS.label"
@@ -38,24 +38,24 @@ function save() {
       </label>
 
       <div class="flex items-center justify-between pt-3">
-        <span class="text-[15px]">Columns</span>
+        <span class="text-[15px]">列数</span>
         <div class="flex items-center gap-3">
-          <button type="button" class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40" :disabled="columns <= 1" aria-label="Fewer columns" @click="columns--">
+          <button type="button" class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40" :disabled="columns <= 1" aria-label="减少列数" @click="columns--">
             <Minus :size="16" />
           </button>
           <span class="w-5 text-center text-[17px] font-semibold tabular-nums">{{ columns }}</span>
-          <button type="button" class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40" :disabled="columns >= 8" aria-label="More columns" @click="columns++">
+          <button type="button" class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40" :disabled="columns >= 8" aria-label="增加列数" @click="columns++">
             <Plus :size="16" />
           </button>
         </div>
       </div>
       <p class="pt-1 pb-3 text-[13px] leading-snug text-muted">
-        On a phone held upright. Wider screens fit more, and Settings → Deck changes the button size on this device.
+        以竖屏握持手机时的列数。屏幕更宽时可容纳更多，在“设置 → 快捷面板”中可调整本设备的按钮大小。
       </p>
 
       <div class="flex gap-2 py-3">
         <button type="button" class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-surface-2 text-[14px] disabled:opacity-40" :disabled="index === 0" @click="emit('move', -1)">
-          <ArrowLeft :size="16" /> Move left
+          <ArrowLeft :size="16" /> 左移
         </button>
         <button
           type="button"
@@ -63,7 +63,7 @@ function save() {
           :disabled="index === count - 1"
           @click="emit('move', 1)"
         >
-          Move right <ArrowRight :size="16" />
+          右移 <ArrowRight :size="16" />
         </button>
       </div>
 
@@ -75,10 +75,10 @@ function save() {
         @click="confirming ? emit('remove') : (confirming = true)"
       >
         <Trash2 :size="16" />
-        {{ confirming ? `Delete “${page.name}” and its ${page.tiles.length} ${page.tiles.length === 1 ? 'button' : 'buttons'}` : 'Delete page' }}
+        {{ confirming ? `删除“${page.name}”及其 ${page.tiles.length} 个按钮` : '删除页面' }}
       </button>
 
-      <button type="button" class="mt-4 h-12 w-full rounded-2xl bg-accent text-[16px] font-semibold text-accent-text" @click="save">{{ busy ? 'Saving…' : 'Done' }}</button>
+      <button type="button" class="mt-4 h-12 w-full rounded-2xl bg-accent text-[16px] font-semibold text-accent-text" @click="save">{{ busy ? '保存中…' : '完成' }}</button>
     </fieldset>
   </Sheet>
 </template>

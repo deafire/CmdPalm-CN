@@ -22,8 +22,8 @@ pub(crate) struct Job {
 /// Apps read the pasteboard asynchronously after ⌘V.
 const PASTE_RESTORE_DELAY: Duration = Duration::from_millis(450);
 const DELAY_SLICE: Duration = Duration::from_millis(50);
-const STOPPED: &str = "Stopped because control was paused or the device disconnected.";
-const SHELL_DISABLED: &str = "Shell commands are turned off. Turn them on in CmdPalm settings on the Mac.";
+const STOPPED: &str = "已停止：控制已暂停或设备已断开连接。";
+const SHELL_DISABLED: &str = "Shell 命令已关闭。请在 Mac 上的 CmdPalm 设置中开启。";
 const SHELL_POLL: Duration = Duration::from_millis(50);
 const SHELL_KILL_GRACE: Duration = Duration::from_secs(1);
 /// How long a button waits for its shell command before carrying on, so a
@@ -42,7 +42,7 @@ pub(crate) async fn worker(shared: Arc<Shared>, session: SessionId, mut jobs: mp
         let action = job.action;
         let result = tokio::task::spawn_blocking(move || execute(&task_shared, session, &action, 0))
             .await
-            .unwrap_or_else(|_| Err("The action crashed.".into()));
+            .unwrap_or_else(|_| Err("动作执行时发生错误。".into()));
         if job.id.is_some() || result.is_err() {
             let (ok, message) = match result {
                 Ok(()) => (true, None),
@@ -135,7 +135,7 @@ pub(crate) fn paste(
         return Ok(());
     }
     if !shared.delegate.begin_paste(text.to_string()) {
-        return Err("Couldn't use the clipboard.".into());
+        return Err("无法使用剪贴板。".into());
     }
     input(shared, session, Input::CharTap { ch: 'v', fallback: kc::KEY_V, mods: mods::COMMAND });
     let _ = queued.send(());
@@ -149,7 +149,7 @@ pub(crate) fn paste(
 
 /// Why a link can't be opened, or `None` when it can.
 fn link_problem(url: &str, allow_shell: bool) -> Option<&'static str> {
-    const NOT_ALLOWED: &str = "That kind of link isn't allowed.";
+    const NOT_ALLOWED: &str = "不允许打开此类链接。";
     let Some((scheme, _)) = url.trim().split_once(':') else { return Some(NOT_ALLOWED) };
     let scheme = scheme.to_ascii_lowercase();
     if scheme.is_empty() || !scheme.chars().all(|c| c.is_ascii_alphanumeric() || "+-.".contains(c)) {
@@ -165,7 +165,7 @@ fn link_problem(url: &str, allow_shell: bool) -> Option<&'static str> {
             if !allow_shell =>
         {
             Some(
-                "Links to files, terminals and file servers need shell commands turned on in CmdPalm settings on the Mac.",
+                "打开文件或终端、文件服务器的链接，需要在 Mac 上的 CmdPalm 设置中开启 Shell 命令。",
             )
         }
         _ => None,
@@ -208,7 +208,7 @@ pub(crate) fn execute(shared: &Shared, session: SessionId, action: &Action, dept
             settle(shared, session)?;
             if !shared.delegate.app_action(id.clone(), *op) {
                 return Err(format!(
-                    "Couldn't finish the action for “{id}”. The app may still be starting or waiting for a dialog."
+                    "无法完成“{id}”的操作。该应用可能正在启动，或正在等待对话框。"
                 ));
             }
         }
@@ -219,7 +219,7 @@ pub(crate) fn execute(shared: &Shared, session: SessionId, action: &Action, dept
             }
             settle(shared, session)?;
             if !shared.delegate.open_url(url.to_string()) {
-                return Err("The Mac couldn't open that link.".into());
+                return Err("Mac 无法打开该链接。".into());
             }
         }
         Action::System { name } => match system_plan(*name) {
@@ -230,14 +230,14 @@ pub(crate) fn execute(shared: &Shared, session: SessionId, action: &Action, dept
                 // and don't lock or sleep if Pause was pressed meanwhile.
                 settle(shared, session)?;
                 if !shared.delegate.native(command) {
-                    return Err("The Mac couldn't do that.".into());
+                    return Err("Mac 无法执行该操作。".into());
                 }
             }
         },
         Action::Shortcut { name } => {
             settle(shared, session)?;
             if !shared.delegate.run_shortcut(name.clone()) {
-                return Err(format!("Couldn't run the shortcut “{name}”."));
+                return Err(format!("无法运行快捷指令“{name}”。"));
             }
         }
         Action::Shell { command } => {
@@ -263,7 +263,7 @@ pub(crate) fn execute(shared: &Shared, session: SessionId, action: &Action, dept
         }
         Action::Sequence { steps } => {
             if depth >= MAX_DEPTH {
-                return Err("The sequence is nested too deeply.".into());
+                return Err("序列嵌套层级过深。".into());
             }
             for step in steps {
                 execute(shared, session, step, depth + 1)?;
@@ -289,7 +289,7 @@ fn run_shell(command: &str, interrupts: Arc<Interrupts>) -> Result<(), String> {
         Err(ShellDeny::Closed) => return Err(STOPPED.into()),
         Err(ShellDeny::Disabled) => return Err(SHELL_DISABLED.into()),
         Err(ShellDeny::Busy) => {
-            return Err("Too many shell commands are still running. Pause CmdPalm on the Mac to stop them.".into());
+            return Err("仍有太多 Shell 命令在运行。请在 Mac 上暂停 CmdPalm 以停止它们。".into());
         }
     };
     struct Running(Arc<Interrupts>);
@@ -318,7 +318,7 @@ fn run_shell(command: &str, interrupts: Arc<Interrupts>) -> Result<(), String> {
         // Its own process group, so Pause can stop everything it started.
         .process_group(0)
         .spawn()
-        .map_err(|e| format!("Couldn't run the command: {e}"))?;
+        .map_err(|e| format!("无法执行命令：{e}"))?;
     let group = child.id() as libc::pid_t;
     let (done, finished) = std::sync::mpsc::channel();
     // Reap the process when it finishes so it never lingers as a zombie, and
@@ -409,12 +409,12 @@ fn shell_failure(status: std::process::ExitStatus, errors: Option<std::fs::File>
         Some(detail)
     });
     let how = match status.code() {
-        Some(code) => format!("exit code {code}"),
-        None => "stopped by a signal".into(),
+        Some(code) => format!("退出码 {code}"),
+        None => "被信号终止".into(),
     };
     match detail {
-        Some(detail) => format!("The command failed ({how}): {detail}"),
-        None => format!("The command failed ({how})."),
+        Some(detail) => format!("命令失败（{how}）：{detail}"),
+        None => format!("命令失败（{how}）。"),
     }
 }
 
@@ -518,9 +518,9 @@ mod tests {
     fn a_failing_shell_command_says_why() {
         let interrupts = Arc::new(Interrupts::default());
         let error = run_shell("echo first >&2; echo 'no such thing' >&2; exit 3", interrupts.clone()).unwrap_err();
-        assert_eq!(error, "The command failed (exit code 3): no such thing");
+        assert_eq!(error, "命令失败（退出码 3）：no such thing");
         let error = run_shell("exit 1", interrupts).unwrap_err();
-        assert_eq!(error, "The command failed (exit code 1).");
+        assert_eq!(error, "命令失败（退出码 1）。");
     }
 
     #[test]
@@ -531,7 +531,7 @@ mod tests {
         let line = "z".repeat(SHELL_ERROR_CHARS);
         write!(file, "\n{line}\n").unwrap();
         let status = std::process::Command::new("/bin/sh").args(["-c", "exit 1"]).status().unwrap();
-        assert_eq!(shell_failure(status, Some(file)), format!("The command failed (exit code 1): {line}"));
+        assert_eq!(shell_failure(status, Some(file)), format!("命令失败（退出码 1）：{line}"));
     }
 
     #[test]
@@ -555,7 +555,7 @@ mod tests {
             assert!(interrupts.try_enter_shell(MAX_RUNNING_COMMANDS).is_ok());
         }
         let error = run_shell("true", interrupts.clone()).unwrap_err();
-        assert!(error.contains("Too many shell commands"));
+        assert!(error.contains("太多 Shell 命令"));
         let other_host = Arc::new(Interrupts::default());
         assert!(run_shell("true", other_host).is_ok(), "independent hosts do not share command slots");
         for _ in 0..MAX_RUNNING_COMMANDS {

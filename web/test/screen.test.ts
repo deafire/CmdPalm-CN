@@ -174,7 +174,7 @@ describe('receive-only display viewing', () => {
     expect(settings.displayId).toBe('unplugged')
     await library.startViewing()
     expect(FakePeer.all).toHaveLength(0)
-    expect(library.screen.message).toContain('unavailable')
+    expect(library.screen.message).toContain('不可用')
   })
 
   it('ignores a list that completes after the page is hidden', () => {
@@ -189,7 +189,7 @@ describe('receive-only display viewing', () => {
   it('explains an older host without trying unsupported screen messages', () => {
     const socket = connect('old')
     library.activateScreen(video)
-    expect(library.screen.message).toContain('Update CmdPalm')
+    expect(library.screen.message).toContain('请更新 Mac 上的 CmdPalm')
     expect(socket.sent.some(message => message.t === 'displays')).toBe(false)
   })
 
@@ -233,7 +233,7 @@ describe('receive-only display viewing', () => {
     const socket = connect()
     socket.readyState = FakeSocket.CLOSING
     library.activateScreen(video)
-    expect(library.screen.message).toContain('not connected')
+    expect(library.screen.message).toContain('未连接')
     socket.readyState = FakeSocket.OPEN
     library.refreshDisplays()
     expect(socket.sent.filter(message => message.t === 'displays')).toHaveLength(1)
@@ -320,7 +320,7 @@ describe('receive-only display viewing', () => {
     const socket = connect(); connection.state.features.displayOriginal = undefined
     const { settings } = await import('../src/lib/settings'); settings.displayQuality = 'original'
     library.activateScreen(video, document.createElement('canvas')); list(socket); await library.startViewing()
-    expect(library.screen.message).toContain('Update CmdPalm')
+    expect(library.screen.message).toContain('请更新 Mac 上的 CmdPalm')
     expect(FakePeer.all).toHaveLength(0)
   })
 })

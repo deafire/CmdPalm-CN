@@ -68,7 +68,7 @@ describe('controls used without touch', () => {
     const socket = connect()
     const { default: ClickBar } = await import('../src/components/ClickBar.vue')
     const view = mount(ClickBar, { attachTo: document.body })
-    const left = view.find('[aria-label="left mouse button"]')
+    const left = view.find('[aria-label="left 鼠标按键"]')
     expect(left.attributes('tabindex')).toBe('0')
     readerClick(left.element)
     enter(left.element)
@@ -104,8 +104,8 @@ describe('controls used without touch', () => {
     expect(tabNav.defaultPrevented).toBe(false)
     tabKey.focus()
     enter(tabKey)
-    enter(view.find('[aria-label="Left"]').element)
-    readerClick(view.find('[aria-label="Return"]').element)
+    enter(view.find('[aria-label="左"]').element)
+    readerClick(view.find('[aria-label="回车"]').element)
     expect(socket.sent.filter((m) => m.t === 'tap')).toMatchObject([{ code: Key.Tab }, { code: Key.Left }, { code: Key.Return }])
     expect(socket.sent.filter((m) => m.t === 'key')).toEqual([])
   })
@@ -127,7 +127,7 @@ describe('controls used without touch', () => {
 
     // Moving the Mac's caret with the toolbar arrow strip must reset live history
     // instead of backspacing from the new caret position on the next edit.
-    const left = view.find('[aria-label="Left"]')
+    const left = view.find('[aria-label="左"]')
     left.element.setPointerCapture = () => {}
     await left.trigger('pointerdown', { pointerId: 1 })
     await left.trigger('pointerup', { pointerId: 1 })
@@ -137,14 +137,14 @@ describe('controls used without touch', () => {
     expect(socket.sent.filter((m) => m.t === 'edit').at(-1)).toEqual({ t: 'edit', delete: 0, insert: '!' })
 
     // Pasting the phone's clipboard onto the Mac also resets live history.
-    await view.find('[aria-label="Paste the phone clipboard on the Mac"]').trigger('click')
+    await view.find('[aria-label="将手机剪贴板内容粘贴到 Mac"]').trigger('click')
     await Promise.resolve()
     expect((field.element as HTMLTextAreaElement).value).toBe('')
 
     // Clearing or blurring mid-composition must not leave live typing stuck.
     await field.trigger('compositionstart')
     await field.setValue('ni')
-    await view.find('[aria-label^="Clear the field"]').trigger('click')
+    await view.find('[aria-label^="清空输入框"]').trigger('click')
     await field.setValue('ok')
     expect(socket.sent.filter((m) => m.t === 'edit').at(-1)).toEqual({ t: 'edit', delete: 0, insert: 'ok' })
 
@@ -158,15 +158,15 @@ describe('controls used without touch', () => {
 
     settings.liveTyping = false
     await field.setValue(huge)
-    await view.find('[aria-label="Type on the Mac"]').trigger('click')
+    await view.find('[aria-label="在 Mac 上输入"]').trigger('click')
     expect((field.element as HTMLTextAreaElement).value).toBe(huge)
 
     // Turning Live on when an unsent draft cannot be sent (e.g. >64 KiB) must
     // preserve the draft (and even if toggled again) instead of wiping it.
-    await view.findAll('button').find((b) => b.text() === 'Live')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '实时')!.trigger('click')
     expect((field.element as HTMLTextAreaElement).value).toBe(huge)
     expect(settings.liveTyping).toBe(false)
-    await view.findAll('button').find((b) => b.text() === 'Live')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '实时')!.trigger('click')
     expect((field.element as HTMLTextAreaElement).value).toBe(huge)
     expect(settings.liveTyping).toBe(false)
 
@@ -177,7 +177,7 @@ describe('controls used without touch', () => {
     await field.setValue('sent')
     socket.drop()
     await field.setValue('sent unsent')
-    await view.findAll('button').find((b) => b.text() === 'Live')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '实时')!.trigger('click')
     expect(settings.liveTyping).toBe(false)
     expect((field.element as HTMLTextAreaElement).value).toBe(' unsent')
   })
@@ -200,7 +200,7 @@ describe('controls used without touch', () => {
     modifiers.release(1)
     expect(modifiers.status(Mod.Command)).toBe('latched')
 
-    await view.find('[aria-label="Paste the phone clipboard on the Mac"]').trigger('click')
+    await view.find('[aria-label="将手机剪贴板内容粘贴到 Mac"]').trigger('click')
     await Promise.resolve()
 
     expect(socket.sent.filter((m) => m.t === 'tap')).toEqual([])
@@ -215,8 +215,8 @@ describe('forgetting a Mac', () => {
     lastSocket().receive({ t: 'denied', reason: 'busy', retryAfter: 5 })
     const { default: ConnectView } = await import('../src/views/ConnectView.vue')
     const view = mount(ConnectView, { attachTo: document.body })
-    expect(view.text()).toContain('quit and reopen CmdPalm')
-    await view.findAll('button').find((button) => button.text() === 'Reconnect')!.trigger('click')
+    expect(view.text()).toContain('退出并重新打开')
+    await view.findAll('button').find((button) => button.text() === '重新连接')!.trigger('click')
     lastSocket().open()
     expect(lastSocket().sent[0]).toMatchObject({ t: 'hello', auth: { method: 'token', token: 'saved' } })
   })

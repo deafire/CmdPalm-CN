@@ -40,7 +40,7 @@ const mediaSent = (socket: FakeSocket) => socket.sent.filter((m) => m.t === 'med
 describe('MediaView', () => {
   it('works from a keyboard or screen reader, without doubling a tap', async () => {
     const { socket, view } = await mediaView()
-    const play = view.find('button[aria-label="Play or pause"]')
+    const play = view.find('button[aria-label="播放或暂停"]')
     await play.trigger('click')
     expect(mediaSent(socket)).toEqual(['playPause click'])
 
@@ -49,14 +49,14 @@ describe('MediaView', () => {
     await play.trigger('click', { detail: 1 })
     expect(mediaSent(socket)).toEqual(['playPause click', 'playPause click'])
 
-    await view.find('button[aria-label="Rewind"]').trigger('click')
+    await view.find('button[aria-label="快退"]').trigger('click')
     expect(mediaSent(socket).slice(2)).toEqual(['rewind down', 'rewind up'])
     view.unmount()
   })
 
   it('keeps a held key down when another finger lifts from it', async () => {
     const { socket, view } = await mediaView()
-    const rewind = view.find('button[aria-label="Rewind"]').element
+    const rewind = view.find('button[aria-label="快退"]').element
     pointer(rewind, 'pointerdown', 1)
     pointer(rewind, 'pointerdown', 2)
     pointer(rewind, 'pointerup', 2)
@@ -68,7 +68,7 @@ describe('MediaView', () => {
 
   it('stops repeating media keys when control is paused on the Mac', async () => {
     const { socket, view } = await mediaView()
-    const brighter = view.find('button[aria-label="Display brightness up"]').element
+    const brighter = view.find('button[aria-label="提高屏幕亮度"]').element
     brighter.setPointerCapture = () => {}
     pointer(brighter, 'pointerdown', 1)
     vi.advanceTimersByTime(550)
@@ -88,8 +88,8 @@ describe('MediaView', () => {
     const { installHardwareKeyboard } = await import('../src/lib/hardware')
     const { Key } = await import('../src/lib/keys')
     installHardwareKeyboard()
-    const previous = view.find('button[aria-label="Previous track"]').element as HTMLButtonElement
-    const play = view.find('button[aria-label="Play or pause"]').element as HTMLButtonElement
+    const previous = view.find('button[aria-label="上一首"]').element as HTMLButtonElement
+    const play = view.find('button[aria-label="播放或暂停"]').element as HTMLButtonElement
     previous.focus()
 
     const forwardDown = new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true, cancelable: true })

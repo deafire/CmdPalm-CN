@@ -22,8 +22,8 @@ function move(by: number) {
 }
 
 const steppers = computed(() => [
-  { axis: 'cols' as const, label: 'Columns', value: props.board.cols, min: LIMITS.minCols, max: LIMITS.maxCols },
-  { axis: 'rows' as const, label: 'Rows', value: props.board.rows, min: LIMITS.minRows, max: LIMITS.maxRows },
+  { axis: 'cols' as const, label: '列数', value: props.board.cols, min: LIMITS.minCols, max: LIMITS.maxCols },
+  { axis: 'rows' as const, label: '行数', value: props.board.rows, min: LIMITS.minRows, max: LIMITS.maxRows },
 ])
 
 function step(axis: 'cols' | 'rows', by: number) {
@@ -39,7 +39,7 @@ function step(axis: 'cols' | 'rows', by: number) {
 }
 
 function saveName() {
-  props.board.name = name.value.trim().slice(0, LIMITS.name) || 'Keyboard'
+  props.board.name = name.value.trim().slice(0, LIMITS.name) || '键盘'
 }
 
 function close() {
@@ -55,9 +55,9 @@ function duplicate() {
 </script>
 
 <template>
-  <Sheet title="Keyboard" @close="close">
+  <Sheet title="键盘" @close="close">
     <label class="block py-2">
-      <span class="text-[13px] text-muted">Name</span>
+      <span class="text-[13px] text-muted">名称</span>
       <input
         v-model="name"
         :maxlength="LIMITS.name"
@@ -74,7 +74,7 @@ function duplicate() {
           type="button"
           class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40"
           :disabled="s.value <= s.min"
-          :aria-label="`Fewer ${s.label.toLowerCase()}`"
+          :aria-label="`减少${s.label.toLowerCase()}`"
           @click="step(s.axis, -1)"
         >
           <Minus :size="16" />
@@ -84,7 +84,7 @@ function duplicate() {
           type="button"
           class="grid size-9 place-items-center rounded-full bg-surface-3 disabled:opacity-40"
           :disabled="s.value >= s.max"
-          :aria-label="`More ${s.label.toLowerCase()}`"
+          :aria-label="`增加${s.label.toLowerCase()}`"
           @click="step(s.axis, 1)"
         >
           <Plus :size="16" />
@@ -92,17 +92,17 @@ function duplicate() {
       </div>
     </div>
     <p v-if="blocked" class="pb-2 text-[13px] text-bad">
-      Move or delete the keys in the last {{ blocked === 'cols' ? 'column' : 'row' }} first.
+      请先移动或删除最后一{{ blocked === 'cols' ? '列' : '行' }}的按钮。
     </p>
 
-    <Toggle v-model="board.trackpad" label="Trackpad" hint="Show a trackpad beside the keys, for moving the pointer while you hold them." />
+    <Toggle v-model="board.trackpad" label="触控板" hint="在按键旁显示触控板，方便在按住按键时移动指针。" />
 
     <div v-if="keyboards.boards.length > 1" class="flex gap-2 py-3">
       <button type="button" class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-surface-2 text-[14px] disabled:opacity-40" :disabled="index <= 0" @click="move(-1)">
-        <ArrowLeft :size="16" /> Move left
+        <ArrowLeft :size="16" /> 左移
       </button>
       <button type="button" class="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-surface-2 text-[14px] disabled:opacity-40" :disabled="index < 0 || index >= keyboards.boards.length - 1" @click="move(1)">
-        Move right <ArrowRight :size="16" />
+        右移 <ArrowRight :size="16" />
       </button>
     </div>
 
@@ -113,7 +113,7 @@ function duplicate() {
         :disabled="keyboards.boards.length >= LIMITS.boards"
         @click="duplicate"
       >
-        <Copy :size="16" /> Duplicate
+        <Copy :size="16" /> 复制
       </button>
       <button
         v-if="keyboards.boards.length > 1"
@@ -123,10 +123,10 @@ function duplicate() {
         @click="confirming ? emit('remove') : (confirming = true)"
       >
         <Trash2 :size="16" />
-        {{ confirming ? 'Tap again to delete' : 'Delete' }}
+        {{ confirming ? '再次点按以删除' : '删除' }}
       </button>
     </div>
 
-    <button type="button" class="mt-2 h-12 w-full rounded-2xl bg-accent text-[16px] font-semibold text-accent-text" @click="close">Done</button>
+    <button type="button" class="mt-2 h-12 w-full rounded-2xl bg-accent text-[16px] font-semibold text-accent-text" @click="close">完成</button>
   </Sheet>
 </template>

@@ -22,17 +22,17 @@ struct MenuBarIcon: View {
     }
 
     private var accessibilityLabel: String {
-        if !host.approvals.isEmpty { return "CmdPalm, a device is asking to pair" }
-        if !host.displayApprovals.isEmpty { return "CmdPalm, a device is asking to view the screen" }
+        if !host.approvals.isEmpty { return "CmdPalm，有设备请求配对" }
+        if !host.displayApprovals.isEmpty { return "CmdPalm，有设备请求查看屏幕" }
         switch host.status {
-        case .failed: return "CmdPalm, not running"
-        case .stopped: return "CmdPalm, stopped"
-        case .starting: return "CmdPalm, starting"
+        case .failed: return "CmdPalm，未运行"
+        case .stopped: return "CmdPalm，已停止"
+        case .starting: return "CmdPalm，正在启动"
         case .running: break
         }
-        if host.paused { return "CmdPalm, paused" }
-        if !permissions.canControl { return "CmdPalm, needs Accessibility permission" }
-        return host.connected.isEmpty ? "CmdPalm" : "CmdPalm, connected"
+        if host.paused { return "CmdPalm，已暂停" }
+        if !permissions.canControl { return "CmdPalm，需要辅助功能权限" }
+        return host.connected.isEmpty ? "CmdPalm" : "CmdPalm，已连接"
     }
 }
 
@@ -101,13 +101,13 @@ struct MenuPanel: View {
             Spacer(minLength: 8)
             if host.isRunning {
                 Toggle(isOn: Binding(get: { !host.paused }, set: { host.setPaused(!$0) })) {
-                    Text("Allow control")
+                    Text("允许控制")
                 }
                 .toggleStyle(.switch)
                 .labelsHidden()
                 .controlSize(.small)
-                .help(host.paused ? "Resume control and viewing from devices" : "Pause control and viewing from all devices")
-                .accessibilityLabel("Allow control and screen mirroring from devices")
+                .help(host.paused ? "恢复设备的控制和查看" : "暂停所有设备的控制和查看")
+                .accessibilityLabel("允许来自设备的控制和屏幕镜像")
             }
         }
     }
@@ -116,24 +116,24 @@ struct MenuPanel: View {
     private var alerts: some View {
         if !permissions.canControl {
             Callout(symbol: "hand.raised.fill", tint: .orange,
-                    title: "Allow CmdPalm to control this Mac",
-                    message: "Turn on CmdPalm in Privacy & Security → Accessibility.") {
-                Button("Open Settings") { permissions.requestControl() }
+                    title: "允许 CmdPalm 控制这台 Mac",
+                    message: "在“隐私与安全性 → 辅助功能”中打开 CmdPalm。") {
+                Button("打开设置") { permissions.requestControl() }
             }
         }
         if let version = updater.pendingVersion {
             Callout(symbol: "arrow.down.circle.fill", tint: .accentColor,
-                    title: "CmdPalm \(version) is available", message: nil) {
-                Button("Update") { updater.checkForUpdates() }
+                    title: "CmdPalm \(version) 可用", message: nil) {
+                Button("更新") { updater.checkForUpdates() }
             }
         }
         if let notice = host.notice, permissions.canControl {
             Callout(symbol: "info.circle.fill", tint: .secondary, title: notice, message: nil) {
-                Button("Dismiss") { host.notice = nil }
+                Button("忽略") { host.notice = nil }
             }
         }
         if host.preferredPortTaken, let port = host.port {
-            Label("Port \(String(host.preferences.port)) is in use by another app, so CmdPalm is using \(String(port)).",
+            Label("端口 \(String(host.preferences.port)) 已被其他应用占用，因此 CmdPalm 正在使用 \(String(port))。",
                   systemImage: "info.circle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -144,11 +144,11 @@ struct MenuPanel: View {
 
     private var devices: some View {
         VStack(alignment: .leading, spacing: 6) {
-            MenuSectionHeader(host.connected.count == 1 ? "Connected Device" : "Connected Devices") {
+            MenuSectionHeader(host.connected.count == 1 ? "已连接的设备" : "已连接的设备") {
                 Button {
                     showPairing.toggle()
                 } label: {
-                    Label(showPairing ? "Hide QR Code" : "Pair Another", systemImage: showPairing ? "chevron.up" : "plus")
+                    Label(showPairing ? "隐藏二维码" : "配对其他设备", systemImage: showPairing ? "chevron.up" : "plus")
                         .labelStyle(.titleAndIcon)
                 }
                 .buttonStyle(.borderless)
@@ -167,7 +167,7 @@ struct MenuPanel: View {
 
     private var pairing: some View {
         VStack(alignment: .leading, spacing: 8) {
-            MenuSectionHeader(host.connected.isEmpty ? "Connect a Device" : "Pair Another Device")
+            MenuSectionHeader(host.connected.isEmpty ? "连接设备" : "配对其他设备")
             PairingCard()
         }
     }
@@ -177,13 +177,13 @@ struct MenuPanel: View {
             Button {
                 SettingsWindowController.show()
             } label: {
-                MenuRowLabel(title: "Settings…", symbol: "gearshape", shortcut: "⌘,")
+                MenuRowLabel(title: "设置…", symbol: "gearshape", shortcut: "⌘,")
             }
             .keyboardShortcut(",")
             Button {
                 NSApp.terminate(nil)
             } label: {
-                MenuRowLabel(title: "Quit CmdPalm", symbol: "power", shortcut: "⌘Q")
+                MenuRowLabel(title: "退出 CmdPalm", symbol: "power", shortcut: "⌘Q")
             }
             .keyboardShortcut("q")
         }
@@ -192,15 +192,15 @@ struct MenuPanel: View {
 
     private var statusText: String {
         switch host.status {
-        case .starting: return "Starting…"
-        case .stopped: return "Off"
-        case .failed: return "Couldn’t start"
+        case .starting: return "正在启动…"
+        case .stopped: return "已关闭"
+        case .failed: return "无法启动"
         case .running:
-            if host.paused { return "Paused" }
+            if host.paused { return "已暂停" }
             switch host.connected.count {
-            case 0: return "Ready to connect"
-            case 1: return "\(host.connected[0].name) connected"
-            case let count: return "\(count) devices connected"
+            case 0: return "等待连接"
+            case 1: return "\(host.connected[0].name) 已连接"
+            case let count: return "\(count) 个设备已连接"
             }
         }
     }

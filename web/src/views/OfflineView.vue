@@ -10,7 +10,7 @@ import { deviceModel, lastHost } from '@/lib/device'
 
 const props = withDefaults(defineProps<{ patience?: number }>(), { patience: 2500 })
 
-const mac = computed(() => state.hostName || lastHost.get() || 'your Mac')
+const mac = computed(() => state.hostName || lastHost.get() || '你的 Mac')
 /** A moment to connect before saying the Mac can't be reached. */
 const waiting = ref(props.patience > 0)
 const phoneOnline = ref(navigator.onLine)
@@ -43,9 +43,9 @@ function retry() {
 }
 
 const checks = computed(() => [
-  { icon: Power, text: `${mac.value} is on and awake` },
-  { icon: AppWindowMac, text: 'CmdPalm is running in its menu bar' },
-  { icon: Wifi, text: `This ${deviceModel()} is on the same Wi-Fi` },
+  { icon: Power, text: `${mac.value} 已开机并处于唤醒状态` },
+  { icon: AppWindowMac, text: 'CmdPalm 正在菜单栏中运行' },
+  { icon: Wifi, text: `这台 ${deviceModel()} 连接的是同一个 Wi-Fi` },
 ])
 </script>
 
@@ -73,19 +73,19 @@ const checks = computed(() => [
 
       <Transition name="fade" mode="out-in">
         <div v-if="connecting" key="connecting" class="flex flex-col items-center">
-          <h1 class="text-[22px] font-semibold tracking-tight">Connecting to {{ mac }}…</h1>
-          <p class="mt-2 text-[15px] text-muted">This only takes a moment.</p>
+          <h1 class="text-[22px] font-semibold tracking-tight">正在连接到 {{ mac }}…</h1>
+          <p class="mt-2 text-[15px] text-muted">只需片刻。</p>
         </div>
 
         <div v-else key="offline" class="flex w-full flex-col items-center">
           <h1 class="text-[24px] font-semibold tracking-tight">
-            {{ phoneOnline ? `Can’t reach ${mac}` : 'This phone is offline' }}
+            {{ phoneOnline ? `无法连接到 ${mac}` : '此手机处于离线状态' }}
           </h1>
           <p class="mt-2 max-w-xs text-[15px] leading-relaxed text-muted">
             {{
               phoneOnline
-                ? 'It may be asleep, turned off or on another network. CmdPalm connects again by itself as soon as it’s back.'
-                : `Join the Wi-Fi network your Mac is on. CmdPalm connects again by itself once this ${deviceModel()} is back online.`
+                ? '它可能处于睡眠、关机状态，或连接到了其他网络。Mac 恢复后 CmdPalm 会自动重新连接。'
+                : `请连接到 Mac 所在的 Wi-Fi。此 ${deviceModel()} 恢复联网后，CmdPalm 会自动重新连接。`
             }}
           </p>
 
@@ -104,10 +104,10 @@ const checks = computed(() => [
             @click="retry"
           >
             <RefreshCw :size="18" :class="retrying && 'animate-spin'" />
-            Try again
+            重试
           </button>
           <button type="button" class="mt-2 h-11 w-full rounded-2xl text-[15px] font-medium text-accent" @click="disconnect(true)">
-            Pair with another Mac
+            与其他 Mac 配对
           </button>
         </div>
       </Transition>
@@ -115,7 +115,7 @@ const checks = computed(() => [
 
     <p v-if="!connecting" class="safe-bottom relative flex items-center gap-2 pb-6 text-[13px] text-faint">
       <span class="size-1.5 animate-pulse rounded-full bg-warn" />
-      Trying to reconnect
+      正在尝试重新连接
     </p>
   </div>
 </template>

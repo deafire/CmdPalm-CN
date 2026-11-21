@@ -58,7 +58,7 @@ final class DisplayService: Sendable {
         switch command {
         case let .start(generation, _, _, _, _, _, _, _):
             guard gate.begin(generation) else {
-                reference.host?.displayFailed(session: session, generation: generation, message: "Unlock or wake the Mac, then start viewing again.")
+                reference.host?.displayFailed(session: session, generation: generation, message: "请先解锁或唤醒 Mac，然后重新开始查看。")
                 return
             }
         case let .stop(generation): gate.end(generation)
@@ -96,7 +96,7 @@ private actor DisplayController {
         switch command {
         case let .list(requestId):
             guard CGPreflightScreenCaptureAccess() else {
-                reference.host?.displaySources(session: session, requestId: requestId, displays: [], message: "Allow Screen Recording in CmdPalm Settings → General → Display on the Mac. macOS may ask you to reopen CmdPalm.")
+                reference.host?.displaySources(session: session, requestId: requestId, displays: [], message: "请在 Mac 上的 CmdPalm“设置 → 通用 → 屏幕镜像”中允许屏幕录制。macOS 可能会要求你重新打开 CmdPalm。")
                 return
             }
             do {
@@ -105,11 +105,11 @@ private actor DisplayController {
                 let displays = content.displays.filter { CGDisplayMirrorsDisplay($0.displayID) == kCGNullDirectDisplay }.compactMap { display -> DisplayInfo? in
                     guard let id = Self.identifier(display.displayID) else { return nil }
                     let pixels = DisplayVideo.sourcePixels(display)
-                    return DisplayInfo(id: id, name: names[display.displayID] ?? "Display", width: UInt32(pixels.width), height: UInt32(pixels.height), main: display.displayID == CGMainDisplayID())
+                    return DisplayInfo(id: id, name: names[display.displayID] ?? "显示器", width: UInt32(pixels.width), height: UInt32(pixels.height), main: display.displayID == CGMainDisplayID())
                 }.sorted { $0.main && !$1.main || $0.main == $1.main && $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-                reference.host?.displaySources(session: session, requestId: requestId, displays: displays, message: displays.isEmpty ? "No display is available. Wake or connect a display, then refresh." : nil)
+                reference.host?.displaySources(session: session, requestId: requestId, displays: displays, message: displays.isEmpty ? "没有可用的屏幕。请唤醒或连接屏幕后刷新。" : nil)
             } catch {
-                reference.host?.displaySources(session: session, requestId: requestId, displays: [], message: (error as? DisplayError)?.message ?? "The Mac could not list its displays. Check Screen Recording permission, then refresh.")
+                reference.host?.displaySources(session: session, requestId: requestId, displays: [], message: (error as? DisplayError)?.message ?? "Mac 无法列出屏幕。请检查屏幕录制权限后刷新。")
             }
         case let .start(generation, displayId, maxDimension, fps, bitrate, original, patches, profile):
             guard gate.contains(generation) else { return }
@@ -170,7 +170,7 @@ private actor DisplayController {
                 await created.stop()
             }
             guard ticket == revision, gate.contains(config.generation) else { return }
-            reference.host?.displayFailed(session: config.session, generation: config.generation, message: (error as? DisplayError)?.message ?? "Screen capture stopped. Check Screen Recording permission and the selected display, then try again.")
+            reference.host?.displayFailed(session: config.session, generation: config.generation, message: (error as? DisplayError)?.message ?? "屏幕捕获已停止。请检查屏幕录制权限和所选屏幕后重试。")
         }
     }
 
@@ -192,7 +192,7 @@ private actor DisplayController {
             let content = try await shareableContent()
             guard gate.contains(config.generation) else { return }
             guard let display = content.displays.first(where: { Self.identifier($0.displayID) == config.id }) else {
-                reference.host?.displayFailed(session: config.session, generation: config.generation, message: "The selected display was disconnected. Refresh the display list and choose another.")
+                reference.host?.displayFailed(session: config.session, generation: config.generation, message: "所选屏幕已断开连接。请刷新屏幕列表并选择其他屏幕。")
                 return
             }
             let pixels = DisplayVideo.sourcePixels(display)
@@ -200,7 +200,7 @@ private actor DisplayController {
                 await start(config)
             }
         } catch {
-            reference.host?.displayFailed(session: config.session, generation: config.generation, message: "The display configuration changed. Refresh the display list and try again.")
+            reference.host?.displayFailed(session: config.session, generation: config.generation, message: "屏幕配置已更改。请刷新屏幕列表后重试。")
         }
     }
 
@@ -313,10 +313,10 @@ private enum DisplayError: Error {
     case permission, missing, encoder, busy
     var message: String {
         switch self {
-        case .permission: "Allow Screen Recording in CmdPalm Settings → General → Display on the Mac, then reopen CmdPalm if macOS asks."
-        case .missing: "The selected display is no longer available. Refresh the display list and choose another."
-        case .encoder: "Hardware video encoding is unavailable. Stop other screen-sharing or recording sessions, then try again."
-        case .busy: "The Mac is still preparing its display list. Try again in a moment."
+        case .permission: "请在 Mac 上的 CmdPalm“设置 → 通用 → 屏幕镜像”中允许屏幕录制。如果 macOS 提示，请重新打开 CmdPalm。"
+        case .missing: "所选屏幕已不可用。请刷新屏幕列表并选择其他屏幕。"
+        case .encoder: "硬件视频编码不可用。请停止其他屏幕共享或录制会话后重试。"
+        case .busy: "Mac 正在准备屏幕列表，请稍后重试。"
         }
     }
 }
@@ -783,7 +783,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         switch status {
         case .complete, .started: break
         case .blank, .suspended, .stopped:
-            fail("The selected display is no longer available. Wake or unlock the Mac, then start viewing again.")
+            fail("所选屏幕已不可用。请唤醒或解锁 Mac，然后重新开始查看。")
             return
         default: return
         }
@@ -863,7 +863,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         }
 
         guard let png = autoreleasepool(invoking: { DisplayVideo.png(image, crop: crop) }) else {
-            fail("The HD picture could not be prepared. Try Sharper text or start viewing again.")
+            fail("无法准备高清文字。请尝试“更清晰的文字”或重新开始查看。")
             return nil
         }
         guard gate.contains(generation) else { return nil }
@@ -878,7 +878,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
         } else {
             return nil
         }
-        guard payload.count <= 16 * 1024 * 1024 else { fail("This HD picture is too large. Choose Sharper text for this screen content."); return nil }
+        guard payload.count <= 16 * 1024 * 1024 else { fail("此高清文字过大。对于当前屏幕内容，请选择“更清晰的文字”。"); return nil }
         return (payload, sendFull)
     }
 
@@ -923,7 +923,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             duration: .invalid, frameProperties: options, sourceFrameRefcon: nil, infoFlagsOut: nil)
         if result != noErr {
             flags.withLock { $0.encoding = false; $0.refinementInFlight = false }
-            fail("Hardware video encoding stopped. Try starting the view again.")
+            fail("硬件视频编码已停止。请重新开始查看。")
         }
     }
 
@@ -945,7 +945,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             }
         }
         guard gate.contains(generation), !flags.withLock({ $0.stopped }) else { return }
-        guard status == noErr else { fail("Hardware video encoding stopped. Try starting the view again."); return }
+        guard status == noErr else { fail("硬件视频编码已停止。请重新开始查看。"); return }
         if infoFlags.contains(.frameDropped) {
             // The encoder maintains its own reference chain for intentional
             // rate-control drops. A requested IDR is retried as one; any other
@@ -975,7 +975,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             }
         }
         let length = CMBlockBufferGetDataLength(block)
-        guard length > 0, length <= 1024 * 1024 else { fail("This frame could not be streamed at the selected quality. Choose Save battery and try again."); return }
+        guard length > 0, length <= 1024 * 1024 else { fail("无法以所选画质传输此画面。请选择“省电”后重试。"); return }
         let seconds = CMTimeGetSeconds(sample.presentationTimeStamp)
         guard seconds.isFinite, seconds >= 0 else { requestKeyframe(); return }
         var lengthAtOffset = 0
@@ -993,7 +993,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
             annexB = copied == noErr ? DisplayVideo.annexB(data, headerLength: Int(headerLength), parameters: parameters) : nil
         }
         guard let annexB else { requestKeyframe(); return }
-        guard annexB.count <= 1024 * 1024 else { fail("This frame could not be streamed at the selected quality. Choose Save battery and try again."); return }
+        guard annexB.count <= 1024 * 1024 else { fail("无法以所选画质传输此画面。请选择“省电”后重试。"); return }
         if !sendFrame(annexB, UInt64(seconds * 1_000_000), keyframe) {
             requestKeyframe()
         } else {
@@ -1024,7 +1024,7 @@ final class DisplayCapture: NSObject, SCStreamOutput, SCStreamDelegate, @uncheck
     }
 
     func stream(_ stream: SCStream, didStopWithError error: Error) {
-        if !flags.withLock({ $0.stopped }) { fail("Screen capture stopped. Wake the selected display and check Screen Recording permission, then try again.") }
+        if !flags.withLock({ $0.stopped }) { fail("屏幕捕获已停止。请唤醒所选屏幕并检查屏幕录制权限后重试。") }
     }
 
     private func fail(_ message: String) {

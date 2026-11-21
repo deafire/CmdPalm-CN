@@ -157,12 +157,12 @@ function pasteFromPhone() {
 }
 
 const arrows = [
-  { code: Key.Left, icon: ArrowLeft, label: 'Left' },
-  { code: Key.Down, icon: ArrowDown, label: 'Down' },
-  { code: Key.Up, icon: ArrowUp, label: 'Up' },
-  { code: Key.Right, icon: ArrowRight, label: 'Right' },
-  { code: Key.Delete, icon: Delete, label: 'Delete' },
-  { code: Key.Return, icon: CornerDownLeft, label: 'Return' },
+  { code: Key.Left, icon: ArrowLeft, label: '左' },
+  { code: Key.Down, icon: ArrowDown, label: '下' },
+  { code: Key.Up, icon: ArrowUp, label: '上' },
+  { code: Key.Right, icon: ArrowRight, label: '右' },
+  { code: Key.Delete, icon: Delete, label: '删除' },
+  { code: Key.Return, icon: CornerDownLeft, label: '回车' },
 ]
 
 const fingers = useHeldPointers(keyUp)
@@ -223,7 +223,7 @@ defineExpose({ focus: () => field.value?.focus() })
       <div v-if="voice.active || voice.partial || voice.error" class="flex items-center gap-2 px-3 pt-2.5 text-[13px]" aria-live="polite">
         <span v-if="voice.active" class="size-2 shrink-0 rounded-full bg-bad" :style="{ transform: `scale(${1 + voice.level * 2.5})` }" />
         <span v-if="voice.error" class="text-bad">{{ voice.error }}</span>
-        <span v-else class="truncate text-muted">{{ voice.partial || 'Listening…' }}</span>
+        <span v-else class="truncate text-muted">{{ voice.partial || '正在聆听…' }}</span>
       </div>
       <textarea
         ref="field"
@@ -234,9 +234,9 @@ defineExpose({ focus: () => field.value?.focus() })
         autocapitalize="sentences"
         autocomplete="off"
         spellcheck="true"
-        :placeholder="live ? 'Type here — it appears on the Mac as you type' : 'Type, then send to the Mac'"
+        :placeholder="live ? '在此输入，文字会同步显示在 Mac 上' : '输入后发送到 Mac'"
         class="block max-h-40 min-h-16 w-full resize-none bg-transparent px-3 py-2.5 text-[16px] leading-snug outline-none placeholder:text-faint"
-        aria-label="Text to type on the Mac"
+        aria-label="要在 Mac 上输入的文本"
         @input="syncLive"
         @beforeinput="onBeforeInput"
         @keydown="onKeydown"
@@ -252,18 +252,18 @@ defineExpose({ focus: () => field.value?.focus() })
           :aria-pressed="live"
           @click="toggleLive"
         >
-          Live
+          实时
         </button>
         <button
           v-if="canPaste"
           type="button"
           class="grid size-8 place-items-center rounded-full text-muted"
-          aria-label="Paste the phone clipboard on the Mac"
+          aria-label="将手机剪贴板内容粘贴到 Mac"
           @click="pasteFromPhone"
         >
           <ClipboardPaste :size="17" />
         </button>
-        <button v-if="text" type="button" class="grid size-8 place-items-center rounded-full text-muted" aria-label="Clear the field (keeps the Mac’s text)" @click="reset">
+        <button v-if="text" type="button" class="grid size-8 place-items-center rounded-full text-muted" aria-label="清空输入框（保留 Mac 上的文本）" @click="reset">
           <Eraser :size="17" />
         </button>
         <span class="flex-1" />
@@ -272,7 +272,7 @@ defineExpose({ focus: () => field.value?.focus() })
           type="button"
           class="grid size-9 place-items-center rounded-full transition-colors"
           :class="voice.active ? 'bg-bad text-white' : 'bg-surface-3 text-text'"
-          :aria-label="voice.active ? 'Stop dictation' : 'Dictate'"
+          :aria-label="voice.active ? '停止听写' : '听写'"
           @click="toggleVoice"
         >
           <Square v-if="voice.active" :size="14" fill="currentColor" />
@@ -283,7 +283,7 @@ defineExpose({ focus: () => field.value?.focus() })
           type="button"
           class="grid size-9 place-items-center rounded-full bg-accent text-accent-text disabled:opacity-40"
           :disabled="!text"
-          aria-label="Type on the Mac"
+          aria-label="在 Mac 上输入"
           @click="submit()"
         >
           <Send :size="17" />

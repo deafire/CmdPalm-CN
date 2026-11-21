@@ -16,7 +16,7 @@ let releasedTimer: ReturnType<typeof setTimeout> | undefined
 
 export function explainPermission() {
   notify(
-    'CmdPalm needs Accessibility permission to control the Mac. On the Mac, turn on CmdPalm in System Settings → Privacy & Security → Accessibility.',
+    'CmdPalm 需要辅助功能权限才能控制 Mac。请在 Mac 的“系统设置 → 隐私与安全性 → 辅助功能”中开启 CmdPalm。',
     'warning',
     'permission',
   )
@@ -26,7 +26,7 @@ export function explainPermission() {
 export function panic() {
   releaseHardwareKeys()
   releaseAll()
-  notify('Released all keys and buttons on the Mac.', 'info', 'release')
+  notify('已释放 Mac 上的所有按键和按钮。', 'info', 'release')
   released.value = true
   clearTimeout(releasedTimer)
   releasedTimer = setTimeout(() => (released.value = false), 1200)

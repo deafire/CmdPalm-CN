@@ -110,21 +110,21 @@ describe('DeckView', () => {
     field.value = 'My saved label'
     field.dispatchEvent(new Event('input'))
     await nextTick()
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await nextTick()
-    expect(dialogButton('Saving…').disabled).toBe(true)
+    expect(dialogButton('保存中…').disabled).toBe(true)
     const id = socket.sent.filter((m) => m.t === 'deckSave').at(-1)!.id
     socket.receive({ t: 'deckSaved', id, ok: false, revision: 0, message: 'The Mac could not save the deck.' })
     await nextTick()
     expect(document.querySelector<HTMLInputElement>('[role="dialog"] input')!.value).toBe('My saved label')
     socket.acceptDeckSaves = true
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await flushPromises()
     expect(document.querySelector('[role="dialog"]')).toBeNull()
     expect(conn.state.deck?.pages[0]?.tiles[0]?.label).toBe('My saved label')
-    expect(view.find('button[aria-label="Undo last Deck edit"]').attributes('disabled')).toBeUndefined()
+    expect(view.find('button[aria-label="撤销上次的快捷面板编辑"]').attributes('disabled')).toBeUndefined()
     const activation = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
-    view.find('button[aria-label="Undo last Deck edit"]').element.dispatchEvent(activation)
+    view.find('button[aria-label="撤销上次的快捷面板编辑"]').element.dispatchEvent(activation)
     await flushPromises()
     expect(activation.defaultPrevented).toBe(true)
     expect(conn.state.deck?.pages[0]?.tiles[0]?.label).toBe('Mute')
@@ -133,7 +133,7 @@ describe('DeckView', () => {
 
   it('cancels a local drag when a newer deck arrives', async () => {
     const { socket, view } = await deckView('essentials')
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     const mute = tile('Mute')
     const play = tile('Play / Pause')
     Object.defineProperty(document, 'elementsFromPoint', { configurable: true, value: () => [play] })
@@ -170,10 +170,10 @@ describe('DeckView', () => {
     await nextTick()
     expect(socket.sent.filter((m) => m.t === 'action')).toMatchObject([{ action: { kind: 'app', id: 'com.apple.Safari' } }])
 
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     tile('Mute').dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
     await nextTick()
-    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('Edit button')
+    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('编辑按钮')
     view.unmount()
   })
 
@@ -186,13 +186,13 @@ describe('DeckView', () => {
     await nextTick()
     expect(settings.deckPage).toBe('apps')
     const field = document.querySelector<HTMLInputElement>('[role="dialog"] input')!
-    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('Edit button')
+    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('编辑按钮')
     expect(field.value).toBe('My Button')
 
     field.value = 'Safari'
     field.dispatchEvent(new Event('input'))
     await nextTick()
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await nextTick()
     const saved = socket.sent.filter((m) => m.t === 'deckSave').at(-1) as { deck: typeof deck } | undefined
     expect(saved?.deck.pages.map((p) => p.tiles.map((t) => t.label))).toEqual([
@@ -204,9 +204,9 @@ describe('DeckView', () => {
 
   it('stays on the selected page when a new page could not be saved', async () => {
     const { socket, settings, view } = await deckView('apps')
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     socket.readyState = FakeSocket.CLOSED
-    await view.find('button[aria-label="Add page"]').trigger('click')
+    await view.find('button[aria-label="添加页面"]').trigger('click')
     expect(settings.deckPage).toBe('apps')
     expect(view.findAll('[role="tab"]').map((t) => t.text())).toEqual(['Essentials', 'Apps'])
     expect(document.querySelector('[role="dialog"]')).toBeNull()
@@ -243,7 +243,7 @@ describe('DeckView', () => {
 
   it('saves page-tab order to the Mac while keeping the selected page', async () => {
     const { socket, settings, view } = await deckView('apps')
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     await view.find('[data-group-id="apps"]').trigger('keydown', { key: 'ArrowLeft', altKey: true })
     const saved = socket.sent.filter((m) => m.t === 'deckSave') as { deck: typeof deck }[]
     expect(saved).toHaveLength(1)
@@ -267,7 +267,7 @@ describe('DeckView', () => {
     field.value = 'Safari'
     field.dispatchEvent(new Event('input'))
     await nextTick()
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await nextTick()
     const saved = socket.sent.filter((m) => m.t === 'deckSave').at(-1) as { deck: typeof deck } | undefined
     expect(saved?.deck.pages[1]?.tiles.map((t) => t.label)).toEqual(['Safari', 'Finder'])
@@ -282,9 +282,9 @@ describe('DeckView', () => {
     pointer(target, 'pointerup')
     await nextTick()
     socket.readyState = FakeSocket.CLOSED
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await nextTick()
-    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('Edit button')
+    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('编辑按钮')
     view.unmount()
   })
 
@@ -299,7 +299,7 @@ describe('DeckView', () => {
     field.value = 'Safari'
     field.dispatchEvent(new Event('input'))
     await nextTick()
-    dialogButton('Duplicate').click()
+    dialogButton('复制').click()
     await nextTick()
     const saved = socket.sent.filter((m) => m.t === 'deckSave').at(-1) as { deck: typeof deck } | undefined
     const tiles = saved?.deck.pages[1]?.tiles ?? []
@@ -310,7 +310,7 @@ describe('DeckView', () => {
 
   it('saves a reorder when Done is tapped before the dragging finger lifts', async () => {
     const { socket, view } = await deckView('essentials')
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     const mute = tile('Mute')
     const play = tile('Play / Pause')
     Object.defineProperty(document, 'elementsFromPoint', { configurable: true, value: () => [play] })
@@ -319,7 +319,7 @@ describe('DeckView', () => {
     at('pointerdown', 0)
     at('pointermove', 40)
     await nextTick()
-    await view.findAll('button').find((b) => b.text() === 'Done')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '完成')!.trigger('click')
     at('pointerup', 40)
     await nextTick()
     Reflect.deleteProperty(document, 'elementsFromPoint')
@@ -330,9 +330,9 @@ describe('DeckView', () => {
 
   it('closes the page editor when another device deletes the page', async () => {
     const { socket, view } = await deckView('apps')
-    await view.findAll('button').find((b) => b.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '编辑')!.trigger('click')
     await view.findAll('[role="tab"]').find((t) => t.text().includes('Apps'))!.trigger('click')
-    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('Page')
+    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('页面')
     socket.receive({ t: 'deck', deck: { ...deck, pages: [deck.pages[0]] } })
     await nextTick()
     expect(document.querySelector('[role="dialog"]')).toBeNull()
@@ -375,13 +375,13 @@ describe('DeckView', () => {
 
     // First Save keeps the draft open as a new button and warns that its page was
     // removed; saving again appends a fresh button without overwriting Existing.
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await flushPromises()
-    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('New button')
+    expect(document.querySelector('[role="dialog"]')?.getAttribute('aria-label')).toBe('新建按钮')
     expect(socket.sent.filter((m) => m.t === 'deckSave')).toEqual([])
-    expect(conn.state.notices.at(-1)?.message).toContain('page was deleted')
+    expect(conn.state.notices.at(-1)?.message).toContain('此按钮所在的页面已在另一台设备上删除')
 
-    dialogButton('Add').click()
+    dialogButton('添加').click()
     await flushPromises()
     expect(document.querySelector('[role="dialog"]')).toBeNull()
     const saved = socket.sent.filter((m) => m.t === 'deckSave') as { deck: typeof deck }[]
@@ -396,7 +396,7 @@ describe('DeckView', () => {
     vi.advanceTimersByTime(600)
     pointer(mute, 'pointerup')
     await nextTick()
-    dialogButton('Save').click()
+    dialogButton('保存').click()
     await flushPromises()
     expect(document.querySelector('[role="dialog"]')).toBeNull()
     expect(socket.sent.filter((m) => m.t === 'deckSave')).toHaveLength(1)

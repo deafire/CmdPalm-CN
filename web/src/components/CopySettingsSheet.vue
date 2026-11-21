@@ -18,8 +18,8 @@ onMounted(listDevices)
 onBeforeUnmount(cancelCopy)
 
 function icon(model: string) {
-  if (/iPad|tablet/i.test(model)) return Tablet
-  if (/iPhone|iPod|phone/i.test(model)) return Smartphone
+  if (/iPad|tablet|平板/i.test(model)) return Tablet
+  if (/iPhone|iPod|phone|手机/i.test(model)) return Smartphone
   return MonitorSmartphone
 }
 
@@ -50,24 +50,24 @@ function selectAll() {
 </script>
 
 <template>
-  <Sheet title="Copy from device" @close="emit('close')">
+  <Sheet title="从设备复制" @close="emit('close')">
     <template v-if="chosen">
-      <button type="button" class="mb-3 flex min-h-10 items-center gap-1.5 text-[14px] font-medium text-muted" @click="back"><ArrowLeft :size="16" /> Devices</button>
-      <p class="text-[16px] font-semibold break-words">Choose what to copy from {{ chosen.name }}</p>
-      <p class="mt-1.5 text-[14px] leading-snug text-muted">Only your selection changes here. Everything else in your setup stays as it is.</p>
+      <button type="button" class="mb-3 flex min-h-10 items-center gap-1.5 text-[14px] font-medium text-muted" @click="back"><ArrowLeft :size="16" /> 设备</button>
+      <p class="text-[16px] font-semibold break-words">选择要从 {{ chosen.name }} 复制的内容</p>
+      <p class="mt-1.5 text-[14px] leading-snug text-muted">仅更改你选择的内容，其余设置保持不变。</p>
 
       <div v-if="copier.copying" class="flex items-center justify-center gap-3 py-10 text-muted" aria-live="polite">
-        <LoaderCircle :size="20" class="animate-spin" /> Reading saved setup…
+        <LoaderCircle :size="20" class="animate-spin" /> 正在读取已保存的设置…
       </div>
       <div v-else-if="!preview" class="py-6 text-center">
-        <p class="text-[14px] text-muted">Couldn’t read this device’s setup. Check the connection and try again.</p>
-        <button type="button" class="action mt-4 w-full" @click="choose(chosen)">Try again</button>
+        <p class="text-[14px] text-muted">无法读取此设备的设置。请检查连接后重试。</p>
+        <button type="button" class="action mt-4 w-full" @click="choose(chosen)">重试</button>
       </div>
       <template v-else>
         <div class="mt-3 flex min-h-10 items-center justify-between">
-          <span class="text-[13px] text-muted">{{ selectedCount ? `${selectedCount} selected` : 'Select the items you need' }}</span>
+          <span class="text-[13px] text-muted">{{ selectedCount ? `已选择 ${selectedCount} 项` : '选择需要的项目' }}</span>
           <button v-if="available.length || preview.keyboards.length" type="button" class="px-2 py-2 text-[13px] font-medium text-accent" @click="selectAll">
-            {{ selectedCount === available.length + preview.keyboards.length ? 'Deselect all' : 'Select all' }}
+            {{ selectedCount === available.length + preview.keyboards.length ? '取消全选' : '全选' }}
           </button>
         </div>
         <div v-if="available.length" class="rounded-2xl bg-surface-2 px-4">
@@ -81,49 +81,49 @@ function selectAll() {
         </div>
 
         <template v-if="preview.keyboards.length">
-          <p class="mt-5 text-[15px] font-semibold">Custom keyboards</p>
-          <p class="mt-1 mb-3 text-[13px] leading-snug text-muted">New keyboards are added. Previously copied keyboards are updated in place; other keyboards stay here.</p>
+          <p class="mt-5 text-[15px] font-semibold">自定义键盘</p>
+          <p class="mt-1 mb-3 text-[13px] leading-snug text-muted">将添加新键盘，已复制过的键盘会就地更新，其他键盘保持不变。</p>
           <div class="rounded-2xl bg-surface-2 px-4">
             <label v-for="board in preview.keyboards" :key="board.id" class="choice border-t border-line first:border-t-0">
               <span class="min-w-0 flex-1">
                 <span class="block text-[15px] font-medium break-words">{{ board.name }}</span>
-                <span class="block text-[13px] text-muted">{{ keyboards.boards.some((b) => b.id === board.id) ? 'Update existing' : 'Add keyboard' }} · {{ board.cols }} × {{ board.rows }} · {{ board.keys.length }} {{ board.keys.length === 1 ? 'key' : 'keys' }}</span>
+                <span class="block text-[13px] text-muted">{{ keyboards.boards.some((b) => b.id === board.id) ? '更新现有' : '添加键盘' }} · {{ board.cols }} × {{ board.rows }} · {{ board.keys.length }} 个按键</span>
               </span>
-              <input v-model="boards" type="checkbox" :value="board.id" :aria-label="`Copy ${board.name}`" />
+              <input v-model="boards" type="checkbox" :value="board.id" :aria-label="`复制 ${board.name}`" />
             </label>
           </div>
         </template>
-        <p class="mt-4 text-[13px] leading-snug text-muted">Deck pages and buttons are already shared by all devices paired with this Mac. They don’t need to be copied.</p>
-        <p v-if="!available.length && !preview.keyboards.length" class="py-4 text-[14px] text-muted">No saved options to copy from this device.</p>
+        <p class="mt-4 text-[13px] leading-snug text-muted">快捷面板的页面和按钮已与此 Mac 配对的所有设备共享，无需复制。</p>
+        <p v-if="!available.length && !preview.keyboards.length" class="py-4 text-[14px] text-muted">此设备没有可复制的已保存选项。</p>
         <div class="sticky -bottom-5 -mx-5 mt-4 bg-surface px-5 pt-2 pb-5">
-          <button type="button" class="action w-full bg-accent! text-accent-text!" :disabled="!selectedCount" @click="copySelected">Copy selected</button>
+          <button type="button" class="action w-full bg-accent! text-accent-text!" :disabled="!selectedCount" @click="copySelected">复制所选</button>
         </div>
       </template>
     </template>
 
     <div v-else-if="copier.loading" class="flex flex-col items-center gap-3 py-10 text-muted" aria-live="polite">
       <LoaderCircle :size="24" class="animate-spin" />
-      <span class="text-[14px]">Looking for devices…</span>
+      <span class="text-[14px]">正在查找设备…</span>
     </div>
     <div v-else-if="copier.failed" class="py-8 text-center">
-      <p class="text-[15px] font-medium">Couldn’t get the list from the Mac.</p>
-      <p class="mt-1 text-[14px] text-muted">Check the connection, then try again.</p>
-      <button type="button" class="action mt-4 w-full" @click="listDevices">Try again</button>
+      <p class="text-[15px] font-medium">无法从 Mac 获取设备列表。</p>
+      <p class="mt-1 text-[14px] text-muted">请检查连接后重试。</p>
+      <button type="button" class="action mt-4 w-full" @click="listDevices">重试</button>
     </div>
     <div v-else-if="!copier.devices?.length" class="py-8 text-center">
       <MonitorSmartphone :size="30" class="mx-auto text-faint" />
-      <p class="mt-3 text-[15px] font-medium">No other devices to copy from</p>
-      <p class="mx-auto mt-1 max-w-xs text-[14px] leading-snug text-muted">Settings from your other phones and tablets appear here once they’ve connected to this Mac and changed a setting.</p>
+      <p class="mt-3 text-[15px] font-medium">没有其他可复制的设备</p>
+      <p class="mx-auto mt-1 max-w-xs text-[14px] leading-snug text-muted">其他手机和平板连接到此 Mac 并更改设置后，其设置会显示在此处。</p>
     </div>
     <template v-else>
-      <p class="pb-3 text-[14px] leading-snug text-muted">Choose a paired device, then select which settings or custom keyboards to copy.</p>
+      <p class="pb-3 text-[14px] leading-snug text-muted">选择一台已配对的设备，然后选择要复制的设置或自定义键盘。</p>
       <ul class="rounded-2xl bg-surface-2 px-4">
         <li v-for="device in copier.devices" :key="device.id" class="border-t border-line first:border-t-0">
           <button type="button" class="flex min-h-14 w-full items-center gap-3 py-2 text-left" @click="choose(device)">
             <component :is="icon(device.model)" :size="20" class="shrink-0 text-muted" />
             <span class="min-w-0 flex-1">
               <span class="block truncate text-[15px] font-medium">{{ device.name }}</span>
-              <span class="block truncate text-[13px] text-muted">{{ device.model }} · Updated {{ ago(device.updatedAt) }}</span>
+              <span class="block truncate text-[13px] text-muted">{{ device.model }} · 更新于 {{ ago(device.updatedAt) }}</span>
             </span>
             <ChevronRight :size="16" class="shrink-0 text-faint" />
           </button>

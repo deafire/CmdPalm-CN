@@ -11,7 +11,7 @@ struct PairingCard: View {
                     .frame(height: qrSize)
             } else if let pairing = host.pairing, host.isRunning {
                 QRCodeView(text: pairing.link, size: qrSize)
-                Text("Scan with your phone’s camera")
+                Text("用手机相机扫描")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 VStack(spacing: 0) {
@@ -42,7 +42,7 @@ private struct PinRow: View {
     var body: some View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
-                Text("Or enter this PIN")
+                Text("或输入此 PIN")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(Self.format(pin))
@@ -61,8 +61,8 @@ private struct PinRow: View {
                     .fontWeight(.medium)
             }
             .buttonStyle(.borderless)
-            .help("Make a new QR code and PIN")
-            .accessibilityLabel("New QR code and PIN")
+            .help("生成新的二维码和 PIN")
+            .accessibilityLabel("新的二维码和 PIN")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -77,7 +77,7 @@ private struct PinRow: View {
             .font(.caption.monospacedDigit())
             .foregroundStyle(.secondary)
             .frame(minWidth: 32, alignment: .trailing)
-            .help("The QR code and PIN change when this reaches zero.")
+            .help("倒计时归零后，二维码和 PIN 会更新。")
     }
 
     static func format(_ pin: String) -> String {
@@ -200,8 +200,8 @@ struct AddressRow: View {
                     .foregroundStyle(copied ? AnyShapeStyle(.green) : AnyShapeStyle(.secondary))
             }
             .buttonStyle(.borderless)
-            .help("Copy address")
-            .accessibilityLabel(copied ? "Copied" : "Copy address")
+            .help("复制地址")
+            .accessibilityLabel(copied ? "已复制" : "复制地址")
         }
     }
 }
@@ -234,14 +234,14 @@ struct LinkAddressPicker: View {
     }
 
     private var title: some View {
-        Text("QR link uses")
+        Text("二维码链接使用")
             .font(.caption.weight(.medium))
             .foregroundStyle(.secondary)
             .fixedSize()
     }
 
     private func picker(_ selection: Binding<Preferences.LinkAddress>) -> some View {
-        Picker("Address in the QR code", selection: selection) {
+        Picker("二维码中的地址", selection: selection) {
             ForEach(options) { option in
                 Text(option.title).tag(option)
             }
@@ -263,11 +263,11 @@ struct LinkAddressPicker: View {
     private var hint: String {
         switch preferences.linkAddress {
         case .hostName:
-            "Some Android phones can’t open .local names. If scanning doesn’t open CmdPalm, choose IP Address."
+            "部分 Android 手机无法打开 .local 名称。如果扫码后无法打开 CmdPalm，请选择“IP 地址”。"
         case .ipAddress:
-            "The IP address can change when this Mac rejoins the network. Mac Name keeps working."
+            "这台 Mac 重新连接网络后，IP 地址可能会变化。“Mac 名称”始终可用。"
         case .custom:
-            "Change the custom address in Settings → Phone Setup."
+            "在“设置 → 手机设置”中修改自定义地址。"
         }
     }
 }
@@ -290,9 +290,9 @@ private struct NoNetworkPlaceholder: View {
                 .symbolRenderingMode(.hierarchical)
                 .font(.title)
                 .foregroundStyle(.secondary)
-            Text("Not connected to a network")
+            Text("未连接到网络")
                 .font(.headline)
-            Text("Connect this Mac to Wi-Fi or Ethernet, and the QR code appears here.")
+            Text("将这台 Mac 连接到 Wi-Fi 或以太网，二维码就会显示在这里。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -310,28 +310,28 @@ struct ServerStatusPlaceholder: View {
             switch host.status {
             case .starting:
                 ProgressView().controlSize(.small)
-                Text("Starting…").foregroundStyle(.secondary)
+                Text("正在启动…").foregroundStyle(.secondary)
             case let .failed(message):
                 Image(systemName: "exclamationmark.triangle.fill")
                     .symbolRenderingMode(.hierarchical)
                     .font(.title)
                     .foregroundStyle(.orange)
-                Text("CmdPalm couldn’t start")
+                Text("CmdPalm 无法启动")
                     .font(.headline)
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                Button("Try Again") { host.restart() }
+                Button("重试") { host.restart() }
                     .controlSize(.small)
             case .stopped, .running:
                 Image(systemName: "pause.circle")
                     .symbolRenderingMode(.hierarchical)
                     .font(.title)
                     .foregroundStyle(.secondary)
-                Text("Not accepting connections").foregroundStyle(.secondary)
-                Button("Start") { host.start() }
+                Text("不接受连接").foregroundStyle(.secondary)
+                Button("启动") { host.start() }
                     .controlSize(.small)
             }
         }

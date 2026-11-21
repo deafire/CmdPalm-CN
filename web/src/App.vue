@@ -94,8 +94,8 @@ onMounted(() => {
             role="status"
           >
             <div>
-              <div class="text-[17px] font-semibold">Paused on the Mac</div>
-              <p class="mt-1 text-[14px] text-muted">Resume from the CmdPalm menu in the Mac’s menu bar.</p>
+              <div class="text-[17px] font-semibold">已在 Mac 上暂停</div>
+              <p class="mt-1 text-[14px] text-muted">在 Mac 菜单栏的 CmdPalm 菜单中恢复。</p>
             </div>
           </div>
           <OfflineView v-if="lost" :patience="0" class="absolute inset-0 z-20" />

@@ -12,24 +12,24 @@ const emit = defineEmits<{ settings: [] }>()
 <template>
   <!-- Landscape phones: status, sections and actions in one column, so the
        content gets the full height of the screen. -->
-  <nav class="side-rail no-scrollbar flex w-14 shrink-0 flex-col items-center overflow-y-auto py-2" aria-label="Sections">
+  <nav class="side-rail no-scrollbar flex w-14 shrink-0 flex-col items-center overflow-y-auto py-2" aria-label="分区">
     <div class="flex flex-col items-center gap-1 pb-1" :title="state.hostName">
       <span
         role="img"
         class="size-2 rounded-full transition-colors"
         :class="online ? 'bg-good' : 'animate-pulse bg-warn'"
-        :aria-label="online ? `Connected to ${state.hostName}` : 'Reconnecting'"
+        :aria-label="online ? `已连接到 ${state.hostName}` : '正在重新连接'"
       />
       <span class="text-[9px] leading-none text-faint tabular-nums">{{ online ? (state.latency ? `${state.latency}ms` : '') : '…' }}</span>
     </div>
-    <span v-if="state.paused" role="img" class="grid size-7 place-items-center rounded-full bg-warn/15 text-warn" aria-label="Paused on the Mac">
+    <span v-if="state.paused" role="img" class="grid size-7 place-items-center rounded-full bg-warn/15 text-warn" aria-label="已在 Mac 上暂停">
       <Pause :size="12" fill="currentColor" />
     </span>
     <button
       v-else-if="!state.features.permission"
       type="button"
       class="grid size-7 place-items-center rounded-full bg-bad/15 text-bad"
-      aria-label="CmdPalm needs Accessibility permission on the Mac"
+      aria-label="CmdPalm 需要 Mac 上的辅助功能权限"
       @click="explainPermission"
     >
       <ShieldAlert :size="14" />
@@ -38,7 +38,7 @@ const emit = defineEmits<{ settings: [] }>()
       v-if="stuck"
       type="button"
       class="mt-1 rounded-full bg-accent-soft px-1.5 py-1 text-[11px] font-semibold text-accent"
-      :aria-label="`Modifiers on: ${stuck}. Tap to turn off.`"
+      :aria-label="`已按下修饰键：${stuck}。点按以关闭。`"
       @click="modifiers.reset(true)"
     >
       {{ stuck }}
@@ -64,8 +64,8 @@ const emit = defineEmits<{ settings: [] }>()
       type="button"
       class="grid size-10 shrink-0 place-items-center rounded-full transition-[color,background-color,scale] duration-150 active:scale-90 active:bg-surface-3"
       :class="released ? 'bg-good/15 text-good' : 'text-muted'"
-      aria-label="Release all keys and buttons"
-      title="Release all keys and buttons"
+      aria-label="释放所有按键和按钮"
+      title="释放所有按键和按钮"
       @click="panic"
     >
       <Check v-if="released" :size="18" :stroke-width="2.4" />
@@ -74,7 +74,7 @@ const emit = defineEmits<{ settings: [] }>()
     <button
       type="button"
       class="grid size-10 shrink-0 place-items-center rounded-full text-muted transition-[scale] duration-150 active:scale-90 active:bg-surface-3"
-      aria-label="Settings"
+      aria-label="设置"
       @click="emit('settings')"
     >
       <Settings :size="18" />

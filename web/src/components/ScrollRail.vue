@@ -165,7 +165,7 @@ const listeners = {
     class="absolute inset-y-3 flex touch-none flex-col items-center justify-between rounded-full py-2 transition-colors"
     :class="active !== null ? 'bg-text/10' : 'bg-text/[0.05]'"
     :style="placement"
-    aria-label="Scroll strip"
+    aria-label="滚动条"
     v-on="listeners"
   >
     <ChevronUp :size="15" :stroke-width="2.2" class="shrink-0 text-text/30" />
@@ -177,7 +177,7 @@ const listeners = {
       class="pointer-events-auto absolute inset-x-0 top-1/2 flex h-28 max-h-full touch-none flex-col items-center justify-between rounded-full py-2"
       :class="[active !== null ? 'bg-text/10' : 'bg-text/[0.05] transition-[transform,background-color] duration-200']"
       :style="{ transform: `translateY(calc(-50% + ${offset}px))` }"
-      aria-label="Scroll strip"
+      aria-label="滚动条"
       v-on="listeners"
     >
       <ChevronUp :size="15" :stroke-width="2.2" class="shrink-0 transition-colors" :class="holding < 0 ? 'text-text/70' : 'text-text/30'" />

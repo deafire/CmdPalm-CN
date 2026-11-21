@@ -62,7 +62,7 @@ describe('ShortcutField', () => {
     await type('c')
     expect(model.value).toMatchObject({ code: Key.C, mods: 0 })
 
-    document.querySelector<HTMLButtonElement>('[aria-label="Command"]')!.click()
+    document.querySelector<HTMLButtonElement>('[aria-label="命令"]')!.click()
     await nextTick()
     await type('?')
     await type('c')
@@ -79,7 +79,7 @@ describe('BoardEditor', () => {
     name.dispatchEvent(new Event('input'))
     await nextTick()
     Array.from(document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button'))
-      .find((b) => b.textContent?.includes('Duplicate'))!
+      .find((b) => b.textContent?.includes('复制'))!
       .click()
     expect(board.name).toBe('WASD')
     expect(view.emitted('duplicate')).toHaveLength(1)
@@ -92,8 +92,8 @@ describe('action choices', () => {
     state.features.shell = false
     try {
       const view = mount(ActionEditor, { props: { modelValue: { kind: 'keys', code: Key.A, mods: 0 } } })
-      for (const label of ['Run Shortcut', 'Mouse click', 'Sequence', 'Wait']) expect(view.findAll('button').some(button => button.text() === label)).toBe(true)
-      expect(view.findAll('button').some(button => button.text() === 'Shell command')).toBe(false)
+      for (const label of ['运行快捷指令', '鼠标点击', '序列', '等待']) expect(view.findAll('button').some(button => button.text() === label)).toBe(true)
+      expect(view.findAll('button').some(button => button.text() === 'Shell 命令')).toBe(false)
     } finally { state.features.shell = previous }
   })
 
@@ -103,9 +103,9 @@ describe('action choices', () => {
     try {
       const view = mount(ActionEditor, { props: { modelValue: { kind: 'keys', code: Key.A, mods: 0 }, depth: LIMITS.depth - 1, exclude: ['delay'] } })
       const labels = view.findAll('button').map(button => button.text())
-      expect(labels).toContain('Shell command')
-      expect(labels).not.toContain('Sequence')
-      expect(labels).not.toContain('Wait')
+      expect(labels).toContain('Shell 命令')
+      expect(labels).not.toContain('序列')
+      expect(labels).not.toContain('等待')
     } finally { state.features.shell = previous }
   })
 })

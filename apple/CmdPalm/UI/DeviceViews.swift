@@ -16,21 +16,21 @@ enum DeviceText {
     /// timer to stay correct.
     static func connectedSince(_ date: Date, now: Date = .now, calendar: Calendar = .current) -> String {
         if calendar.isDate(date, inSameDayAs: now) {
-            return "Since \(date.formatted(date: .omitted, time: .shortened))"
+            return "自 \(date.formatted(date: .omitted, time: .shortened)) 起"
         }
-        return "Since \(date.formatted(.dateTime.month(.abbreviated).day()))"
+        return "自 \(date.formatted(.dateTime.month(.abbreviated).day())) 起"
     }
 
-    static let removeMessage = "It is disconnected and must pair again with a QR code, PIN or approval. Its phone settings kept on this Mac, such as custom keyboards and gestures, are deleted."
+    static let removeMessage = "该设备已断开连接，必须使用二维码、PIN 或批准重新配对。它在这台 Mac 上保存的手机设置（如自定义键盘和手势）将被删除。"
 
     @MainActor
     static func confirmRemove(_ device: TrustedDevice, host: HostController) {
         let alert = NSAlert()
-        alert.messageText = "Remove “\(device.name)”?"
+        alert.messageText = "移除“\(device.name)”？"
         alert.informativeText = removeMessage
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Remove Device").hasDestructiveAction = true
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: "移除设备").hasDestructiveAction = true
+        alert.addButton(withTitle: "取消")
         if AppActivation.shared.present({ alert.runModal() }) == .alertFirstButtonReturn {
             host.forget(device)
         }
@@ -70,7 +70,7 @@ struct ConnectedDeviceRow: View {
         HStack(spacing: 10) {
             ConnectedDeviceLabel(device: device)
                 .accessibilityElement(children: .combine)
-                .accessibilityAction(named: "Disconnect") { host.disconnect(device) }
+                .accessibilityAction(named: "断开") { host.disconnect(device) }
             Spacer(minLength: 4)
             Button {
                 host.disconnect(device)
@@ -83,8 +83,8 @@ struct ConnectedDeviceRow: View {
             .buttonStyle(.borderless)
             .focused($buttonFocused)
             .opacity(hovering || buttonFocused ? 1 : 0)
-            .help("Disconnect — the device can reconnect from the phone")
-            .accessibilityLabel("Disconnect \(device.name)")
+            .help("断开 — 设备可从手机重新连接")
+            .accessibilityLabel("断开 \(device.name)")
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
@@ -92,10 +92,10 @@ struct ConnectedDeviceRow: View {
         .background(HoverBackground(active: hovering))
         .onHover { hovering = $0 }
         .contextMenu {
-            Button("Disconnect") { host.disconnect(device) }
+            Button("断开") { host.disconnect(device) }
             if device.remembered, let trusted = host.trusted.first(where: { $0.id == device.deviceId }) {
                 Divider()
-                Button("Remove Device…") {
+                Button("移除设备…") {
                     // Let the context menu finish closing before the modal alert starts.
                     Task { @MainActor in DeviceText.confirmRemove(trusted, host: host) }
                 }
@@ -117,8 +117,8 @@ struct ConnectedDeviceLabel: View {
                     if device.secure {
                         Image(systemName: "lock.fill")
                             .imageScale(.small)
-                            .help("Encrypted connection")
-                            .accessibilityLabel("Encrypted")
+                            .help("加密连接")
+                            .accessibilityLabel("已加密")
                     }
                     Text(detail)
                 }
@@ -154,19 +154,19 @@ struct DisplayApprovalRow: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Allow “\(request.deviceName)” to view your Mac screen?", systemImage: "display")
+            Label("允许“\(request.deviceName)”查看这台 Mac 的屏幕？", systemImage: "display")
                 .font(inMenu ? .callout.weight(.semibold) : .headline)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("\(request.model.isEmpty ? "Device" : request.model) at \(request.address). Only approve a device you recognize.")
+            Text("来自 \(request.address) 的\(request.model.isEmpty ? "设备" : request.model)。只批准你认识的设备。")
                 .font(inMenu ? .caption : .callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(request.remembered ? "This paired device stays allowed until you revoke access in Devices." : "Access lasts for this connection only.")
+            Text(request.remembered ? "这台已配对设备将保持允许状态，直到你在“设备”中撤销访问权限。" : "访问权限仅在此次连接期间有效。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if !preferences.displayEnabled {
-                Text("Approving also turns on screen mirroring on this Mac.")
+                Text("批准也会在这台 Mac 上打开屏幕镜像。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -174,7 +174,7 @@ struct DisplayApprovalRow: View {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 8) {
                     if waitingCount > 0 {
-                        Text("\(waitingCount) more waiting")
+                        Text("还有 \(waitingCount) 个等待中")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: true, vertical: true)
@@ -190,7 +190,7 @@ struct DisplayApprovalRow: View {
                             .fixedSize(horizontal: true, vertical: true)
                     }
                     if waitingCount > 0 {
-                        Text("\(waitingCount) more waiting")
+                        Text("还有 \(waitingCount) 个等待中")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -202,9 +202,9 @@ struct DisplayApprovalRow: View {
     }
 
     @ViewBuilder private var actionButtons: some View {
-        Button("Don’t Allow") { host.respond(to: request, allow: false) }
+        Button("不允许") { host.respond(to: request, allow: false) }
             .keyboardShortcut(.cancelAction)
-        Button("Allow Screen Mirroring") { host.respond(to: request, allow: true) }
+        Button("允许屏幕镜像") { host.respond(to: request, allow: true) }
             .buttonStyle(.borderedProminent)
     }
 }
@@ -222,7 +222,7 @@ struct ApprovalRow: View {
                     .foregroundStyle(.tint)
                     .frame(width: 20)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("“\(request.deviceName)” wants to connect")
+                    Text("“\(request.deviceName)”请求连接")
                         .font(.callout.weight(.semibold))
                         .fixedSize(horizontal: false, vertical: true)
                     Text(detail)
@@ -232,8 +232,8 @@ struct ApprovalRow: View {
             }
             HStack(spacing: 8) {
                 Spacer()
-                Button("Don’t Allow") { host.respond(to: request, allow: false) }
-                Button("Allow") { host.respond(to: request, allow: true) }
+                Button("不允许") { host.respond(to: request, allow: false) }
+                Button("允许") { host.respond(to: request, allow: true) }
                     .buttonStyle(.borderedProminent)
             }
             .controlSize(.small)
@@ -244,7 +244,7 @@ struct ApprovalRow: View {
 
     private var detail: String {
         let parts = [request.model, request.address].filter { !$0.isEmpty }
-        let source = parts.isEmpty ? "" : parts.joined(separator: " · ") + ". "
-        return source + "Only allow devices you recognize."
+        let source = parts.isEmpty ? "" : parts.joined(separator: " · ") + "。"
+        return source + "只批准你认识的设备。"
     }
 }

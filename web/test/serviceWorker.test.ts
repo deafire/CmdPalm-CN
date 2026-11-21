@@ -566,7 +566,7 @@ describe('stale build reload guard', () => {
       await flushPromises()
       expect(attempts).toBe(3)
       // Fallback UI shows a visible Try again action while still disconnected.
-      expect(view.find('button').text()).toBe('Try again')
+      expect(view.find('button').text()).toBe('重试')
 
       // Even if state.status never left 'connected' during a brief Wi-Fi drop,
       // tapping Try again once connectivity returns loads the view immediately.
@@ -579,7 +579,7 @@ describe('stale build reload guard', () => {
       await flushPromises()
       await vi.advanceTimersByTimeAsync(4000)
       await flushPromises()
-      expect(manualView.find('button').text()).toBe('Try again')
+      expect(manualView.find('button').text()).toBe('重试')
 
       online = true
       await manualView.find('button').trigger('click')

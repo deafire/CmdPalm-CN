@@ -5,7 +5,7 @@ import { selectTab, TABS } from '@/lib/tabs'
 
 <template>
   <!-- The home indicator needs less room than the full inset reserves. -->
-  <nav class="tab-bar safe-x shrink-0 border-t border-line bg-bg" aria-label="Sections">
+  <nav class="tab-bar safe-x shrink-0 border-t border-line bg-bg" aria-label="分区">
     <div class="mx-auto flex h-[52px] max-w-xl" role="tablist">
       <button
         v-for="tab in TABS"

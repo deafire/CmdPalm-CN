@@ -1,23 +1,23 @@
-Installing CmdPalm
+安装 CmdPalm
 ==================
 
-1. Drag CmdPalm into the Applications folder.
+1. 将 CmdPalm 拖入「应用程序」文件夹。
 
-2. CmdPalm is free and open source, and it is not signed with a paid Apple
-   Developer ID, so macOS blocks it the first time. Open Terminal and run:
+2. CmdPalm 是免费的开源软件，未使用付费的 Apple Developer ID 签名，
+   因此 macOS 首次会阻止它运行。请打开「终端」并运行：
 
        xattr -dr com.apple.quarantine /Applications/CmdPalm.app
 
-   Or open CmdPalm once, then go to System Settings → Privacy & Security and
-   click "Open Anyway" next to the message about CmdPalm.
+   或者先尝试打开一次 CmdPalm，然后前往「系统设置」→「隐私与安全性」，
+   在有关 CmdPalm 的提示旁点击「仍然打开」。
 
-3. Open CmdPalm. It lives in the menu bar and walks you through the rest.
+3. 打开 CmdPalm。它位于菜单栏中，会引导你完成后续设置。
 
-Updates install from inside the app, so you only do this once.
+更新在应用内安装，因此你只需执行此操作一次。
 
-Homebrew users can instead run:
+Homebrew 用户也可以运行：
 
     brew install --cask rahatsagor/tap/cmdpalm
 
-Website: https://cmdpalm.app
-Source code, help and release notes: https://github.com/rahatsagor/CmdPalm
+官网：https://cmdpalm.app
+源代码、帮助和版本说明：https://github.com/rahatsagor/CmdPalm

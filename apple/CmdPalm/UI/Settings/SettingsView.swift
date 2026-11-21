@@ -7,12 +7,12 @@ enum SettingsTab: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .general: "General"
-        case .phone: "Phone Setup"
-        case .devices: "Devices"
-        case .deck: "Deck"
-        case .advanced: "Advanced"
-        case .about: "About"
+        case .general: "通用"
+        case .phone: "手机设置"
+        case .devices: "设备"
+        case .deck: "快捷面板"
+        case .advanced: "高级"
+        case .about: "关于"
         }
     }
 
@@ -138,7 +138,7 @@ struct PermissionRow: View {
     var body: some View {
         LabeledContent {
             if granted {
-                Label("Allowed", systemImage: "checkmark.circle.fill")
+                Label("已允许", systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             } else {
                 Button(action, action: perform)

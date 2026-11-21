@@ -15,16 +15,16 @@ struct AppFoldersSection: View {
                 }
             }
             LabeledContent {
-                Button("Add Folder…", action: choose)
+                Button("添加文件夹…", action: choose)
                     .disabled(preferences.appFolders.count >= Preferences.maxAppFolders)
             } label: {
-                Text("Your phone lists apps in Applications. Add other folders, such as one on an external drive, to list those apps too.")
+                Text("手机会在“应用程序”中列出应用。添加其他文件夹（例如外接磁盘上的文件夹），即可同时列出其中的应用。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         } header: {
-            Text("App Folders")
+            Text("应用文件夹")
         }
         .task(id: preferences.appFolders) { await count() }
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didMountNotification)) { _ in
@@ -40,8 +40,8 @@ struct AppFoldersSection: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = true
-        panel.prompt = "Add"
-        panel.message = "Choose folders that contain apps."
+        panel.prompt = "添加"
+        panel.message = "选择包含应用的文件夹。"
         panel.directoryURL = URL(fileURLWithPath: "/Volumes", isDirectory: true)
         guard panel.runModal() == .OK else { return }
         for url in panel.urls { preferences.addAppFolder(url) }
@@ -73,8 +73,8 @@ private struct FolderRow: View {
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
-            .help("Remove this folder")
-            .accessibilityLabel("Remove \(FileManager.default.displayName(atPath: path))")
+            .help("移除此文件夹")
+            .accessibilityLabel("移除 \(FileManager.default.displayName(atPath: path))")
         } label: {
             Label {
                 VStack(alignment: .leading, spacing: 2) {
@@ -92,7 +92,7 @@ private struct FolderRow: View {
             }
         }
         .contextMenu {
-            Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)]) }
+            Button("在访达中显示") { NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)]) }
                 .disabled(count == nil)
         }
     }
@@ -100,10 +100,10 @@ private struct FolderRow: View {
     private var detail: String {
         let shown = (path as NSString).abbreviatingWithTildeInPath
         switch count {
-        case nil: return "Not available. Connect the drive to list its apps. · \(shown)"
+        case nil: return "不可用。连接磁盘后即可列出其中的应用。· \(shown)"
         case -1: return shown
-        case 1: return "1 app · \(shown)"
-        case let n?: return "\(n) apps · \(shown)"
+        case 1: return "1 个应用 · \(shown)"
+        case let n?: return "\(n) 个应用 · \(shown)"
         }
     }
 }

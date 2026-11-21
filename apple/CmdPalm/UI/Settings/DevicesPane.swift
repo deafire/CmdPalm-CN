@@ -8,36 +8,36 @@ struct DevicesPane: View {
 
     var body: some View {
         Form {
-            Section("Screen Mirroring") {
+            Section("屏幕镜像") {
                 VStack(alignment: .leading, spacing: 8) {
                     if !preferences.displayEnabled {
-                        Label("Screen mirroring is off on this Mac", systemImage: "display")
+                        Label("这台 Mac 上的屏幕镜像已关闭", systemImage: "display")
                     } else if !permissions.canView {
-                        Label("Screen Recording permission is needed", systemImage: "exclamationmark.circle")
+                        Label("需要屏幕录制权限", systemImage: "exclamationmark.circle")
                             .foregroundStyle(.orange)
                     } else {
-                        Label("Ready to share a display", systemImage: "checkmark.circle.fill")
+                        Label("可以共享屏幕", systemImage: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                     }
-                    Text("Turn on Allow screen mirroring for each device below. Devices without this access can still use the trackpad and keyboard.")
+                    Text("为下方每台设备打开“允许屏幕镜像”。没有此权限的设备仍可使用触控板和键盘。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                     HStack {
                         if preferences.displayEnabled && !permissions.canView {
-                            Button("Allow Screen Recording…") { permissions.requestViewing() }
+                            Button("允许屏幕录制…") { permissions.requestViewing() }
                                 .fixedSize()
                         }
-                        Button("Display Settings…") { SettingsNavigation.shared.selection = .general }
+                        Button("屏幕镜像设置…") { SettingsNavigation.shared.selection = .general }
                             .fixedSize()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
             }
-            Section("Connected Now") {
+            Section("当前已连接") {
                 if host.connected.isEmpty {
-                    Text("No devices are connected right now.")
+                    Text("当前没有已连接的设备。")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(host.connected, id: \.session) { device in
@@ -48,7 +48,7 @@ struct DevicesPane: View {
 
             Section {
                 if host.trusted.isEmpty {
-                    Text("Devices you pair appear here. They reconnect without a code until you remove them.")
+                    Text("配对的设备会显示在这里。在移除之前，它们无需验证码即可重新连接。")
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
@@ -57,15 +57,15 @@ struct DevicesPane: View {
                     }
                 }
             } header: {
-                Text("Paired Devices")
+                Text("已配对设备")
             } footer: {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Each device’s phone settings, such as custom keyboards and gestures, are kept on this Mac and deleted when you remove the device.")
+                    Text("每台设备的手机设置（如自定义键盘和手势）都保存在这台 Mac 上，移除设备时会被删除。")
                         .fixedSize(horizontal: false, vertical: true)
                     if !host.trusted.isEmpty {
                         HStack {
                             Spacer()
-                            Button("Remove All…", role: .destructive) { confirmForgetAll = true }
+                            Button("全部移除…", role: .destructive) { confirmForgetAll = true }
                         }
                     }
                 }
@@ -74,10 +74,10 @@ struct DevicesPane: View {
             }
         }
         .settingsForm()
-        .confirmationDialog("Remove all paired devices?", isPresented: $confirmForgetAll) {
-            Button("Remove All", role: .destructive) { host.forgetAllDevices() }
+        .confirmationDialog("移除所有已配对设备？", isPresented: $confirmForgetAll) {
+            Button("全部移除", role: .destructive) { host.forgetAllDevices() }
         } message: {
-            Text("They are disconnected and must pair again with a QR code, PIN or approval. Their phone settings kept on this Mac are deleted.")
+            Text("这些设备将被断开，必须使用二维码、PIN 或批准重新配对。它们在这台 Mac 上保存的手机设置将被删除。")
         }
     }
 }
@@ -93,9 +93,9 @@ private struct ConnectedSettingsRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .layoutPriority(1)
                     .accessibilityElement(children: .combine)
-                Button("Disconnect") { host.disconnect(device) }
+                Button("断开") { host.disconnect(device) }
                     .fixedSize()
-                    .help("Disconnect this device; it can reconnect from the phone")
+                    .help("断开此设备；它可从手机重新连接")
             }
             DeviceScreenAccessRow(name: device.name, temporary: !device.remembered, allowed: Binding(
                 get: { device.displayAllowed },
@@ -124,7 +124,7 @@ private struct TrustedDeviceRow: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 10) {
                 DeviceIcon(model: device.model, online: session != nil)
-                    .help(session != nil ? "Connected" : "Not connected")
+                    .help(session != nil ? "已连接" : "未连接")
                 VStack(alignment: .leading, spacing: 3) {
                     nameField
                     Text(detail)
@@ -135,7 +135,7 @@ private struct TrustedDeviceRow: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .layoutPriority(1)
-                Button("Remove…") { confirmForget = true }
+                Button("移除…") { confirmForget = true }
                     .fixedSize()
             }
             DeviceScreenAccessRow(name: device.name, allowed: Binding(get: { device.displayAllowed }, set: { host.setDisplayAllowed(device.id, allowed: $0) }))
@@ -144,17 +144,17 @@ private struct TrustedDeviceRow: View {
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .contextMenu {
-            Button("Rename") { startRenaming() }
+            Button("重命名") { startRenaming() }
             if let session {
-                Button("Disconnect") { host.disconnect(session) }
+                Button("断开") { host.disconnect(session) }
             }
             Divider()
-            Button("Remove…", role: .destructive) { confirmForget = true }
+            Button("移除…", role: .destructive) { confirmForget = true }
         }
         .onAppear { name = device.name }
         .onChange(of: device.name) { _, new in if !renaming { name = new } }
-        .confirmationDialog("Remove “\(device.name)”?", isPresented: $confirmForget) {
-            Button("Remove Device", role: .destructive) { host.forget(device) }
+        .confirmationDialog("移除“\(device.name)”？", isPresented: $confirmForget) {
+            Button("移除设备", role: .destructive) { host.forget(device) }
         } message: {
             Text(DeviceText.removeMessage)
         }
@@ -163,7 +163,7 @@ private struct TrustedDeviceRow: View {
     @ViewBuilder
     private var nameField: some View {
         if renaming {
-            TextField("Name", text: $name)
+            TextField("名称", text: $name)
                 .textFieldStyle(.roundedBorder)
                 .frame(maxWidth: 240)
                 .focused($nameFocused)
@@ -187,8 +187,8 @@ private struct TrustedDeviceRow: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
-                .help("Rename")
-                .accessibilityLabel("Rename \(device.name)")
+                .help("重命名")
+                .accessibilityLabel("重命名 \(device.name)")
             }
         }
     }
@@ -208,13 +208,13 @@ private struct TrustedDeviceRow: View {
         var parts: [String] = []
         if !device.model.isEmpty { parts.append(device.model) }
         if session != nil {
-            parts.append("Connected")
+            parts.append("已连接")
         } else if device.lastSeen > 0 {
             let date = Date(timeIntervalSince1970: TimeInterval(device.lastSeen))
-            parts.append("Last used \(date.formatted(.relative(presentation: .named)))")
+            parts.append("上次使用：\(date.formatted(.relative(presentation: .named)))")
         }
         let paired = Date(timeIntervalSince1970: TimeInterval(device.pairedAt))
-        parts.append("Paired \(paired.formatted(date: .abbreviated, time: .omitted))")
+        parts.append("配对于 \(paired.formatted(date: .abbreviated, time: .omitted))")
         return parts.joined(separator: " · ")
     }
 }
@@ -229,18 +229,18 @@ private struct DeviceScreenAccessRow: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Allow screen mirroring")
-                Text(temporary ? "For this connection only" : (allowed ? "Allowed when screen mirroring is on" : "Screen mirroring is off for this device"))
+                Text("允许屏幕镜像")
+                Text(temporary ? "仅此次连接" : (allowed ? "屏幕镜像开启时允许" : "此设备的屏幕镜像已关闭"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Toggle("Allow screen mirroring for \(name)", isOn: $allowed)
+            Toggle("允许 \(name) 使用屏幕镜像", isOn: $allowed)
                 .labelsHidden()
                 .toggleStyle(.switch)
                 .fixedSize()
-                .accessibilityLabel("Allow screen mirroring for \(name)")
+                .accessibilityLabel("允许 \(name) 使用屏幕镜像")
         }
     }
 }

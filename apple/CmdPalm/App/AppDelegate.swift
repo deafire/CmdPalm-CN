@@ -49,7 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if defaults.bool(forKey: "debugMenuPanel") {
             let window = NSWindow(contentViewController: NSHostingController(rootView: MenuPanel().appEnvironment()))
-            window.title = "Menu Panel"
+            window.title = "菜单栏面板"
             window.styleMask.remove(.resizable)
             window.isReleasedWhenClosed = false
             window.center()

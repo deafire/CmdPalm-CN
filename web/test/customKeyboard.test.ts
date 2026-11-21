@@ -27,7 +27,7 @@ describe('CustomKeyboard', () => {
     const view = mount(CustomKeyboard, { props: { board, editing: true }, attachTo: document.body })
     expect(click(view.find('.key').element).defaultPrevented).toBe(true)
     expect(click(view.find('label').element).defaultPrevented).toBe(true)
-    expect(click(view.find('button[aria-label="Add key here"]').element).defaultPrevented).toBe(false)
+    expect(click(view.find('button[aria-label="在此添加按键"]').element).defaultPrevented).toBe(false)
     view.unmount()
   })
 })
@@ -52,10 +52,10 @@ describe('CustomKeyboard while the page hides', () => {
 describe('actionProblem', () => {
   it('refuses shortcut names longer than the Mac accepts', () => {
     expect(actionProblem({ kind: 'shortcut', name: 'é'.repeat(256) })).toBe('')
-    expect(actionProblem({ kind: 'shortcut', name: 'é'.repeat(257) })).toBe('The shortcut name is too long.')
+    expect(actionProblem({ kind: 'shortcut', name: 'é'.repeat(257) })).toBe('快捷指令名称过长。')
   })
 
   it('asks for a key when a keys action has none', () => {
-    expect(actionProblem({ kind: 'keys' } as Parameters<typeof actionProblem>[0])).toBe('Pick a key.')
+    expect(actionProblem({ kind: 'keys' } as Parameters<typeof actionProblem>[0])).toBe('请选择一个按键。')
   })
 })

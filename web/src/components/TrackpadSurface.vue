@@ -152,7 +152,7 @@ function onCancel(event: PointerEvent) {
     :class="dragging && 'ring-2 ring-accent/60'"
     :style="reach"
     role="application"
-    :aria-label="`Trackpad. Move one finger to move the pointer, two fingers to scroll.${settings.tapToClick ? ' Tap to click.' : ''}${settings.twoFingerTapRightClick ? ' Two-finger tap to right-click.' : ''}`"
+    :aria-label="`触控板。移动一根手指可移动指针，两根手指可滚动。${settings.tapToClick ? '轻点以单击。' : ''}${settings.twoFingerTapRightClick ? '双指轻点以右键单击。' : ''}`"
     @pointerdown="onDown"
     @pointermove="onMove"
     @pointerup="onUp"

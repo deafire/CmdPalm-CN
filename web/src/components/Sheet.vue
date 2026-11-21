@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
             v-if="closable"
             type="button"
             class="grid size-11 shrink-0 place-items-center rounded-full bg-surface-3 text-muted active:scale-95"
-            aria-label="Close"
+            aria-label="关闭"
             @click="emit('close')"
           >
             <X :size="17" />

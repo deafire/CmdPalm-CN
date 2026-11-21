@@ -294,8 +294,8 @@ async function editTile(change: (tiles: Tile[], at: number, id: string) => void,
     }
     notify(
       fallback
-        ? `This button’s page was deleted on another device. Tap Add to put it on “${fallback.name}”.`
-        : 'This button’s page was deleted on another device.',
+        ? `此按钮所在的页面已在另一台设备上删除。轻点“添加”将其放到“${fallback.name}”。`
+        : '此按钮所在的页面已在另一台设备上删除。',
       'warning',
       'deck',
     )
@@ -316,7 +316,7 @@ function saveTile(tile: Tile) {
   const edit = tileEdit.value
   const target = edit ? pageById(edit.pageId) : undefined
   if (target && target.tiles.length >= LIMITS.tiles && (edit?.isNew || !target.tiles.some((t) => t.id === edit?.tile.id))) {
-    notify('This page already has the maximum of 64 buttons.', 'warning', 'deck')
+    notify('此页面已达到 64 个按钮的上限。', 'warning', 'deck')
     return
   }
   void editTile((tiles, at, id) => {
@@ -334,7 +334,7 @@ async function duplicateTile(tile: Tile) {
   const edit = tileEdit.value
   const target = edit ? pageById(edit.pageId) : undefined
   if (target && target.tiles.length >= LIMITS.tiles && (edit?.isNew || !target.tiles.some((t) => t.id === edit?.tile.id))) {
-    notify('This page already has the maximum of 64 buttons.', 'warning', 'deck')
+    notify('此页面已达到 64 个按钮的上限。', 'warning', 'deck')
     return
   }
   let full = false
@@ -345,12 +345,12 @@ async function duplicateTile(tile: Tile) {
     full = tiles.length >= LIMITS.tiles
     if (!full) tiles.splice(i + 1, 0, { ...clone(next), id: freshTileId(deck.value?.pages ?? []) })
   })
-  if (saved && full) notify('This page is full, so the button was saved but not duplicated.', 'warning')
+  if (saved && full) notify('此页面已满，按钮已保存但未复制。', 'warning')
 }
 
 async function addPage() {
   if (pages.value.length >= LIMITS.pages) return
-  const created = newPage(`Page ${pages.value.length + 1}`)
+  const created = newPage(`页面 ${pages.value.length + 1}`)
   if (!(await mutate((d) => d.pages.push(created)))) return
   settings.deckPage = created.id
   pageEdit.value = created.id
@@ -402,12 +402,12 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
 <template>
   <div class="flex h-full flex-col">
     <div class="flex items-center gap-2 px-3 pt-1 pb-2">
-      <GroupTabs :items="pages" :active="page?.id ?? ''" :editing="editing && !deckHistory.saving" label="Deck pages" @select="selectGroup" @reorder="reorderPages">
+      <GroupTabs :items="pages" :active="page?.id ?? ''" :editing="editing && !deckHistory.saving" label="快捷面板页面" @select="selectGroup" @reorder="reorderPages">
         <button
           v-if="editing && pages.length < LIMITS.pages"
           type="button"
           class="grid size-8 shrink-0 place-items-center rounded-full text-muted"
-          aria-label="Add page"
+          aria-label="添加页面"
           :disabled="deckHistory.saving"
           @click="addPage"
         >
@@ -418,8 +418,8 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
         <button
           type="button"
           class="grid size-8 shrink-0 place-items-center rounded-full text-muted disabled:opacity-30"
-          aria-label="Undo last Deck edit"
-          title="Undo"
+          aria-label="撤销上次的快捷面板编辑"
+          title="撤销"
           :disabled="!deckHistory.undo || deckHistory.saving"
           @click="undoDeck"
           @keydown.enter.prevent="undoDeck"
@@ -428,8 +428,8 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
         <button
           type="button"
           class="grid size-8 shrink-0 place-items-center rounded-full text-muted disabled:opacity-30"
-          aria-label="Redo Deck edit"
-          title="Redo"
+          aria-label="重做快捷面板编辑"
+          title="重做"
           :disabled="!deckHistory.redo || deckHistory.saving"
           @click="redoDeck"
           @keydown.enter.prevent="redoDeck"
@@ -446,7 +446,7 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
         <LoaderCircle v-if="deckHistory.saving" :size="15" class="animate-spin" />
         <Check v-else-if="editing" :size="15" />
         <Pencil v-else :size="14" />
-        {{ deckHistory.saving ? 'Saving…' : editing ? 'Done' : 'Edit' }}
+        {{ deckHistory.saving ? '保存中…' : editing ? '完成' : '编辑' }}
       </button>
     </div>
 
@@ -504,7 +504,7 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
             v-if="editing && p.tiles.length < LIMITS.tiles"
             type="button"
             class="grid aspect-square place-items-center rounded-[22px] border border-dashed border-line-strong text-muted"
-            aria-label="Add button"
+            aria-label="添加按钮"
             :disabled="deckHistory.saving"
             @click="addTile(p)"
           >
@@ -512,12 +512,12 @@ const dragged = computed(() => (press.value?.moved && editing.value ? pageById(p
           </button>
         </div>
         <div v-if="p.tiles.length === 0 && !editing" class="flex flex-col items-center gap-3 py-16 text-center text-muted">
-          <p class="text-[15px]">No buttons on this page yet.</p>
+          <p class="text-[15px]">此页面还没有按钮。</p>
           <button type="button" class="h-10 rounded-full bg-surface-3 px-4 text-[14px] font-medium text-text" @click="(addTile(p), (editing = true))">
-            Add a button
+            添加按钮
           </button>
         </div>
-        <p v-if="editing" class="pt-4 text-center text-[12px] text-faint">Drag tabs or buttons to reorder. Tap the selected tab to edit the page.</p>
+        <p v-if="editing" class="pt-4 text-center text-[12px] text-faint">拖动标签或按钮可重新排序。轻点选中的标签可编辑页面。</p>
       </section>
     </div>
 

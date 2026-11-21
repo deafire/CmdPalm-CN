@@ -59,19 +59,19 @@ export function installHint(): string {
   const model = deviceModel()
   const ua = navigator.userAgent
   if (model === 'iPhone' || model === 'iPad' || model === 'iPod touch') {
-    return 'Tap Share, then Add to Home Screen, to open CmdPalm full screen like an app.'
+    return '轻点“分享”，然后选择“添加到主屏幕”，即可像应用一样全屏打开 CmdPalm。'
   }
   if (model.startsWith('Android')) {
     // Android browsers install web apps only over HTTPS; over plain HTTP they
     // offer a shortcut that opens in a browser tab.
     if (!isSecureContext) {
-      return 'To install CmdPalm as an app, use an encrypted connection: on the Mac, open CmdPalm Settings → Phone Setup → Encrypted Connection. Otherwise, add a shortcut (menu ⋮ → Add to Home screen) and use Full screen.'
+      return '要将 CmdPalm 安装为应用，请使用加密连接：在 Mac 上打开 CmdPalm 的“设置 → 手机设置 → 加密连接”。否则，可添加快捷方式（菜单 ⋮ → 添加到主屏幕）并使用全屏。'
     }
-    if (display.installable) return 'Install CmdPalm to open it full screen like an app.'
-    if (/SamsungBrowser/.test(ua)) return 'Open the menu ☰, then Add page to → Home screen.'
-    if (/Firefox/.test(ua)) return 'Open the menu ⋮, then Add to Home screen.'
-    return 'Open the browser menu ⋮, then Add to Home screen → Install.'
+    if (display.installable) return '安装 CmdPalm，即可像应用一样全屏打开。'
+    if (/SamsungBrowser/.test(ua)) return '打开菜单 ☰，然后选择“添加页面到 → 主屏幕”。'
+    if (/Firefox/.test(ua)) return '打开菜单 ⋮，然后选择“添加到主屏幕”。'
+    return '打开浏览器菜单 ⋮，然后选择“添加到主屏幕 → 安装”。'
   }
-  if (display.installable) return 'Install CmdPalm to open it in its own window.'
-  return 'Use your browser’s Install or Add to Home Screen option to open CmdPalm in its own window.'
+  if (display.installable) return '安装 CmdPalm，即可在独立窗口中打开。'
+  return '使用浏览器的“安装”或“添加到主屏幕”选项，即可在独立窗口中打开 CmdPalm。'
 }

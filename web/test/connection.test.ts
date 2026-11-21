@@ -143,7 +143,7 @@ describe('reconnecting', () => {
     vi.advanceTimersByTime(8000)
     expect(conn.state.status).toBe('idle')
     expect(conn.state.byeReason).toBe(
-      'Lost the connection to the Mac while waiting for approval. Check that this phone is on the same network as the Mac, then try again.',
+      '等待批准期间与 Mac 断开连接。请确认此手机与 Mac 在同一网络中，然后重试。',
     )
     vi.advanceTimersByTime(30000)
     expect(FakeSocket.all).toHaveLength(1)
@@ -172,7 +172,7 @@ describe('pairing on a slow network', () => {
     vi.advanceTimersByTime(5000)
     expect(conn.state.status).toBe('idle')
     expect(conn.state.byeReason).toBe(
-      'Couldn’t reach the Mac. Check that this phone is on the same network as the Mac, then scan the QR code again.',
+      '无法连接到 Mac。请确认此手机与 Mac 在同一网络中，然后重新扫描二维码。',
     )
     vi.advanceTimersByTime(30000)
     expect(FakeSocket.all).toHaveLength(3)
@@ -297,7 +297,7 @@ describe('actions', () => {
     const socket = connected()
     const result = conn.runAction({ kind: 'system', name: 'missionControl' })
     socket.drop()
-    await expect(result).resolves.toEqual({ ok: false, message: 'Lost the connection to the Mac.' })
+    await expect(result).resolves.toEqual({ ok: false, message: '已与 Mac 断开连接。' })
   })
 
   it('resolves with the Mac’s answer', async () => {

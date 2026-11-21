@@ -30,7 +30,7 @@ const apps = computed(() => {
 function act(app: AppEntry, op: AppOp) {
   menu.value = null
   if (!send({ t: 'appAction', id: app.id, op })) {
-    notify('Not connected to the Mac.', 'warning')
+    notify('未连接到 Mac。', 'warning')
     return
   }
   if (op === 'quit') markQuitting(app.id)
@@ -41,7 +41,7 @@ async function addToDeck(app: AppEntry) {
   menu.value = null
   const page = await addTileToCurrentPage(newTile({ kind: 'app', id: app.id, op: 'toggle' }, app.name), settings.deckPage)
   if (page === null) return
-  notify(page ? `Added ${app.name} to “${page}”.` : 'That deck page is full.', page ? 'info' : 'warning')
+  notify(page ? `已将 ${app.name} 添加到“${page}”。` : '该快捷面板页面已满。', page ? 'info' : 'warning')
 }
 
 let longTimer: ReturnType<typeof setTimeout> | undefined
@@ -72,18 +72,18 @@ function onClick(app: AppEntry) {
     <div class="flex flex-col gap-2 px-3 pt-1 pb-2">
       <label class="flex h-10 items-center gap-2 rounded-xl bg-surface-3 px-3 text-muted">
         <Search :size="16" />
-        <input v-model="query" type="search" class="min-w-0 flex-1 bg-transparent text-[16px] text-text outline-none" placeholder="Search apps on the Mac" aria-label="Search apps on the Mac" />
-        <button type="button" class="grid size-7 place-items-center" aria-label="Refresh" @click="loadApps(true)"><RefreshCw :size="15" /></button>
+        <input v-model="query" type="search" class="min-w-0 flex-1 bg-transparent text-[16px] text-text outline-none" placeholder="搜索 Mac 上的应用" aria-label="搜索 Mac 上的应用" />
+        <button type="button" class="grid size-7 place-items-center" aria-label="刷新" @click="loadApps(true)"><RefreshCw :size="15" /></button>
       </label>
       <Segmented
         v-if="!query"
         v-model="filter"
         class="py-0!"
-        aria-label="Apps to show"
+        aria-label="显示的应用"
         :keyboard-navigation="false"
         :options="[
-          { value: 'running', label: 'Open' },
-          { value: 'all', label: 'All apps' },
+          { value: 'running', label: '打开' },
+          { value: 'all', label: '所有应用' },
         ]"
       />
     </div>
@@ -96,7 +96,7 @@ function onClick(app: AppEntry) {
           :key="app.id"
           type="button"
           class="flex flex-col items-center gap-1.5 rounded-2xl p-1.5 transition-transform active:scale-95"
-          :aria-label="`${app.name}${isOpen(app) ? ', open' : ''}${app.active ? ', in front' : ''}`"
+          :aria-label="`${app.name}${isOpen(app) ? '，已打开' : ''}${app.active ? '，在前台' : ''}`"
           @pointerdown="onDown(app)"
           @pointerup="onUp"
           @pointercancel="onUp"
@@ -113,18 +113,18 @@ function onClick(app: AppEntry) {
         </button>
       </div>
       <div v-if="apps.length === 0" class="py-12 text-center">
-        <p class="text-[15px] text-muted">{{ query ? `No apps match “${query}”.` : 'No apps are open.' }}</p>
-        <button type="button" class="mt-3 min-h-11 rounded-xl bg-surface-2 px-4 text-[14px] font-medium text-accent" @click="query ? (query = '') : (filter = 'all')">{{ query ? 'Clear search' : 'Show all apps' }}</button>
+        <p class="text-[15px] text-muted">{{ query ? `没有找到匹配“${query}”的应用。` : '没有打开的应用。' }}</p>
+        <button type="button" class="mt-3 min-h-11 rounded-xl bg-surface-2 px-4 text-[14px] font-medium text-accent" @click="query ? (query = '') : (filter = 'all')">{{ query ? '清除搜索' : '显示所有应用' }}</button>
       </div>
-      <p v-else class="pt-6 text-center text-[12px] text-faint">Tap to show or hide · Touch and hold for more</p>
+      <p v-else class="pt-6 text-center text-[12px] text-faint">轻点以显示或隐藏 · 长按查看更多</p>
     </div>
 
     <Sheet v-if="menu" :title="menu.name" @close="menu = null">
       <div class="flex flex-col gap-1.5 pb-2">
-        <button type="button" class="menu-row" @click="act(menu, 'open')"><SquareArrowOutUpRight :size="18" /> {{ menu.running ? 'Bring to front' : 'Open' }}</button>
-        <button v-if="menu.running" type="button" class="menu-row" @click="act(menu, 'hide')"><EyeOff :size="18" /> Hide</button>
-        <button type="button" class="menu-row" @click="addToDeck(menu)"><SquarePlus :size="18" /> Add to deck</button>
-        <button v-if="menu.running" type="button" class="menu-row text-bad" @click="act(menu, 'quit')"><Power :size="18" /> Quit</button>
+        <button type="button" class="menu-row" @click="act(menu, 'open')"><SquareArrowOutUpRight :size="18" /> {{ menu.running ? '置于前台' : '打开' }}</button>
+        <button v-if="menu.running" type="button" class="menu-row" @click="act(menu, 'hide')"><EyeOff :size="18" /> 隐藏</button>
+        <button type="button" class="menu-row" @click="addToDeck(menu)"><SquarePlus :size="18" /> 添加到快捷面板</button>
+        <button v-if="menu.running" type="button" class="menu-row text-bad" @click="act(menu, 'quit')"><Power :size="18" /> 退出</button>
       </div>
     </Sheet>
   </div>

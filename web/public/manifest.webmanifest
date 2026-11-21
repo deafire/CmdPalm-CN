@@ -2,7 +2,7 @@
   "id": "/",
   "name": "CmdPalm",
   "short_name": "CmdPalm",
-  "description": "Use your phone as a trackpad, keyboard, button deck and screen mirror for your Mac.",
+  "description": "把手机变成 Mac 的触控板、键盘、快捷面板和屏幕镜像。",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

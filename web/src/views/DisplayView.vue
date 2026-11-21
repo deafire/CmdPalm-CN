@@ -53,12 +53,12 @@ const maxZoom = computed(() => {
 })
 const mode = computed({ get: () => settings.displayControls, set: value => { releaseAll(); settings.displayControls = value } })
 const placeholder = computed(() => {
-  if (screen.status === 'loading') return 'Finding displays…'
-  if (screen.needsPlay) return 'Tap to show the display'
-  if (screen.status === 'connecting') return screen.original ? 'Connecting HD view…' : 'Connecting video…'
+  if (screen.status === 'loading') return '正在查找显示器…'
+  if (screen.needsPlay) return '轻点以显示屏幕'
+  if (screen.status === 'connecting') return screen.original ? '正在连接高清画面…' : '正在连接视频…'
   if (screen.message) return screen.message
-  if (display.value) return 'Start viewing to see this display.'
-  return 'Choose a display to start viewing.'
+  if (display.value) return '开始观看以查看此显示器。'
+  return '选择显示器以开始观看。'
 })
 
 function activate() { if (video.value) activateScreen(video.value, picture.value) }
@@ -234,18 +234,18 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
         v-if="screen.displays.length > 1 || (screen.displays.length && !display)"
         :value="display ? settings.displayId : ''"
         class="h-11 min-w-0 flex-1 rounded-xl bg-surface-2 px-2 text-[14px] font-medium"
-        aria-label="Mac display"
+        aria-label="Mac 显示器"
         @change="chooseDisplay(($event.target as HTMLSelectElement).value)"
       >
-        <option v-if="!display" value="" disabled>Choose a display</option>
+        <option v-if="!display" value="" disabled>选择显示器</option>
         <option v-for="source in screen.displays" :key="source.id" :value="source.id">{{ source.name }} · {{ source.width }} × {{ source.height }}</option>
       </select>
-      <span v-else class="min-w-0 flex-1 truncate px-1 text-[14px] font-medium">{{ display?.name || 'Display' }}</span>
+      <span v-else class="min-w-0 flex-1 truncate px-1 text-[14px] font-medium">{{ display?.name || '屏幕镜像' }}</span>
       <button
         type="button"
         class="grid size-11 shrink-0 place-items-center rounded-xl text-muted active:bg-surface-3 disabled:opacity-40"
         :disabled="screen.status === 'loading' || connection.status !== 'connected'"
-        aria-label="Refresh displays"
+        aria-label="刷新显示器"
         @click="refreshDisplays"
       ><RefreshCw :size="17" :class="{ 'animate-spin': screen.status === 'loading' }" /></button>
       <button
@@ -253,14 +253,14 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
         type="button"
         class="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-surface-3 px-3 text-[13px] font-semibold"
         @click="stopViewing()"
-      ><Square :size="14" />Stop</button>
+      ><Square :size="14" />停止</button>
       <button
         v-else
         type="button"
         class="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-accent px-3 text-[13px] font-semibold text-accent-text disabled:opacity-40"
         :disabled="!display || screen.status === 'loading' || connection.paused || connection.status !== 'connected'"
         @click="startViewing"
-      ><Play :size="15" />View</button>
+      ><Play :size="15" />观看</button>
     </div>
 
     <div class="flex shrink-0 items-center gap-2">
@@ -268,12 +268,12 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
         v-model="mode"
         class="min-w-0 flex-1 py-0!"
         label=""
-        :options="[{ value: 'view', label: 'View' }, { value: 'trackpad', label: 'Trackpad' }, { value: 'keyboard', label: 'Keyboard' }]"
-        aria-label="Controls below the display"
+        :options="[{ value: 'view', label: '观看' }, { value: 'trackpad', label: '触控板' }, { value: 'keyboard', label: '键盘' }]"
+        aria-label="屏幕下方的控制方式"
         :keyboard-navigation="false"
       />
-      <button v-if="live" type="button" class="grid size-11 shrink-0 place-items-center rounded-xl text-muted active:bg-surface-3" aria-label="Fullscreen display" @click="enterFullscreen" @keydown.enter.prevent="enterFullscreen" @keydown.space.prevent="enterFullscreen"><Maximize :size="19" /></button>
-      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-xl text-muted active:bg-surface-3" aria-label="Display options" @click="options = true"><Settings2 :size="19" /></button>
+      <button v-if="live" type="button" class="grid size-11 shrink-0 place-items-center rounded-xl text-muted active:bg-surface-3" aria-label="全屏显示" @click="enterFullscreen" @keydown.enter.prevent="enterFullscreen" @keydown.space.prevent="enterFullscreen"><Maximize :size="19" /></button>
+      <button type="button" class="grid size-11 shrink-0 place-items-center rounded-xl text-muted active:bg-surface-3" aria-label="屏幕镜像选项" @click="options = true"><Settings2 :size="19" /></button>
     </div>
 
     <div ref="body" class="flex min-h-0 flex-1 gap-2" :class="wide ? 'flex-row' : 'flex-col'">
@@ -281,15 +281,15 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
         ref="displayArea"
         tabindex="-1"
         role="region"
-        :aria-label="fullView ? 'Fullscreen Mac display' : 'Mac display preview'"
+        :aria-label="fullView ? 'Mac 屏幕全屏' : 'Mac 屏幕预览'"
         class="display-preview relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-black"
         :class="fullView ? 'fixed! inset-0 z-[100] px-2 pt-[calc(env(safe-area-inset-top)+52px)] pb-[env(safe-area-inset-bottom)]' : 'rounded-2xl'"
         :style="fullView ? undefined : previewStyle"
       >
         <div v-if="fullView" class="absolute inset-x-2 top-[env(safe-area-inset-top)] flex h-12 items-center justify-between gap-2 text-white">
-          <span class="min-w-0 truncate px-2 text-[13px]">{{ display?.name }}{{ screen.original ? ' · HD text · lossless' : '' }}</span>
-          <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-[13px]" @click="stopViewing()"><Square :size="15" />Stop</button>
-          <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-[13px]" @click="leaveFullscreen()"><Minimize :size="17" />Exit</button>
+          <span class="min-w-0 truncate px-2 text-[13px]">{{ display?.name }}{{ screen.original ? ' · 高清文字 · 无损' : '' }}</span>
+          <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-[13px]" @click="stopViewing()"><Square :size="15" />停止</button>
+          <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-[13px]" @click="leaveFullscreen()"><Minimize :size="17" />退出</button>
         </div>
         <div
           ref="preview"
@@ -311,14 +311,14 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
           class="h-full w-full object-contain"
           :class="{ 'opacity-0': !live }"
           :style="{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }"
-          aria-label="Live view of the selected Mac display"
+          aria-label="所选 Mac 显示器的实时画面"
           @loadedmetadata="clampPan"
         />
         <canvas
           ref="picture"
           v-show="live && screen.original"
           role="img"
-          aria-label="Lossless HD view of the selected Mac display"
+          aria-label="所选 Mac 显示器的无损高清画面"
           class="h-full w-full object-contain"
           :style="{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }"
           @load="clampPan"
@@ -327,11 +327,11 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
           <Monitor :size="28" :class="{ 'animate-pulse': screen.status === 'connecting' || screen.status === 'loading' }" class="shrink-0 opacity-50" aria-hidden="true" />
           <p class="max-w-sm text-[13px] leading-relaxed">{{ placeholder }}</p>
           <template v-if="screen.canRequest && connection.status === 'connected' && !connection.paused">
-            <button type="button" class="min-h-11 rounded-full bg-accent px-4 text-[13px] font-semibold text-accent-text disabled:opacity-50" :disabled="screen.accessState === 'pending'" @click="requestScreenAccess">{{ screen.accessState === 'pending' ? 'Waiting for the Mac…' : 'Ask Mac to allow viewing' }}</button>
+            <button type="button" class="min-h-11 rounded-full bg-accent px-4 text-[13px] font-semibold text-accent-text disabled:opacity-50" :disabled="screen.accessState === 'pending'" @click="requestScreenAccess">{{ screen.accessState === 'pending' ? '等待 Mac…' : '请求 Mac 允许观看' }}</button>
             <p v-if="screen.accessMessage" class="max-w-sm text-[12px] leading-relaxed">{{ screen.accessMessage }}</p>
-            <button v-if="screen.accessState === 'pending'" type="button" class="min-h-11 px-3 text-[12px]" @click="cancelAccessRequest">Cancel request</button>
+            <button v-if="screen.accessState === 'pending'" type="button" class="min-h-11 px-3 text-[12px]" @click="cancelAccessRequest">取消请求</button>
           </template>
-          <button v-if="screen.needsPlay" type="button" class="flex min-h-11 items-center gap-2 rounded-full bg-accent px-4 text-[13px] font-semibold text-accent-text" @click="playViewing"><Play :size="16" />Show display</button>
+          <button v-if="screen.needsPlay" type="button" class="flex min-h-11 items-center gap-2 rounded-full bg-accent px-4 text-[13px] font-semibold text-accent-text" @click="playViewing"><Play :size="16" />显示屏幕</button>
         </div>
         <p v-if="live && screen.message" class="absolute top-2 right-2 left-2 rounded-lg bg-black/75 px-3 py-2 text-center text-[12px] text-white" role="status">{{ screen.message }}</p>
         </div>
@@ -340,13 +340,13 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
             type="button"
             class="flex min-h-11 items-center gap-1.5 rounded-xl bg-black/70 px-2.5 text-[12px] text-white disabled:opacity-40"
             :disabled="!connection.features.permission"
-            aria-label="Move the Mac pointer to this display"
+            aria-label="将 Mac 指针移动到此显示器"
             @click="focusDisplay"
-          ><LocateFixed :size="16" /><span class="pointer-label">Pointer here</span></button>
+          ><LocateFixed :size="16" /><span class="pointer-label">指针移至此处</span></button>
           <div class="flex items-center rounded-xl bg-black/70 text-white">
-            <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="Zoom out preview" :disabled="zoom <= 1" @click="changeZoom(zoom / 1.4)"><ZoomOut :size="17" /></button>
-            <button type="button" class="grid h-11 min-w-10 place-items-center text-[12px] tabular-nums" aria-label="Fit display in preview" @click="resetZoom"><RotateCcw v-if="zoom > 1" :size="16" /><span v-else>Fit</span></button>
-            <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="Zoom in preview" :disabled="zoom >= maxZoom" @click="changeZoom(zoom * 1.4)"><ZoomIn :size="17" /></button>
+            <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="缩小预览" :disabled="zoom <= 1" @click="changeZoom(zoom / 1.4)"><ZoomOut :size="17" /></button>
+            <button type="button" class="grid h-11 min-w-10 place-items-center text-[12px] tabular-nums" aria-label="使显示器适应预览" @click="resetZoom"><RotateCcw v-if="zoom > 1" :size="16" /><span v-else>适应</span></button>
+            <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="放大预览" :disabled="zoom >= maxZoom" @click="changeZoom(zoom * 1.4)"><ZoomIn :size="17" /></button>
           </div>
         </div>
       </div>
@@ -357,13 +357,13 @@ function up(event: PointerEvent) { pointers.delete(event.pointerId); beginGestur
       <KeyboardView v-else-if="settings.displayControls === 'keyboard'" embedded :compact="controlsHeight < 240" class="min-h-0 min-w-0 flex-1" />
     </div>
 
-    <Sheet v-if="options" title="Display options" @close="options = false">
+    <Sheet v-if="options" title="屏幕镜像选项" @close="options = false">
       <div v-if="live && compactPreview" class="mb-4 flex items-center justify-between gap-2 rounded-2xl bg-surface-2 p-2">
-        <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-[12px] disabled:opacity-40" :disabled="!connection.features.permission" @click="focusDisplay(); options = false"><LocateFixed :size="16" />Pointer here</button>
+        <button type="button" class="flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-[12px] disabled:opacity-40" :disabled="!connection.features.permission" @click="focusDisplay(); options = false"><LocateFixed :size="16" />指针移至此处</button>
         <div class="flex items-center">
-          <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="Zoom out preview" :disabled="zoom <= 1" @click="changeZoom(zoom / 1.4)"><ZoomOut :size="17" /></button>
-          <button type="button" class="grid h-11 min-w-10 place-items-center text-[12px]" aria-label="Fit display in preview" @click="resetZoom">Fit</button>
-          <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="Zoom in preview" :disabled="zoom >= maxZoom" @click="changeZoom(zoom * 1.4)"><ZoomIn :size="17" /></button>
+          <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="缩小预览" :disabled="zoom <= 1" @click="changeZoom(zoom / 1.4)"><ZoomOut :size="17" /></button>
+          <button type="button" class="grid h-11 min-w-10 place-items-center text-[12px]" aria-label="使显示器适应预览" @click="resetZoom">适应</button>
+          <button type="button" class="grid size-11 place-items-center disabled:opacity-30" aria-label="放大预览" :disabled="zoom >= maxZoom" @click="changeZoom(zoom * 1.4)"><ZoomIn :size="17" /></button>
         </div>
       </div>
       <DisplayPreferences :show-layout="false" @quality="quality" />

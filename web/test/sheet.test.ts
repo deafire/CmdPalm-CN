@@ -29,7 +29,7 @@ describe('sheet keyboard navigation', () => {
     const dialog = document.querySelector<HTMLElement>('[role="dialog"]')!
     // happy-dom has no layout; these controls are visible in a browser.
     for (const item of dialog.querySelectorAll('button')) Object.defineProperty(item, 'offsetParent', { configurable: true, value: document.body })
-    const close = dialog.querySelector<HTMLButtonElement>('[aria-label="Close"]')!
+    const close = dialog.querySelector<HTMLButtonElement>('[aria-label="关闭"]')!
     const choice = dialog.querySelector<HTMLButtonElement>('[role="radio"][tabindex="0"]')!
     choice.focus()
     const forward = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true })

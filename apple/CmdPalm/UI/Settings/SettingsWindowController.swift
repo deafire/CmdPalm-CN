@@ -21,7 +21,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
         super.init(window: window)
-        window.title = "CmdPalm Settings"
+        window.title = "CmdPalm 设置"
         window.toolbarStyle = .unified
         window.isReleasedWhenClosed = false
         window.setFrameAutosaveName("SettingsWindow")
@@ -67,7 +67,7 @@ final class WelcomeWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
         super.init(window: window)
-        window.title = "Welcome to CmdPalm"
+        window.title = "欢迎使用 CmdPalm"
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true

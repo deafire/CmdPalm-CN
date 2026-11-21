@@ -41,7 +41,7 @@ export const LIMITS = { minCols: 2, maxCols: 12, minRows: 1, maxRows: 8, boards:
 
 const STORAGE_KEY = 'cmdpalm.keyboards'
 const MOUSE_BUTTONS: MouseButton[] = ['left', 'right', 'middle']
-const MOUSE_LABELS: Partial<Record<MouseButton, string>> = { left: 'Click', right: 'Right-click', middle: 'Middle click' }
+const MOUSE_LABELS: Partial<Record<MouseButton, string>> = { left: '单击', right: '右键单击', middle: '中键单击' }
 
 export const newId = () => Math.random().toString(36).slice(2, 10)
 
@@ -299,7 +299,7 @@ export function removeBoard(id: string) {
 }
 
 export function blankBoard(): CustomKeyboard {
-  return { id: newId(), name: 'New keyboard', cols: 4, rows: 3, trackpad: false, keys: [] }
+  return { id: newId(), name: '新键盘', cols: 4, rows: 3, trackpad: false, keys: [] }
 }
 
 export function copyBoard(board: CustomKeyboard): CustomKeyboard {

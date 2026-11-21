@@ -34,7 +34,7 @@ async function toggleTyping() {
           type="button"
           class="key grid shrink-0 place-items-center rounded-[9px] bg-key text-muted active:bg-key-down"
           :class="layout.compact ? 'min-h-0 flex-1' : 'w-12'"
-          aria-label="Type on the Mac"
+          aria-label="在 Mac 上输入"
           @click="toggleTyping"
         >
           <Keyboard :size="19" />
@@ -48,10 +48,10 @@ async function toggleTyping() {
           class="pointer-events-none absolute inset-0 grid place-items-center px-10 text-center text-[13px] leading-relaxed text-muted transition-opacity"
         >
           <p>
-            One finger moves the pointer · Two fingers scroll<br />
-            <template v-if="settings.tapToClick">Tap to click<span v-if="settings.twoFingerTapRightClick"> · </span></template>
-            <template v-if="settings.twoFingerTapRightClick">Two-finger tap to right-click</template>
-            <template v-if="!settings.tapToClick && !settings.twoFingerTapRightClick && settings.clickButtons">Use the Click and Right-click buttons</template>
+            一根手指移动指针 · 两根手指滚动<br />
+            <template v-if="settings.tapToClick">轻点以单击<span v-if="settings.twoFingerTapRightClick"> · </span></template>
+            <template v-if="settings.twoFingerTapRightClick">双指轻点以右键单击</template>
+            <template v-if="!settings.tapToClick && !settings.twoFingerTapRightClick && settings.clickButtons">使用“单击”和“右键单击”按钮</template>
           </p>
         </div>
       </TrackpadSurface>
@@ -66,7 +66,7 @@ async function toggleTyping() {
         class="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-xl text-[13px] font-medium text-muted"
         @click="toggleTyping"
       >
-        <KeyboardOff :size="16" /> Hide typing
+        <KeyboardOff :size="16" /> 隐藏输入
       </button>
     </div>
   </div>

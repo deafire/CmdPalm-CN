@@ -135,14 +135,14 @@ pub(crate) fn state(id: u32, value: &str, message: Option<&str>) -> ServerMessag
 
 pub(crate) fn access(shared: &Shared, session: u64) -> Result<(), &'static str> {
     if !shared.displays.awake.load(Ordering::Acquire) {
-        return Err("Unlock or wake the Mac, then try again.");
+        return Err("请解锁或唤醒 Mac，然后重试。");
     }
     if !shared.config().display_enabled {
-        return Err("Screen mirroring is off. On the Mac, open CmdPalm Settings → General → Display.");
+        return Err("屏幕镜像已关闭。请在 Mac 上打开 CmdPalm 设置 → 通用 → 屏幕镜像。");
     }
     let state = shared.state();
     if state.paused {
-        return Err("Screen mirroring is paused on the Mac.");
+        return Err("Mac 上已暂停屏幕镜像。");
     }
     match state.sessions.get(&session) {
         Some(live)
@@ -151,8 +151,8 @@ pub(crate) fn access(shared: &Shared, session: u64) -> Result<(), &'static str> 
         {
             Ok(())
         }
-        Some(_) => Err("Allow screen mirroring for this device in CmdPalm Settings → Devices on the Mac."),
-        None => Err("The device is no longer connected."),
+        Some(_) => Err("请在 Mac 上的 CmdPalm 设置 → 设备中允许此设备的屏幕镜像。"),
+        None => Err("设备已断开连接。"),
     }
 }
 
@@ -160,13 +160,13 @@ impl DisplayHub {
     pub(crate) fn request_access(&self, shared: Arc<Shared>, session: u64, client: u32) {
         let refuse = |message| shared.send_to(session, access_state(client, "error", message));
         if !self.awake.load(Ordering::Acquire) {
-            refuse("Unlock or wake the Mac before requesting access.");
+            refuse("请求访问前请先解锁或唤醒 Mac。");
             return;
         }
         let state = shared.state();
         if state.paused {
             drop(state);
-            refuse("Screen mirroring is paused on the Mac.");
+            refuse("Mac 上已暂停屏幕镜像。");
             return;
         }
         let Some(live) = state.sessions.get(&session) else { return };
@@ -174,13 +174,13 @@ impl DisplayHub {
         if !self.awake.load(Ordering::Acquire) {
             drop(requests);
             drop(state);
-            refuse("Unlock or wake the Mac before requesting access.");
+            refuse("请求访问前请先解锁或唤醒 Mac。");
             return;
         }
         if requests.pending.contains_key(&session) {
             drop(requests);
             drop(state);
-            refuse("An access request is already waiting on the Mac.");
+            refuse("已有一个访问请求正在 Mac 上等待。");
             return;
         }
         requests.last.retain(|_, last| last.elapsed() < Duration::from_secs(300));
@@ -192,7 +192,7 @@ impl DisplayHub {
         {
             drop(requests);
             drop(state);
-            refuse("Wait a moment before requesting screen access again.");
+            refuse("请稍后再请求屏幕访问。");
             return;
         }
         let id = shared.next_id();
@@ -215,7 +215,7 @@ impl DisplayHub {
         let _ = live.tx.send(Outgoing::Message(access_state(
             client,
             "pending",
-            "Approve screen mirroring on the Mac. This request expires in one minute.",
+            "请在 Mac 上批准屏幕镜像。此请求将在一分钟后过期。",
         )));
         drop(requests);
         drop(state);
@@ -253,7 +253,7 @@ impl DisplayHub {
                 access_state(
                     request.client,
                     "expired",
-                    "The access request expired. Ask again when someone is at the Mac.",
+                    "访问请求已过期。请在 Mac 前有人时重新请求。",
                 ),
             );
             shared.emit(HostEvent::DisplayApprovalEnded { id });
@@ -322,11 +322,11 @@ impl DisplayHub {
             shared.send_to(session, ServerMessage::DisplayAccess { allowed: true });
         }
         let (status, message) = if !valid {
-            ("expired", "This access request is no longer valid. Ask again from the phone.")
+            ("expired", "此访问请求已失效，请在手机上重新请求。")
         } else if allow {
-            ("allowed", "Screen mirroring was approved on the Mac. Refresh the display list when ready.")
+            ("allowed", "Mac 上已批准屏幕镜像。准备好后请刷新屏幕列表。")
         } else {
-            ("denied", "Screen mirroring was declined on the Mac.")
+            ("denied", "Mac 上已拒绝屏幕镜像。")
         };
         shared.send_to(session, access_state(request.client, status, message));
         if valid && allow {
@@ -339,8 +339,8 @@ impl DisplayHub {
     pub(crate) fn set_awake(&self, shared: &Shared, awake: bool) {
         self.awake.store(awake, Ordering::Release);
         if !awake {
-            self.cancel(shared, None, None, "Screen mirroring stopped. Unlock or wake the Mac to continue.");
-            self.cancel_access(shared, None, None, "cancelled", "Unlock or wake the Mac, then ask again.");
+            self.cancel(shared, None, None, "屏幕镜像已停止。请解锁或唤醒 Mac 以继续。");
+            self.cancel_access(shared, None, None, "cancelled", "请解锁或唤醒 Mac，然后重新请求。");
         }
     }
 
@@ -475,8 +475,8 @@ impl DisplayHub {
     }
 
     pub(crate) fn forget(&self, shared: &Shared, session: u64) {
-        self.cancel_access(shared, Some(session), None, "cancelled", "This device's access request was cancelled.");
-        self.cancel(shared, Some(session), None, "Screen mirroring stopped.");
+        self.cancel_access(shared, Some(session), None, "cancelled", "此设备的访问请求已取消。");
+        self.cancel(shared, Some(session), None, "屏幕镜像已停止。");
         self.sources.lock().unwrap_or_else(|p| p.into_inner()).remove(&session);
     }
 
@@ -553,7 +553,7 @@ pub(crate) fn start(
             line.starts_with(if quality == DisplayQuality::Original { "m=application " } else { "m=video " })
         })
     {
-        refuse("The browser sent an unsupported video offer.");
+        refuse("浏览器发送了不支持的视频请求。");
         return;
     }
     let listed = shared
@@ -564,14 +564,14 @@ pub(crate) fn start(
         .get(&session)
         .is_some_and(|source| source.ids.contains(&display_id));
     if !listed {
-        refuse("Refresh the display list and select an available display.");
+        refuse("请刷新屏幕列表并选择可用的屏幕。");
         return;
     }
     // Reserve before spawning: simultaneous requests cannot each open an encoder.
     let mut guard = shared.displays.active.lock().unwrap_or_else(|p| p.into_inner());
     if guard.is_some() {
         drop(guard);
-        refuse("A device is already viewing a display. Stop that view before starting another.");
+        refuse("已有一台设备正在查看屏幕。请先停止该查看再开始新的。");
         return;
     }
     let generation = shared.next_id();
@@ -612,7 +612,7 @@ pub(crate) fn start(
             &needs_keyframe,
         )
         .await;
-        let message = result.err().unwrap_or_else(|| "Screen mirroring stopped.".into());
+        let message = result.err().unwrap_or_else(|| "屏幕镜像已停止。".into());
         shared.displays.failed(&shared, session, generation, &message);
     });
 }
@@ -723,7 +723,7 @@ async fn endpoints() -> Result<Vec<Endpoint>, String> {
         }
     }
     if endpoints.is_empty() {
-        return Err("The Mac could not open a local video connection.".into());
+        return Err("Mac 无法建立本地视频连接。".into());
     }
     Ok(endpoints)
 }
@@ -818,9 +818,9 @@ async fn run(
             }
         }
     }
-    let offer = SdpOffer::from_sdp_string(&offer_text).map_err(|_| "The browser's video offer could not be read.")?;
+    let offer = SdpOffer::from_sdp_string(&offer_text).map_err(|_| "无法读取浏览器的视频请求。")?;
     let answer =
-        rtc.sdp_api().accept_offer(offer).map_err(|_| "The browser could not negotiate compatible H.264 video.")?;
+        rtc.sdp_api().accept_offer(offer).map_err(|_| "浏览器无法协商出兼容的 H.264 视频。")?;
     shared.send_to(
         session,
         ServerMessage::DisplayState {
@@ -858,10 +858,10 @@ async fn run(
             .as_ref()
             .is_some_and(|a| a.generation == generation && a.alive.elapsed() <= LEASE);
         if !alive {
-            return Err("Viewing stopped because the phone is no longer active.".into());
+            return Err("查看已停止，因为手机已不再活跃。".into());
         }
         if !connected && started.elapsed() > CONNECT_TIMEOUT {
-            return Err("Video could not reach the phone. Check that the network or VPN allows a direct UDP connection to the Mac.".into());
+            return Err("视频无法传到手机。请检查网络或 VPN 是否允许与 Mac 直接建立 UDP 连接。".into());
         }
         if original
             && connected
@@ -873,7 +873,7 @@ async fn run(
         }
         if let (Some(channel), Some((frame, sequence, offset, began))) = (image_channel, image_transfer.as_mut()) {
             if began.elapsed() > Duration::from_secs(12) {
-                return Err("HD text could not keep up with the connection. Choose Sharper text and try again.".into());
+                return Err("高清文字跟不上连接速度。请选择“更清晰的文字”后重试。".into());
             }
             if let Some(mut channel) = rtc.channel(channel) {
                 // One in-flight picture, the newest waiting picture, and 256 KiB of SCTP
@@ -910,16 +910,16 @@ async fn run(
                     let endpoint = endpoints
                         .iter()
                         .find(|endpoint| endpoint.address == packet.source)
-                        .ok_or("The selected network interface is no longer available.")?;
+                        .ok_or("所选网络接口已不可用。")?;
                     tokio::select! {
                         _ = cancelled.changed() => return Ok(()),
                         result = tokio::time::timeout(Duration::from_millis(500), endpoint.socket.send_to(&packet.contents, packet.destination)) => {
                             // A roaming phone or a full interface queue fails single sends.
                             // WebRTC recovers from loss; only a lasting failure ends the view.
-                            match result.map_err(|_| "The video connection stalled. Try Save battery or a faster network.")? {
+                            match result.map_err(|_| "视频连接停滞。请尝试“省电”或更快的网络。")? {
                                 Ok(_) => send_failing = None,
                                 Err(_) if send_failing.get_or_insert_with(Instant::now).elapsed() > SEND_FAILURE_LIMIT => {
-                                    return Err("The video connection was interrupted.".into());
+                                    return Err("视频连接已中断。".into());
                                 }
                                 Err(_) => {}
                             }
@@ -928,7 +928,7 @@ async fn run(
                 }
                 Output::Event(Event::MediaAdded(added)) if added.kind == MediaKind::Video => {
                     if added.direction != Direction::SendOnly {
-                        return Err("The browser requested an unsupported video connection.".into());
+                        return Err("浏览器请求了不支持的视频连接。".into());
                     }
                     let chosen = rtc.writer(added.mid).and_then(|writer| {
                         writer
@@ -938,7 +938,7 @@ async fn run(
                             .map(|p| (p.pt(), h264_profile(p.spec().format.profile_level_id).1))
                     });
                     let Some((pt, profile)) = chosen else {
-                        return Err("This browser did not offer compatible H.264 video.".into());
+                        return Err("此浏览器未提供兼容的 H.264 视频。".into());
                     };
                     let level = receiver_level(&offer_text, *pt);
                     let (dimension, fps, bitrate) = capture_limits(quality, level);
@@ -955,18 +955,18 @@ async fn run(
                 }
                 Output::Event(Event::ChannelOpen(id, label)) => {
                     if !original || image_channel.is_some() || label != "cmdpalm.original" {
-                        return Err("The browser opened an unsupported data connection.".into());
+                        return Err("浏览器建立了不支持的数据连接。".into());
                     }
                     image_channel = Some(id);
                 }
                 Output::Event(Event::ChannelClose(id)) if Some(id) == image_channel => {
-                    return Err("The HD text connection ended. Start viewing again.".into());
+                    return Err("高清文字连接已结束，请重新开始查看。".into());
                 }
                 Output::Event(Event::ChannelData(_)) => {
-                    return Err("The HD text connection only receives pictures on the phone.".into());
+                    return Err("高清文字连接仅接收手机上的画面。".into());
                 }
                 Output::Event(Event::Closed) => {
-                    return Err("The video connection ended. Start viewing again when the phone is ready.".into());
+                    return Err("视频连接已结束。待手机就绪后请重新开始查看。".into());
                 }
                 Output::Event(Event::KeyframeRequest(_)) => {
                     if last_keyframe.elapsed() > Duration::from_millis(250) {
@@ -1048,7 +1048,7 @@ async fn run(
             _ = cancelled.changed() => return Ok(()),
             _ = tick.tick() => {},
             received = datagrams.recv() => {
-                let packet = received.ok_or("The video connection was interrupted.")?;
+                let packet = received.ok_or("视频连接已中断。")?;
                 if let Ok(receive) = Receive::new(Protocol::Udp, packet.source, packet.destination, &packet.bytes) {
                     let input = Input::Receive(Instant::now(), receive);
                     // Unauthenticated or malformed UDP must not terminate an
@@ -1071,7 +1071,7 @@ async fn run(
                 if waiting_for_keyframe && !frame.keyframe { continue; }
                 if frame.keyframe { waiting_for_keyframe = false; }
                 if let Some((mid, pt, _, _)) = media {
-                    rtc.writer(mid).ok_or("The video track ended.")?.write(pt, Instant::now(), MediaTime::from_micros(frame.timestamp_us), frame.data).map_err(|e| e.to_string())?;
+                    rtc.writer(mid).ok_or("视频轨道已结束。")?.write(pt, Instant::now(), MediaTime::from_micros(frame.timestamp_us), frame.data).map_err(|e| e.to_string())?;
                     sent_video = true;
                 }
             }

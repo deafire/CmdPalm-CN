@@ -41,9 +41,9 @@ const shortcut = computed({
 
 const mediaKeys = Object.keys(MEDIA) as MediaKey[]
 const mouseButtons: { value: MouseButton; label: string }[] = [
-  { value: 'left', label: 'Left' },
-  { value: 'right', label: 'Right' },
-  { value: 'middle', label: 'Middle' },
+  { value: 'left', label: '左' },
+  { value: 'right', label: '右' },
+  { value: 'middle', label: '中' },
 ]
 
 const room = computed(() => fits(props.board, draft.value, draft.value.id))
@@ -65,7 +65,7 @@ function save() {
 </script>
 
 <template>
-  <Sheet :title="isNew ? 'New key' : 'Edit key'" full @close="emit('close')">
+  <Sheet :title="isNew ? '新建按键' : '编辑按键'" full @close="emit('close')">
     <template #actions>
       <button
         type="button"
@@ -73,7 +73,7 @@ function save() {
         :disabled="!room"
         @click="save"
       >
-        {{ isNew ? 'Add' : 'Save' }}
+        {{ isNew ? '添加' : '保存' }}
       </button>
     </template>
 
@@ -82,7 +82,7 @@ function save() {
         {{ preview }}
       </div>
       <label class="min-w-0 flex-1">
-        <span class="text-[13px] text-muted">Label (optional)</span>
+        <span class="text-[13px] text-muted">标签（可选）</span>
         <input
           v-model="draft.label"
           :maxlength="LIMITS.label"
@@ -94,20 +94,20 @@ function save() {
     </div>
 
     <section class="border-t border-line py-4">
-      <h3 class="mb-1 text-[13px] font-medium tracking-wide text-muted uppercase">Sends</h3>
+      <h3 class="mb-1 text-[13px] font-medium tracking-wide text-muted uppercase">发送</h3>
       <Segmented
         v-model="kind"
         :options="[
-          { value: 'key', label: 'Key' },
-          { value: 'mod', label: 'Modifier' },
-          { value: 'media', label: 'Media' },
-          { value: 'mouse', label: 'Mouse' },
+          { value: 'key', label: '按键' },
+          { value: 'mod', label: '修饰键' },
+          { value: 'media', label: '媒体' },
+          { value: 'mouse', label: '鼠标' },
         ]"
       />
       <div class="mt-2">
         <template v-if="draft.action.kind === 'key'">
           <ShortcutField v-model="shortcut" />
-          <p class="mt-2 text-[13px] text-faint">Held down for as long as you touch it. Turn on modifiers above to send a combination.</p>
+          <p class="mt-2 text-[13px] text-faint">按住时持续按下。开启上方的修饰键可发送组合键。</p>
         </template>
 
         <template v-else-if="draft.action.kind === 'mod'">
@@ -122,12 +122,11 @@ function save() {
               @click="draft.action = { kind: 'mod', mod: m.mod }"
             >
               {{ m.symbol }}
-              <span v-if="RIGHT_MODS.includes(m)" class="mt-0.5 text-[10px]">right</span>
+              <span v-if="RIGHT_MODS.includes(m)" class="mt-0.5 text-[10px]">右</span>
             </button>
           </div>
           <p class="mt-2 text-[13px] text-faint">
-            Pressed on the Mac while you hold it, so it combines with other keys on this keyboard. The bottom row uses the keys on the right side,
-            which some apps treat differently, such as a hyper key set to right ⌘.
+            按住时在 Mac 上按下，因此可与此键盘上的其他按键组合。底行使用右侧的按键，某些应用对它们的处理不同，例如将右侧 ⌘ 设置为 hyper 键。
           </p>
         </template>
 
@@ -151,31 +150,31 @@ function save() {
             :options="mouseButtons"
             @update:model-value="(button: MouseButton) => (draft.action = { kind: 'mouse', button })"
           />
-          <p class="text-[13px] text-faint">The button stays down while you hold the key, so you can drag on the trackpad.</p>
+          <p class="text-[13px] text-faint">按住按键时鼠标按键保持按下，因此可在触控板上拖动。</p>
         </template>
       </div>
     </section>
 
     <section class="border-t border-line py-4">
-      <h3 class="mb-2 text-[13px] font-medium tracking-wide text-muted uppercase">Size</h3>
+      <h3 class="mb-2 text-[13px] font-medium tracking-wide text-muted uppercase">大小</h3>
       <div class="grid grid-cols-2 gap-3">
         <div v-for="axis in ['w', 'h'] as const" :key="axis" class="flex items-center justify-between rounded-xl bg-surface-2 px-2 py-1.5">
-          <button type="button" class="grid size-9 place-items-center rounded-lg text-muted active:bg-surface-3" :aria-label="`Smaller ${axis === 'w' ? 'width' : 'height'}`" @click="grow(axis, -1)">
+          <button type="button" class="grid size-9 place-items-center rounded-lg text-muted active:bg-surface-3" :aria-label="`缩小${axis === 'w' ? '宽度' : '高度'}`" @click="grow(axis, -1)">
             <Minus :size="17" />
           </button>
-          <span class="text-[14px] tabular-nums">{{ axis === 'w' ? 'Width' : 'Height' }} {{ draft[axis] }}</span>
-          <button type="button" class="grid size-9 place-items-center rounded-lg text-muted active:bg-surface-3" :aria-label="`Larger ${axis === 'w' ? 'width' : 'height'}`" @click="grow(axis, 1)">
+          <span class="text-[14px] tabular-nums">{{ axis === 'w' ? '宽度' : '高度' }} {{ draft[axis] }}</span>
+          <button type="button" class="grid size-9 place-items-center rounded-lg text-muted active:bg-surface-3" :aria-label="`放大${axis === 'w' ? '宽度' : '高度'}`" @click="grow(axis, 1)">
             <Plus :size="17" />
           </button>
         </div>
       </div>
-      <p v-if="!room" class="mt-2 text-[13px] text-bad">Another key is in the way. Make this key smaller, or move the other key first.</p>
-      <p v-else class="mt-2 text-[13px] text-faint">To move a key, drag it on the keyboard while editing.</p>
+      <p v-if="!room" class="mt-2 text-[13px] text-bad">有其他按键挡住了。请缩小此按键，或先移动其他按键。</p>
+      <p v-else class="mt-2 text-[13px] text-faint">编辑时可在键盘上拖动按键以移动位置。</p>
     </section>
 
     <section v-if="!isNew" class="border-t border-line pt-4">
       <button type="button" class="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-surface-2 text-[14px] text-bad" @click="emit('remove')">
-        <Trash2 :size="16" /> Delete key
+        <Trash2 :size="16" /> 删除按键
       </button>
     </section>
   </Sheet>

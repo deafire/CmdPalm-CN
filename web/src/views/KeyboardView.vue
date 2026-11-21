@@ -132,12 +132,12 @@ const customLayout = computed(() => {
         <Segmented
           v-model="choice"
           class="min-w-0 flex-1 py-0!"
-          aria-label="Keyboard layout"
+          aria-label="键盘布局"
           :keyboard-navigation="false"
           :options="[
             { value: 'mac', label: 'Mac' },
-            { value: 'custom', label: 'Custom' },
-            { value: 'phone', label: 'Type' },
+            { value: 'custom', label: '自定义' },
+            { value: 'phone', label: '输入' },
           ]"
         />
         <button
@@ -146,7 +146,7 @@ const customLayout = computed(() => {
           class="grid size-8 shrink-0 place-items-center rounded-full transition-colors"
           :class="settings.sidewaysKeyboard ? 'bg-accent text-accent-text' : 'bg-surface-3 text-muted'"
           :aria-pressed="settings.sidewaysKeyboard"
-          aria-label="Sideways keyboard"
+          aria-label="横向键盘"
           @click="settings.sidewaysKeyboard = !settings.sidewaysKeyboard"
         >
           <RotateCcwSquare v-if="settings.sidewaysTurn === 'left'" :size="17" />
@@ -154,12 +154,12 @@ const customLayout = computed(() => {
         </button>
       </div>
       <div v-if="mode === 'custom'" class="flex min-w-0 flex-1 basis-60 items-center gap-2">
-        <GroupTabs :items="keyboards.boards" :active="board.id" :editing="editing" label="Custom keyboards" @select="selectBoard" @reorder="reorderBoards">
+        <GroupTabs :items="keyboards.boards" :active="board.id" :editing="editing" label="自定义键盘" @select="selectBoard" @reorder="reorderBoards">
           <button
             v-if="editing && keyboards.boards.length < LIMITS.boards"
             type="button"
             class="grid size-8 shrink-0 place-items-center rounded-full text-muted"
-            aria-label="New keyboard"
+            aria-label="新建键盘"
             @click="choosing = true"
           >
             <Plus :size="17" />
@@ -173,7 +173,7 @@ const customLayout = computed(() => {
         >
           <Check v-if="editing" :size="15" />
           <Pencil v-else :size="14" />
-          {{ editing ? 'Done' : 'Edit' }}
+          {{ editing ? '完成' : '编辑' }}
         </button>
       </div>
     </div>
@@ -207,7 +207,7 @@ const customLayout = computed(() => {
           </div>
         </div>
         <p v-if="editing" class="shrink-0 text-center text-[12px] text-faint">
-          Drag tabs to reorder keyboards. Tap the selected tab to edit it. Tap a key to change it, or drag keys to move them.
+          拖动标签可重新排列键盘。轻点选中的标签进行编辑。轻点按键进行更改，或拖动按键移动位置。
         </p>
       </template>
 
@@ -221,15 +221,15 @@ const customLayout = computed(() => {
 
     <BoardEditor v-if="editingBoard" :board="board" @duplicate="duplicate" @remove="remove" @close="editingBoard = false" />
 
-    <Sheet v-if="choosing" title="New keyboard" @close="choosing = false">
+    <Sheet v-if="choosing" title="新建键盘" @close="choosing = false">
       <button type="button" class="mb-2 flex min-h-14 w-full items-center gap-3 rounded-2xl bg-surface-2 px-4 text-left" @click="create(blankBoard())">
         <Plus :size="18" class="text-accent" />
         <span class="flex-1">
-          <span class="block text-[15px]">Blank</span>
-          <span class="block text-[13px] text-muted">An empty grid to fill with your own keys</span>
+          <span class="block text-[15px]">空白</span>
+          <span class="block text-[13px] text-muted">用你自己的按键填充的空白网格</span>
         </span>
       </button>
-      <h3 class="pt-3 pb-1 text-[13px] font-medium tracking-wide text-muted uppercase">Start from</h3>
+      <h3 class="pt-3 pb-1 text-[13px] font-medium tracking-wide text-muted uppercase">从模板开始</h3>
       <button
         v-for="p in presets()"
         :key="p.name"
@@ -239,7 +239,7 @@ const customLayout = computed(() => {
       >
         <span class="flex-1">
           <span class="block text-[15px]">{{ p.name }}</span>
-          <span class="block text-[13px] text-muted">{{ p.keys.length }} keys{{ p.trackpad ? ' and a trackpad' : '' }}</span>
+          <span class="block text-[13px] text-muted">{{ p.keys.length }} 个按键{{ p.trackpad ? '和一个触控板' : '' }}</span>
         </span>
       </button>
     </Sheet>

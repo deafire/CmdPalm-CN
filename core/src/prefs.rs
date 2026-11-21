@@ -32,11 +32,11 @@ struct SettingsFile {
 
 #[derive(Debug, PartialEq, thiserror::Error)]
 pub enum SettingsError {
-    #[error("Settings must be an object.")]
+    #[error("设置必须是一个对象。")]
     NotAnObject,
-    #[error("These settings are too large to keep on the Mac.")]
+    #[error("这些设置太大，无法保存在 Mac 上。")]
     TooLarge,
-    #[error("The Mac couldn’t save these settings.")]
+    #[error("Mac 无法保存这些设置。")]
     Io,
 }
 

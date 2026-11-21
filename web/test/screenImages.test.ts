@@ -119,7 +119,7 @@ describe('lossless picture rendering', () => {
     const { renderer, full, patch, onPaint, onFailure, decoded } = viewer()
     renderer.receive(full)
     for (let i = 0; i < 20; i++) renderer.receive(patch)
-    expect(onFailure).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('fast enough'))
+    expect(onFailure).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('足够快'))
     await decoded()
     expect(onPaint).not.toHaveBeenCalled()
   })

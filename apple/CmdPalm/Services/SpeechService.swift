@@ -95,13 +95,13 @@ final class SpeechService: @unchecked Sendable {
                             begin(id)
                         } else if let session = sessions.removeValue(forKey: id) {
                             discard(session)
-                            send(id, session, .unavailable, message: "Speech recognition isn’t allowed on the Mac. Turn it on in System Settings → Privacy & Security → Speech Recognition.")
+                            send(id, session, .unavailable, message: "Mac 上未允许语音识别。请在“系统设置 → 隐私与安全性 → 语音识别”中打开它。")
                         }
                     }
                 }
             default:
                 sessions[id] = nil
-                send(id, started, .unavailable, message: "Speech recognition isn’t allowed on the Mac.")
+                send(id, started, .unavailable, message: "Mac 上未允许语音识别。")
             }
         }
         return true
@@ -153,13 +153,13 @@ final class SpeechService: @unchecked Sendable {
         guard session.recognizer.supportsOnDeviceRecognition else {
             sessions[id] = nil
             discard(session)
-            send(id, session, .unavailable, message: "Speech is only transcribed on this Mac, and on-device recognition isn’t available for this language. Try another language, or turn on Dictation in System Settings → Keyboard so macOS can download it.")
+            send(id, session, .unavailable, message: "语音只在这台 Mac 上转写，但设备端识别不支持当前语言。请尝试其他语言，或在“系统设置 → 键盘”中打开“听写”，以便 macOS 下载支持。")
             return
         }
         guard session.recognizer.isAvailable else {
             sessions[id] = nil
             discard(session)
-            send(id, session, .unavailable, message: "Speech recognition isn’t available on the Mac right now. Try again in a moment.")
+            send(id, session, .unavailable, message: "Mac 当前无法使用语音识别，请稍后重试。")
             return
         }
         let request = SFSpeechAudioBufferRecognitionRequest()
@@ -202,7 +202,7 @@ final class SpeechService: @unchecked Sendable {
         } else {
             sessions[id] = nil
             discard(session)
-            send(id, session, .error, message: "Speech recognition stopped: \(error.localizedDescription)")
+            send(id, session, .error, message: "语音识别已停止：\(error.localizedDescription)")
         }
     }
 

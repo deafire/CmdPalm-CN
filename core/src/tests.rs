@@ -261,7 +261,7 @@ fn screen_viewing_needs_a_separate_native_grant_and_filters_late_lists() {
         let session = f.host.connected_devices()[0].session;
 
         send(&mut ws, json!({"t":"displays", "id":1})).await;
-        assert!(recv_kind(&mut ws, "displays").await["message"].as_str().unwrap().contains("off"));
+        assert!(recv_kind(&mut ws, "displays").await["message"].as_str().unwrap().contains("关闭"));
         let mut config = f.config.clone();
         config.display_enabled = true;
         f.host.update_config(config);
@@ -467,7 +467,7 @@ fn screen_video_negotiates_over_plain_websocket_and_stops_before_accepting_late_
             let message = recv_kind(&mut ws, "displayState").await;
             if message["id"] == 99 {
                 assert_eq!(message["state"], "error");
-                assert!(message["message"].as_str().unwrap().contains("already viewing"), "the replacement lost its viewer slot: {message}");
+                assert!(message["message"].as_str().unwrap().contains("正在查看"), "the replacement lost its viewer slot: {message}");
                 break;
             }
         }
@@ -482,7 +482,7 @@ fn screen_video_negotiates_over_plain_websocket_and_stops_before_accepting_late_
             assert_ne!(message["state"], "error", "the prior viewer slot was not released: {message}");
             if message["id"] == 3 && message["state"] == "stopped" { break message; }
         };
-        assert!(expired["message"].as_str().unwrap().contains("no longer active"));
+        assert!(expired["message"].as_str().unwrap().contains("不再活跃"));
         send(&mut ws, json!({"t":"displayStart", "id":4, "displayId":"test", "quality":"auto", "sdp":offer.to_sdp_string()})).await;
         let restarted = recv_kind(&mut ws, "displayState").await;
         assert_eq!(restarted["id"], 4);
@@ -1651,7 +1651,7 @@ fn deck_saves_acknowledge_persistence_and_reject_stale_revisions() {
         assert_eq!(rejected["ok"], false);
         assert_eq!(rejected["id"], 8);
         assert_eq!(rejected["revision"], 1);
-        assert!(rejected["message"].as_str().unwrap().contains("another device"));
+        assert!(rejected["message"].as_str().unwrap().contains("另一台设备"));
         assert_eq!(serde_json::from_str::<Value>(&f.host.deck_json()).unwrap()["pages"][0]["name"], "Phone edit");
     });
 }

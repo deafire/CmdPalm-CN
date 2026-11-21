@@ -143,9 +143,9 @@ const caps = computed(() => {
 })
 
 const WORDS: Record<number, string> = {
-  [Key.Escape]: 'esc', [Key.Tab]: 'tab', [Key.CapsLock]: 'caps lock', [Key.Delete]: 'delete',
-  [Key.Return]: 'return', [Key.Shift]: 'shift', [Key.RightShift]: 'shift', [Key.Control]: 'control',
-  [Key.Option]: 'option', [Key.RightOption]: 'option', [Key.Command]: 'command', [Key.RightCommand]: 'command',
+  [Key.Escape]: 'esc', [Key.Tab]: 'tab', [Key.CapsLock]: '大写锁定', [Key.Delete]: '删除',
+  [Key.Return]: '回车', [Key.Shift]: '上档', [Key.RightShift]: '上档', [Key.Control]: '控制',
+  [Key.Option]: '选项', [Key.RightOption]: '选项', [Key.Command]: '命令', [Key.RightCommand]: '命令',
 }
 
 function modClass(spec: Extract<KeySpec, { kind: 'mod' }>) {
@@ -172,7 +172,7 @@ const rowStyle = (r: number) => ({ flex: r === 0 ? '0.72 1 0%' : '1 1 0%' })
 </script>
 
 <template>
-  <label ref="root" class="keyboard flex h-full w-full touch-none flex-col select-none" :style="vars" role="group" aria-label="Mac keyboard">
+  <label ref="root" class="keyboard flex h-full w-full touch-none flex-col select-none" :style="vars" role="group" aria-label="Mac 键盘">
     <template v-for="(row, r) in rows" :key="r">
       <div v-if="r > 0 || functionRow" class="row flex min-h-0" :style="rowStyle(r)">
         <template v-for="(spec, i) in row" :key="i">
@@ -183,7 +183,7 @@ const rowStyle = (r: number) => ({ flex: r === 0 ? '0.72 1 0%' : '1 1 0%' })
             class="key"
             :class="down.has(spec.code) && 'is-down'"
             :style="flex(spec.width)"
-            :aria-label="caps.get(spec.code)?.main || 'key'"
+            :aria-label="caps.get(spec.code)?.main || '按键'"
           >
             <template v-if="caps.get(spec.code)?.alt">
               <span class="dual">{{ caps.get(spec.code)?.alt }}</span>
@@ -232,7 +232,7 @@ const rowStyle = (r: number) => ({ flex: r === 0 ? '0.72 1 0%' : '1 1 0%' })
               spec.code === Key.CapsLock && state.capsLock && 'is-caps',
             ]"
             :style="flex(spec.width)"
-            :aria-label="spec.label || (spec.code === Key.Space ? 'space' : '')"
+            :aria-label="spec.label || (spec.code === Key.Space ? '空格' : '')"
             :aria-pressed="spec.code === Key.CapsLock ? state.capsLock : undefined"
           >
             <span v-if="spec.code === Key.CapsLock && state.capsLock" class="caps-light" />
@@ -263,18 +263,18 @@ const rowStyle = (r: number) => ({ flex: r === 0 ? '0.72 1 0%' : '1 1 0%' })
 
           <!-- Arrows, laid out like a MacBook: tall ◀ ▶, half-height ▲ ▼ -->
           <div v-else-if="spec.kind === 'arrows'" class="arrows flex min-w-0" :style="flex(3)">
-            <div :data-key="Key.Left" role="button" class="key arrow" :class="down.has(Key.Left) && 'is-down'" aria-label="left">
+            <div :data-key="Key.Left" role="button" class="key arrow" :class="down.has(Key.Left) && 'is-down'" aria-label="左">
               {{ arrow(Key.Left).glyph }}
             </div>
             <div class="flex min-w-0 flex-1 flex-col">
-              <div :data-key="Key.Up" role="button" class="key arrow" :class="down.has(Key.Up) && 'is-down'" aria-label="up">
+              <div :data-key="Key.Up" role="button" class="key arrow" :class="down.has(Key.Up) && 'is-down'" aria-label="上">
                 {{ arrow(Key.Up).glyph }}
               </div>
-              <div :data-key="Key.Down" role="button" class="key arrow" :class="down.has(Key.Down) && 'is-down'" aria-label="down">
+              <div :data-key="Key.Down" role="button" class="key arrow" :class="down.has(Key.Down) && 'is-down'" aria-label="下">
                 {{ arrow(Key.Down).glyph }}
               </div>
             </div>
-            <div :data-key="Key.Right" role="button" class="key arrow" :class="down.has(Key.Right) && 'is-down'" aria-label="right">
+            <div :data-key="Key.Right" role="button" class="key arrow" :class="down.has(Key.Right) && 'is-down'" aria-label="右">
               {{ arrow(Key.Right).glyph }}
             </div>
           </div>

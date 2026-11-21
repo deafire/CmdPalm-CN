@@ -81,8 +81,8 @@ describe('display preferences while viewing', () => {
     document.querySelector<HTMLButtonElement>('#settings-tab-display')!.click()
     await nextTick()
     await nextTick()
-    const dialog = document.querySelector('[role="dialog"][aria-label="Settings"]')!
-    const sharp = Array.from(dialog.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim().startsWith('Sharper text'))!
+    const dialog = document.querySelector('[role="dialog"][aria-label="设置"]')!
+    const sharp = Array.from(dialog.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim().startsWith('更清晰的文字'))!
     sharp.click()
     await flushPromises()
     expect(PreviewPeer.all).toHaveLength(2)
@@ -93,10 +93,10 @@ describe('display preferences while viewing', () => {
     expect(PreviewPeer.all).toHaveLength(2)
 
     viewing.screen.status = 'live'
-    const layout = dialog.querySelector('[role="radiogroup"][aria-label="Controls with the display"]')!
-    Array.from(layout.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim() === 'Keyboard')!.click()
+    const layout = dialog.querySelector('[role="radiogroup"][aria-label="屏幕镜像时的控制方式"]')!
+    Array.from(layout.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim() === '键盘')!.click()
     await nextTick()
-    const split = dialog.querySelector<HTMLInputElement>('input[aria-label="Preview space"]')!
+    const split = dialog.querySelector<HTMLInputElement>('input[aria-label="预览区域"]')!
     split.value = '0.6'
     split.dispatchEvent(new Event('input', { bubbles: true }))
     await flushPromises()
@@ -106,28 +106,28 @@ describe('display preferences while viewing', () => {
     expect(viewing.screen.status).toBe('live')
     overlay.unmount(); overlay = undefined
 
-    await view.get('[aria-label="Display options"]').trigger('click')
-    const options = document.querySelector('[role="dialog"][aria-label="Display options"]')!
-    Array.from(options.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim().startsWith('Save battery'))!.click()
+    await view.get('[aria-label="屏幕镜像选项"]').trigger('click')
+    const options = document.querySelector('[role="dialog"][aria-label="屏幕镜像选项"]')!
+    Array.from(options.querySelectorAll<HTMLButtonElement>('button')).find(item => item.textContent?.trim().startsWith('省电'))!.click()
     await flushPromises()
     expect(PreviewPeer.all).toHaveLength(3)
     expect(PreviewPeer.all[1]!.closed).toBe(true)
     expect(lastSocket().sent.filter(message => message.t === 'displayStart').map(message => message.quality)).toEqual(['auto', 'sharp', 'battery'])
-    expect(document.querySelector('[role="dialog"][aria-label="Display options"]')).toBeNull()
+    expect(document.querySelector('[role="dialog"][aria-label="屏幕镜像选项"]')).toBeNull()
   })
 })
 
 describe('fullscreen display accessibility', () => {
   it('isolates the viewport fallback and restores focus and existing inert state on exit', async () => {
     const { view } = await mountViewer()
-    const opener = view.get('button[aria-label="Fullscreen display"]')
+    const opener = view.get('button[aria-label="全屏显示"]')
     ;(opener.element as HTMLElement).focus()
     await opener.trigger('keydown', { key: 'Enter', code: 'Enter' })
-    const region = view.get('[aria-label="Fullscreen Mac display"]')
+    const region = view.get('[aria-label="Mac 屏幕全屏"]')
     expect(document.activeElement).toBe(region.element)
     expect(document.querySelector('#outside')!.hasAttribute('inert')).toBe(true)
-    expect(button(view, 'Exit').element.closest('[inert]')).toBeNull()
-    await button(view, 'Exit').trigger('click')
+    expect(button(view, '退出').element.closest('[inert]')).toBeNull()
+    await button(view, '退出').trigger('click')
     expect(document.querySelector('#outside')!.hasAttribute('inert')).toBe(false)
     expect(document.querySelector('aside')!.hasAttribute('inert')).toBe(true)
     expect(document.activeElement).toBe(opener.element)
@@ -135,13 +135,13 @@ describe('fullscreen display accessibility', () => {
 
   it('keeps focused viewer button keys local while other hardware input can reach the Mac', async () => {
     const { view } = await mountViewer()
-    await view.get('button[aria-label="Fullscreen display"]').trigger('click')
+    await view.get('button[aria-label="全屏显示"]').trigger('click')
     const received = vi.fn()
     window.addEventListener('keydown', received)
     try {
-      const region = view.get('[aria-label="Fullscreen Mac display"]')
-      const fsStop = region.findAll('button').find(item => item.text() === 'Stop')!
-      const fsExit = region.findAll('button').find(item => item.text() === 'Exit')!
+      const region = view.get('[aria-label="Mac 屏幕全屏"]')
+      const fsStop = region.findAll('button').find(item => item.text() === '停止')!
+      const fsExit = region.findAll('button').find(item => item.text() === '退出')!
       ;(fsStop.element as HTMLElement).focus()
       await fsStop.trigger('keydown', { key: 'Tab', code: 'Tab' })
       ;(fsExit.element as HTMLElement).focus()
@@ -149,16 +149,16 @@ describe('fullscreen display accessibility', () => {
       expect(received).not.toHaveBeenCalled()
       await fsExit.trigger('keydown', { key: 'Enter', code: 'Enter' })
       expect(received).not.toHaveBeenCalled()
-      await view.get('[aria-label="Fullscreen Mac display"]').trigger('keydown', { key: 'a', code: 'KeyA' })
+      await view.get('[aria-label="Mac 屏幕全屏"]').trigger('keydown', { key: 'a', code: 'KeyA' })
       expect(received).toHaveBeenCalledOnce()
-      await view.get('[aria-label="Fullscreen Mac display"]').trigger('keydown', { key: 'Escape', code: 'Escape' })
+      await view.get('[aria-label="Mac 屏幕全屏"]').trigger('keydown', { key: 'Escape', code: 'Escape' })
       expect(document.querySelector('#outside')!.hasAttribute('inert')).toBe(false)
     } finally { window.removeEventListener('keydown', received) }
   })
 
   it('isolates replacement navigation created by responsive layout changes', async () => {
     const { view } = await mountViewer()
-    await view.get('button[aria-label="Fullscreen display"]').trigger('click')
+    await view.get('button[aria-label="全屏显示"]').trigger('click')
     const navigation = document.createElement('nav')
     navigation.innerHTML = '<button>Replacement tab bar</button>'
     document.body.append(navigation)
@@ -171,13 +171,13 @@ describe('fullscreen display accessibility', () => {
     document.body.append(navigation)
     await vi.advanceTimersByTimeAsync(0)
     expect(navigation.hasAttribute('inert')).toBe(true)
-    await button(view, 'Exit').trigger('click')
+    await button(view, '退出').trigger('click')
     expect(navigation.hasAttribute('inert')).toBe(false)
   })
 
   it('restores the rest of the app when its cached Display page deactivates', async () => {
     const { view, visible } = await mountViewer(true)
-    await view.get('button[aria-label="Fullscreen display"]').trigger('click')
+    await view.get('button[aria-label="全屏显示"]').trigger('click')
     expect(document.querySelector('#outside')!.hasAttribute('inert')).toBe(true)
     visible.value = false
     await nextTick()
@@ -185,7 +185,7 @@ describe('fullscreen display accessibility', () => {
     expect(document.querySelector('#outside')!.hasAttribute('inert')).toBe(false)
     visible.value = true
     await nextTick()
-    expect(wrapper!.find('[aria-label="Fullscreen Mac display"]').exists()).toBe(false)
+    expect(wrapper!.find('[aria-label="Mac 屏幕全屏"]').exists()).toBe(false)
   })
 
   it('extends only a right-side scroll strip to the outer screen edge in wide display mode', async () => {

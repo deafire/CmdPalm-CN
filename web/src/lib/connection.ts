@@ -123,7 +123,7 @@ function clearTimers() {
 function settleActions() {
   for (const { resolve, timer } of pendingActions.values()) {
     clearTimeout(timer)
-    resolve({ ok: false, message: 'Lost the connection to the Mac.' })
+    resolve({ ok: false, message: '已与 Mac 断开连接。' })
   }
   pendingActions.clear()
 }
@@ -229,10 +229,10 @@ function connectionLost() {
   state.status = 'idle'
   if (state.byeReason) return
   if (answered) {
-    state.byeReason = 'Lost the connection to the Mac while waiting for approval. Check that this phone is on the same network as the Mac, then try again.'
+    state.byeReason = '等待批准期间与 Mac 断开连接。请确认此手机与 Mac 在同一网络中，然后重试。'
   } else {
-    const next = request.method === 'pair' ? 'scan the QR code again' : 'try again'
-    state.byeReason = `Couldn’t reach the Mac. Check that this phone is on the same network as the Mac, then ${next}.`
+    const next = request.method === 'pair' ? '重新扫描二维码' : '重试'
+    state.byeReason = `无法连接到 Mac。请确认此手机与 Mac 在同一网络中，然后${next}。`
   }
 }
 
@@ -310,7 +310,7 @@ function handle(message: ServerMessage) {
       if (pendingAuth?.method === 'token' && message.reason === 'unknown') token.set(null)
       state.denied = { reason: message.reason, retryAfter: message.retryAfter }
       state.status = message.reason === 'unknown' ? 'idle' : 'denied'
-      if (message.reason === 'unknown') state.byeReason = 'This device is no longer paired with the Mac. Pair it again.'
+      if (message.reason === 'unknown') state.byeReason = '此设备已与 Mac 解除配对。请重新配对。'
       break
     case 'pong': {
       const sent = pingSent.get(message.id)
@@ -429,7 +429,7 @@ export function runAction(action: Action): Promise<{ ok: boolean; message?: stri
   const id = ++actionId
   return new Promise((resolve) => {
     if (!send({ t: 'action', action, id })) {
-      resolve({ ok: false, message: 'Not connected to the Mac.' })
+      resolve({ ok: false, message: '未连接到 Mac。' })
       return
     }
     // The Mac answers every action with an id, but a long one (a shell

@@ -12,8 +12,8 @@ const preview = computed(() => comboLabel(model.value.code, model.value.mods, la
 /** A typed key (a letter, digit or symbol) has no button below, so the field shows it as chosen. */
 const typedKey = computed(() => (SPECIAL_KEYS.some((k) => k.code === model.value.code) ? '' : keyName(model.value.code, labels.value)))
 const prompt = computed(() => {
-  if (listening.value) return 'Press a key…'
-  return typedKey.value ? `${typedKey.value} · tap to change` : 'Tap, then type a key'
+  if (listening.value) return '请按一个键…'
+  return typedKey.value ? `${typedKey.value} · 点按以更改` : '点按后输入按键'
 })
 
 /** Modifiers the last typed character needed (⇧ for "?"), not ones chosen with the buttons. */
@@ -91,7 +91,7 @@ function onInput(event: Event) {
             : 'border-dashed border-line-strong bg-transparent placeholder:text-muted'
         "
         :placeholder="prompt"
-        :aria-label="typedKey ? `Key: ${typedKey}. Tap, then type a different key` : 'Tap, then type a key'"
+        :aria-label="typedKey ? `按键：${typedKey}。点按后输入其他按键` : '点按后输入按键'"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"

@@ -37,8 +37,8 @@ describe('ConnectView', () => {
     const { default: ConnectView } = await import('../src/views/ConnectView.vue')
     const view = mount(ConnectView)
     await nextTick()
-    expect(view.text()).toContain('Disconnected from the Mac.')
-    const reconnect = view.findAll('button').find((b) => b.text() === 'Reconnect')!
+    expect(view.text()).toContain('已与 Mac 断开连接。')
+    const reconnect = view.findAll('button').find((b) => b.text() === '重新连接')!
     await reconnect.trigger('click')
     expect(FakeSocket.all).toHaveLength(2)
     expect(conn.state.status).toBe('connecting')
@@ -53,7 +53,7 @@ describe('ConnectView', () => {
     lastSocket().open()
     lastSocket().receive({ t: 'pending' })
     await nextTick()
-    await view.findAll('button').find((b) => b.text() === 'Cancel')!.trigger('click')
+    await view.findAll('button').find((b) => b.text() === '取消')!.trigger('click')
     expect(conn.state.status).toBe('idle')
     expect(view.find('form').exists()).toBe(true)
     view.unmount()
@@ -71,7 +71,7 @@ describe('custom keyboard group order', () => {
     settings.keyboard = 'mac'
     const view = mount(KeyboardView, { attachTo: document.body })
     try {
-      const selector = view.get('[role="radiogroup"][aria-label="Keyboard layout"] [role="radio"]')
+      const selector = view.get('[role="radiogroup"][aria-label="键盘布局"] [role="radio"]')
       await selector.trigger('keydown', { key: 'ArrowRight', code: 'ArrowRight' })
       await selector.trigger('keyup', { key: 'ArrowRight', code: 'ArrowRight' })
       expect(settings.keyboard).toBe('mac')
@@ -96,7 +96,7 @@ describe('custom keyboard group order', () => {
     const before = keyboards.boards.map((board) => board.id)
     const { default: KeyboardView } = await import('../src/views/KeyboardView.vue')
     const view = mount(KeyboardView, { attachTo: document.body })
-    await view.findAll('button').find((button) => button.text() === 'Edit')!.trigger('click')
+    await view.findAll('button').find((button) => button.text() === '编辑')!.trigger('click')
     await view.find(`[data-group-id="${selected}"]`).trigger('keydown', { key: 'ArrowRight', altKey: true })
     await nextTick()
     vi.advanceTimersByTime(2_000)
@@ -152,11 +152,11 @@ describe('Composer live typing', () => {
     settings.liveTyping = false
     await nextTick()
     await field.setValue('hello')
-    await view.find('button[aria-label="Type on the Mac"]').trigger('click')
+    await view.find('button[aria-label="在 Mac 上输入"]').trigger('click')
     expect((field.element as HTMLTextAreaElement).value).toBe('hello')
 
     const socket = connected()
-    await view.find('button[aria-label="Type on the Mac"]').trigger('click')
+    await view.find('button[aria-label="在 Mac 上输入"]').trigger('click')
     expect(socket.sent.filter((m) => m.t === 'text')).toMatchObject([{ text: 'hello' }])
     expect((field.element as HTMLTextAreaElement).value).toBe('')
     view.unmount()
